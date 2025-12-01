@@ -36,7 +36,7 @@ if (forgotLink) {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://127.0.0.1:5501/public/reset-password.html", // ganti sesuai URL kamu
+        redirectTo: "https://matcah.netlify.app/reset-password.html",
       });
 
       if (error) {
@@ -54,6 +54,7 @@ if (forgotLink) {
     }
   });
 }
+
 
 if (signInBtn) {
   signInBtn.addEventListener("click", async () => {
