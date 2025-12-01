@@ -3,8 +3,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   "use strict";
 
-  // ⬅️ Supabase client (dibuat di cekout.html)
-  const supabase = window.supabase || null;
 
   // ---- helpers ----
   const formatRp = (n) => {
@@ -497,11 +495,13 @@ document.addEventListener("DOMContentLoaded", function () {
         };
       }
 
-      // 🟢 1) SIMPAN ke Supabase (mirror) — TIDAK mengubah perilaku lama kalau gagal
+// 🟢 1) SIMPAN ke Supabase (mirror)
+      const supabase = window.supabase;
       if (supabase) {
         try {
           const { data: userData, error: userErr } =
             await supabase.auth.getUser();
+
 
           if (!userErr && userData?.user) {
             const supaUser = userData.user;

@@ -454,7 +454,6 @@
   "use strict";
 
   // ⬅️ Supabase client (dibuat di HTML, misalnya Home/bagfr page)
-  const supabase = window.supabase || null;
 
   // 🔑 helper UID lagi (scope IIFE kedua)
   function getCurrentUID() {
@@ -571,10 +570,10 @@
     // 🟢 1) Supabase mirror (jika client tersedia & user login)
     if (supabase) {
       try {
-        const { data: userData, error: userErr } =
-          await supabase.auth.getUser();
-        if (!userErr && userData?.user) {
-          const supaUser = userData.user;
+const supabase = window.supabase;
+if (supabase) {
+  const { data: userData, error: userErr } =
+    await supabase.auth.getUser();
 
           const { data: insertedOrder, error: orderError } =
             await supabase
