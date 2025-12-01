@@ -1,0 +1,212 @@
+/* drafamt.css — replaced to match mobile "phone" layout like cari.css */
+/* Paste this over your existing drafamt.css */
+
+:root{
+  --bg: #fdeef0; /* outer page bg (match original theme) */
+  --phone-bg: #fff;
+  --card: #ffffff;
+  --muted: #7b7b7b;
+  --accent: #007aff;
+  --shadow: 0 8px 24px rgba(0,0,0,0.06);
+  --radius: 14px;
+}
+
+/* reset basics */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family: 'Rasa', serif;background:var(--bg);-webkit-text-size-adjust:100%}
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+/* PHONE WRAP (replaces .device behavior) */
+.device{
+  /* phone mock default width (like cari.css) */
+  width: 375px;
+  max-width: 100%;
+  background: var(--phone-bg);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: auto;
+  position: relative;
+  height: 812px; /* mock phone height */
+  display:flex;
+  flex-direction:column;
+}
+
+/* topbar -> header style, keep compatibility with existing HTML */
+.topbar{
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:56px;
+  box-sizing:border-box;
+}
+
+/* preserve existing text styles */
+.topbar h1{margin:0;font-size:18px;font-weight:700}
+.topbar .cancel{color:var(--accent);text-decoration:none;font-weight:600}
+.topbar .done{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:16px;font-weight:700;cursor:pointer}
+
+/* controls */
+.controls{display:flex;justify-content:flex-end;margin-bottom:12px}
+.add-new{color:var(--accent);text-decoration:none;font-weight:600}
+
+/* address list */
+.wrap{padding:18px 20px; flex:1; overflow:auto}
+.address-list{display:flex;flex-direction:column;gap:12px}
+.address-card{position:relative;background:var(--card);border-radius:12px;padding:18px 18px 18px 62px;border:1px solid #e9e9e9}
+.address-label{
+  position: absolute;
+  left: 22px;
+  top: 35px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);   /* ← ini bikin teks menghadap kanan */
+  font-weight: 800;
+  font-size: 25px;
+  color: #111;
+}
+
+
+.address-radio{position:absolute;right:14px;top:20px}
+.addr-name{font-weight:700;margin-bottom:6px}
+.addr-phone{font-size:13px;color:var(--muted);margin-bottom:8px}
+.addr-full{font-size:14px;color:#222;line-height:1.4}
+
+/* separators */
+.address-divider{height:1px;background:#eaeaea;margin:12px 0;border-radius:2px}
+
+/* subtle radio style */
+input[type="radio"]{width:18px;height:18px}
+
+/* empty state */
+.empty{
+  color:var(--muted);
+  padding:60px 28px 28px; /* ⬅ padding-top diperbesar (dari 28px ke 60px) */
+  text-align:center;
+}
+
+
+.wrap{
+  padding:58px 10px; /* misal dari 18px jadi 28px */
+  flex:1;
+  overflow:auto;
+}
+
+
+/* Bottom nav (if you have bottom actions) — mimic cari.css behavior */
+.bottom-nav{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:74px;
+  background:rgba(255,255,255,0.95);
+  border-top:1px solid rgba(0,0,0,0.04);
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  padding:10px 6px;
+  z-index:999;
+  box-shadow: 0 -6px 24px rgba(0,0,0,0.05);
+  border-radius: 12px 12px 0 0;
+}
+.bottom-nav .nav-btn{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#777;font-size:11px}
+.bottom-nav .nav-btn img{height:20px;width:20px;object-fit:contain;margin-bottom:4px}
+.bottom-nav .nav-btn.active{color:#000}
+
+/* Responsive: smaller screens -> phone becomes full screen */
+@media (max-width:500px){
+  body{padding:0;background:var(--phone-bg)}
+  .device{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100vh !important;
+    margin:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    left:0 !important;
+    transform:none !important;
+    position:relative !important;
+    overflow:auto !important;
+  }
+  .wrap{
+    padding: calc(18px + env(safe-area-inset-top)) 16px calc(110px + env(safe-area-inset-bottom)) 16px !important;
+  }
+  .topbar{padding:12px 16px}
+  .bottom-nav{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100vw !important;
+    max-width:100vw !important;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+    border-radius:0 !important;
+    box-shadow: 0 -4px 18px rgba(0,0,0,0.06) !important;
+    z-index:99999 !important;
+  }
+  /* ensure radios and cards fit well on small screen */
+  .address-card{padding-left:56px}
+  .address-label{left:6px}
+  .page-title{ text-align:left }
+}
+
+/* small tweak for very narrow screens */
+@media (max-width:360px){
+  .device{ width:100vw; height:100vh }
+  .topbar h1{ font-size:16px }
+}
+
+/* Optional: make scrollbars subtle */
+.device::-webkit-scrollbar{width:8px}
+.device::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:8px}
+
+
+.addr-title-combined {
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+
+.add-new.disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: auto; /* masih bisa di-click, tapi kita cegat di JS */
+}
+.hint {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 4px 0 10px;
+  text-align: right;
+}
+/* tombol X merah di pojok kanan atas card */
+.addr-delete{
+  position:absolute;
+  top:10px;
+  left:10px;
+  width:14px;
+  height:14px;
+  border-radius:999px;
+  border:1px solid #f97373;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-size:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+}
+
+.addr-delete:hover{
+  background:#fecaca;
+}
+
+

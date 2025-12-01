@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Delivery Tracking</title>
+  <link rel="stylesheet" href="ordadm.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <header class="admin-header">
+      <h1>Admin — Delivery Tracking</h1>
+      <p class="subtitle">Atur status pengiriman, jadwal, dan biaya kirim untuk satu order.</p>
+    </header>
+
+    <main id="admin-detail" class="admin-content">
+
+      <!-- CARD RINGKAS ORDER -->
+      <section class="admin-order-card" id="adm-summary-card">
+        <div class="admin-order-header">
+          <div class="admin-order-id">
+            Order ID: <span id="adm-order-id">(loading)</span>
+          </div>
+          <div class="admin-order-created" id="adm-order-date"></div>
+        </div>
+
+        <div class="admin-status-row">
+          <span class="badge badge-status">Status: <span id="adm-status-text">-</span></span>
+          <span class="badge badge-payment" id="adm-payment-badge">Payment: -</span>
+          <span class="badge" id="adm-total-badge">Total: Rp 0</span>
+        </div>
+
+        <div class="admin-items" id="adm-items">
+          <!-- first item title akan diisi JS -->
+        </div>
+
+        <div class="admin-address" id="adm-address-block">
+          <!-- alamat default akan diisi JS (optional) -->
+        </div>
+      </section>
+
+      <!-- PENGATURAN JADWAL & SHIPPING -->
+      <section class="admin-detail-section">
+        <h2 class="admin-section-title">Delivery Settings</h2>
+
+        <div class="admin-form-row">
+          <label for="adm-scheduled">Scheduled Delivery</label>
+          <input type="date" id="adm-scheduled">
+        </div>
+
+        <div class="admin-form-row">
+          <label for="adm-ship-fee">Shipping Fee (Rp)</label>
+          <input type="number" id="adm-ship-fee" min="0" step="1000" placeholder="contoh: 15000">
+        </div>
+      </section>
+
+      <!-- DELIVERY TRACKING TOGGLE -->
+      <section class="admin-detail-section">
+        <h2 class="admin-section-title">Delivery Tracking</h2>
+
+        <div class="admin-toggle-row">
+          <label for="t-placed">Order Placed</label>
+          <input type="checkbox" id="t-placed">
+        </div>
+
+        <div class="admin-toggle-row">
+          <label for="t-payment">Payment Confirmed</label>
+          <input type="checkbox" id="t-payment">
+        </div>
+
+        <div class="admin-toggle-row">
+          <label for="t-wait">Waiting for Schedule</label>
+          <input type="checkbox" id="t-wait">
+        </div>
+
+        <div class="admin-toggle-row">
+          <label for="t-prep">Preparing Order</label>
+          <input type="checkbox" id="t-prep">
+        </div>
+
+        <hr style="margin:10px 0">
+
+        <div class="admin-toggle-row">
+          <label for="t-out-active">Out for Delivery</label>
+          <input type="checkbox" id="t-out-active">
+        </div>
+
+        <div class="admin-form-row">
+          <label for="t-out-info">Tracking number / link</label>
+          <input type="text" id="t-out-info" placeholder="contoh: JNE 123456 / https://tracking...">
+        </div>
+
+        <div class="admin-actions" style="margin-top:12px;">
+          <button class="btn btn-details" id="btn-save-tracking">Save Changes</button>
+          <button class="btn btn-approve" id="btn-mark-delivered">Mark as Delivered</button>
+          <button class="btn btn-reject" id="btn-back-list">Back to Orders</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="diteladm.js"></script>
+</body>
+</html>

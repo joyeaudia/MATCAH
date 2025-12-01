@@ -1,0 +1,61 @@
+{
+  "id": "drink-hojicha-001",
+  "category": "drinks",
+  "brand": "YourBrand",
+  "title": "Hojicha Latte 🍂",
+  "subtitle": "Comforting roasted green tea latte",
+  "price": 28000,
+  "currency": "IDR",
+  "images": [
+    "images/hojicha-1.webp",
+    "images/hojicha-2.webp"
+  ],
+  "description": "Indulge in the comforting warmth of Hojicha Latte, made with finely roasted green tea leaves for a nutty and deeply roasted flavor, low in bitterness with a naturally sweet, aromatic, and earthy finish. A smooth and cozy drink perfect for any time of day.",
+  "details": {
+    "size": "Regular (350ml)",
+    "serving": "Hot / Iced"
+  },
+  "options": [
+    {
+      "key": "milk",
+      "label": "Milk Options",
+      "type": "radio",
+      "choices": [
+        { "value": "fresh", "label": "Fresh Milk", "price_delta": 0 },
+        { "value": "oat", "label": "Oat Milk", "price_delta": 3000 }
+      ],
+      "default": "fresh",
+      "note": "Add your preference in the notes at checkout. If no note is added, Fresh Milk is used."
+    },
+    {
+      "key": "sugar",
+      "label": "Sugar Level",
+      "type": "radio",
+      "choices": [
+        { "value": "0", "label": "0%" },
+        { "value": "50", "label": "50%" },
+        { "value": "100", "label": "100%" },
+        { "value": "125", "label": "125%" }
+      ],
+      "default": "100"
+    }
+  ],
+  "addons": [
+    {
+      "id": "thermal_bag",
+      "label": "Thermal Bag",
+      "price": 10000,
+      "note": "Keep cold & ice intact (available for deliveries within 3 km only)."
+    }
+  ],
+  "delivery": {
+    "modes": ["sameday", "instant"],
+    "note": "Available for Sameday / Instant Delivery Only to ensure maximum freshness and flavor."
+  },
+  "tips": [
+    "Serve chilled for best taste.",
+    "Consume within 4 hours for optimal freshness."
+  ],
+  "available": true,
+  "tags": ["beverage","seasonal"]
+}

@@ -1,0 +1,190 @@
+:root{
+  --bg: #F3F2F7;
+  --card-bg: #ffffff;
+  --muted: #8b8791;
+  --accent: #2b98ff;
+  --heart-gray: #cfcfd3;
+  --heart-red: #e74b4b;
+  --card-radius: 12px;
+  --card-padding: 16px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;
+    font-family:'Rasa';
+    background:var(--bg); color:#0b0000}
+
+.page {
+  max-width: 412px;
+  margin: 0 auto;                         /* tidak ada margin top lagi */
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: env(safe-area-inset-top);  /* hanya aman area notch, tanpa extra space */
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* logo di tengah */
+  gap: 8px;
+  background: var(--bg);
+  padding: 0;                 /* penting: hapus padding atas/bawah */
+  margin: 0 0 4px 0;          /* kecilkan margin-bottom supaya konten rapat */
+  height: 64px;               /* bikin tinggi bar konsisten */
+}
+
+.topbar .back{
+  color:#2b7dbd;
+  text-decoration:none;
+  font-size:14px;
+}
+.topbar .logo{
+  height: 116px;
+  margin:0 auto;
+  display:block;
+}
+.topbar .spacer{width:48px} /* keep space to center logo */
+
+/* Section title */
+.section-title{
+  font-size:16px;
+  margin:8px 0 14px 2px;
+  color:#222;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px; /* sebelumnya 16px */
+}
+
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+ min-height: 300px; /* sebelumnya 260px */
+  padding: 24px 18px 28px;
+  box-shadow: 0 1px 0 rgba(16,20,24,0.04), 0 6px 12px rgba(16,20,24,0.04);
+  position: relative;
+  min-height: 320px; /* sebelumnya 200px — bikin kartu lebih panjang */
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow .12s, transform .06s;
+  border: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.card-body {
+  font-size: 13px;
+  color: #111;
+  margin-top: auto; /* ini yang bikin nempel ke bawah */
+}
+
+.card-image {
+  background: none;
+  border-radius: 8px;
+  display: block;            /* biarkan mengikuti ukuran gambar */
+  overflow: visible;         /* biarkan gambar keluar */
+  margin-bottom: 12px;
+  display:block;
+  margin-bottom: 18px;
+}
+
+
+.card:active{ transform: translateY(1px); }
+.card.selected{
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(43,152,255,0.14);
+}
+
+/* Heart button in corner */
+/* Heart button */
+.heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px; /* lebih besar */
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(16, 20, 24, 0.08);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.heart:hover {
+  transform: scale(1.08);
+}
+.heart:active {
+  transform: scale(0.96);
+}
+.heart:focus {
+  outline: 2px solid rgba(43, 152, 255, 0.2);
+}
+
+/* SVG heart shape */
+.heart .heart-icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--heart-gray);
+  stroke-width: 2.3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.2s ease, fill 0.25s ease, transform 0.25s ease;
+}
+
+/* Saat liked (klik) */
+.heart.liked .heart-icon {
+  fill: var(--heart-red);
+  stroke: var(--heart-red);
+  transform: scale(1.15);
+  filter: drop-shadow(0 1px 4px rgba(231,75,75,0.4));
+}
+
+
+
+/* Card body text */
+.card-body{
+  font-size:13px;
+  color:#111;
+}
+.product-name{
+  font-weight:700;
+  margin-bottom:6px;
+}
+.product-meta{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:8px;
+}
+.product-price{
+  font-weight:600;
+  font-size:13px;
+  color:#2b7dbd;
+}
+
+.card-image img {
+  object-fit: contain;        /* biar tidak crop */
+  object-position: top center;/* prioritaskan bagian atas kalau pakai cover */
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-image {
+  background-size: contain;       /* jangan cover */
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+

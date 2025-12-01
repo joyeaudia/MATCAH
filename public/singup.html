@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account</title>
+  <link rel="stylesheet" href="singup.css" />
+</head>
+
+<body>
+  <div class="sign-up-page">
+    <div class="card">
+      <h2>Create Account</h2>
+
+      <form id="signup-form" onsubmit="return false;">
+        <label>Full Name</label>
+        <input type="text" id="fullname" placeholder="Your full name" required />
+
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" required />
+
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="08xxxxxxxx" required />
+
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="********" required />
+          <span class="toggle"></span>
+        </div>
+        <small class="pw-hint">
+          Min 8 karakter, huruf besar & kecil, angka, simbol
+        </small>
+
+        <label>Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="confirm-password" placeholder="********" required />
+          <span class="toggle"></span>
+        </div>
+
+        <button type="button" class="create-btn" id="createAccountBtn">Create Account</button>
+
+        <p class="signin-text">
+          Already have an account? <a href="singin.html">Sign In</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1️⃣ Supabase Client - 1x per halaman -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+  </script>
+
+  <!-- 2️⃣ Logic Sign Up -->
+  <script type="module" src="singup.js"></script>
+
+</body>
+</html>

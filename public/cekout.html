@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout</title>
+
+  <!-- Google Font: Rasa -->
+  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="cekout.css">
+</head>
+<body>
+  <div class="frame" role="document" aria-label="Checkout page">
+    <header class="top-nav">
+       <button class="nav-action nav-left" type="button"
+        onclick="window.location.href='gif.html'">
+Back
+</button>
+      <div class="title">Checkout</div>
+      <button class="nav-action nav-right" id="placeOrder" type="button">Place Order</button>
+    </header>
+
+    <main class="content">
+      <!-- Products Summary -->
+      <section class="card summary-card" aria-labelledby="summary-title">
+        <h2 id="summary-title" class="section-title">Products Summary</h2>
+
+        <ul class="product-list">
+          <li class="product-item">
+            <div class="product-info">
+              <div class="product-title">Polkadot Top</div>
+              <div class="product-meta">Affinite Attire • Rp 159.000</div>
+            </div>
+            <div class="qty-control" data-price="159000">
+              <button class="qty-btn dec" aria-label="Decrease">−</button>
+              <input class="qty-input" type="text" inputmode="numeric" value="1" aria-label="Quantity">
+              <button class="qty-btn inc" aria-label="Increase">+</button>
+            </div>
+          </li>
+
+          <li class="product-item">
+            <div class="product-info">
+              <div class="product-title">Matcha Latte</div>
+              <div class="product-meta">Mazai Matcha • Rp 45.000</div>
+            </div>
+            <div class="qty-control" data-price="45000">
+              <button class="qty-btn dec" aria-label="Decrease">−</button>
+              <input class="qty-input" type="text" inputmode="numeric" value="1" aria-label="Quantity">
+              <button class="qty-btn inc" aria-label="Increase">+</button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Notes -->
+      <section class="card">
+        <label class="label" for="notes">Notes for seller (optional)</label>
+        <textarea id="notes" class="textarea" placeholder="Write any notes for seller..."></textarea>
+      </section>
+
+      <!-- Schedule -->
+      <section class="card">
+        <label class="label">Schedule your order</label>
+        <div class="inline-selects">
+          <select aria-label="Date">
+            <option>Date</option>
+            <option>10</option>
+            <option>11</option>
+          </select>
+          <select aria-label="Month">
+            <option>Month</option>
+            <option>Jan</option>
+            <option>Feb</option>
+          </select>
+          <select aria-label="Year">
+            <option>Year</option>
+            <option>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Recipient -->
+<section class="card">
+  <label class="label" for="recipient">Recipient Information</label>
+  <textarea id="recipient" class="textarea"
+    placeholder="Please write the recipient's name, number, and full address"></textarea>
+
+  <!-- wrapper khusus buat tombol Saved Address -->
+  <div class="recipient-actions">
+    <button type="button" id="btnUseSavedAddress" class="saved-link">
+      Saved Address
+    </button>
+  </div>
+</section>
+
+
+
+      <!-- Delivery Method -->
+      <section class="card">
+        <label class="label">Delivery Method</label>
+
+        <div class="delivery-row" id="deliveryRow" role="radiogroup" aria-label="Delivery method">
+          <button class="delivery-item active" data-method="regular" aria-pressed="true">Regular</button>
+          <button class="delivery-item" data-method="nextday" aria-pressed="false">Next Day</button>
+          <button class="delivery-item" data-method="sameday" aria-pressed="false">Same Day</button>
+          <button class="delivery-item" data-method="instant" aria-pressed="false">Instant</button>
+          <button class="delivery-item" data-method="self" aria-pressed="false">Self Pick Up</button>
+        </div>
+      </section>
+
+      <!-- Subtotal / Payment -->
+<section class="card summary-bottom">
+  <div class="flex-between">
+    <div class="muted">Product Subtotal</div>
+    <div id="subtotalRp" class="bold">Rp 204.000,00</div>
+  </div>
+
+  <div class="flex-between">
+    <div class="muted">Shipping Fee</div>
+    <div id="shippingFee" class="bold">Rp 0,00</div>
+  </div>
+
+  <div class="flex-between">
+    <div class="muted">Total (incl. shipping)</div>
+    <div id="totalRp" class="bold">Rp 204.000,00</div>
+  </div>
+
+  <p class="muted tiny">Shipping fee depends on delivery method and total items.</p>
+
+
+        <div class="payment-note">
+          <div class="muted tiny">Payment</div>
+          <div class="muted tiny">Payment and shipping fee will be calculated and sent through WhatsApp.</div>
+        </div>
+      </section>
+
+      <div class="spacer"></div>
+    </main>
+  </div>
+
+    <!-- DDNO splash overlay -->
+  <div id="ddno-overlay" class="ddno-overlay">
+    <div class="ddno-frame">
+      <div class="ddno-logo-wrapper">
+        <img
+          src="acs/ddno.png"
+          alt="Mazi Processing"
+          class="ddno-logo"
+          id="ddno-logo"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+  <!-- external JS -->
+<script src="cekout.js"></script>
+</body>
+</html>

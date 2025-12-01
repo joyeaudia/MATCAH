@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Orders</title>
+  <link rel="stylesheet" href="ordadm.css">
+</head>
+<body>
+  <div class="admin-shell">
+
+    <header class="admin-header">
+      <h1>Admin — Orders</h1>
+
+      <div class="admin-filter-pills">
+        <button type="button" class="admin-pill is-active" data-filter="all">Semua</button>
+        <button type="button" class="admin-pill" data-filter="gift">Gift saja</button>
+        <button type="button" class="admin-pill" data-filter="history">History</button>
+      </div>
+    </header>
+
+    <main id="admin-content" class="admin-content">
+      <!-- list order akan dirender oleh ordadm.js ke dalam div ini -->
+      <div id="order-list"></div>
+    </main>
+
+  </div>
+
+
+  <nav class="bottom-nav">
+
+ <a href="ordadm.html" class="nav-item active">
+    <img src="logos/dm2.png" class="nav-icon" alt="">
+    <span class="nav-label">Orders</span>
+  </a>
+
+  <a href="admin.html" class="nav-item">
+    <img src="logos/dm1.png" class="nav-icon" alt="">
+    <span class="nav-label">Booths</span>
+  </a>
+
+
+<script type="module" src="./ordadm-sync.js"></script>
+<script src="./ordadm.js"></script>
+
+
+  <script>
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      window.location.href = "frsadm.html";
+    }
+  });
+</script>
+
+</body>
+</html>

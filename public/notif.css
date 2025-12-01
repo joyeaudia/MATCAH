@@ -1,0 +1,138 @@
+:root {
+  --bg-pink: #ffe6ef;
+  --card-bg: #f7f7f9;
+  --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --text-main: #222222;
+  --text-muted: #777777;
+  --accent-blue: #007aff;
+  --radius-lg: 26px;
+  --radius-card: 14px;
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+}
+
+/* halaman */
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background: var(--bg-pink);
+}
+
+/* wrapper supaya kotaknya selalu center */
+.notif-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 8px;
+  box-sizing: border-box;
+}
+
+/* “hp” putih — UKURAN TETAP */
+.notif-frame {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  min-height: 640px;           /* <- tinggi minimum (ga mengecil lagi) */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 14px 16px 24px;
+  box-sizing: border-box;
+
+  display: flex;               /* header di atas, list di bawah */
+  flex-direction: column;
+}
+
+/* header */
+.notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.notif-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.link-btn:active {
+  opacity: 0.6;
+}
+
+/* area list */
+.notif-main {
+  flex: 1;                      /* isi sisa tinggi frame */
+  display: flex;
+  flex-direction: column;
+  padding-top: 6px;
+  overflow: hidden;
+}
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;             /* kalau notif banyak, scroll di dalam kotak */
+  padding-right: 4px;
+}
+
+/* card notif */
+.notif-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  padding: 10px 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  font-size: 13px;
+}
+
+.notif-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.notif-card-title {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.notif-card-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.notif-card-body {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* emoji / icon di kiri judul */
+.notif-card-emoji {
+  margin-right: 4px;
+}
+
+/* empty state */
+.notif-empty {
+  margin-top: 40px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}

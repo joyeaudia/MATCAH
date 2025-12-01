@@ -1,0 +1,563 @@
+:root{
+  --bg: #ffffff;
+  --muted: #e9e8ea;
+  --card: #ffffff;
+  --accent: #beb8c9;
+  --text: #1b1b1b;
+  --sub: #7b7b7b;
+  --pill-bg: #fbfbfb;
+  --price-bg: #efefef;
+}
+
+/* page background */
+html,body{
+  height:100%;
+  margin:0;
+  background:linear-gradient(#ffffff,#ffffff 120px, transparent 120px);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding: 0;
+  font-family:'Rasa';
+}
+
+/* device */
+.device {
+  width: 412px;
+  background: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border: 4px solid transparent;
+  overflow: visible; /* ⬅️ ubah dari hidden ke visible */
+}
+
+/* header */
+/* header container (white rounded box like screenshot) */
+header.appbar{
+  padding: 0;
+  background: transparent;
+  display:flex;
+  justify-content:center;
+}
+
+/* inner white rounded area */
+.appbar-inner{
+  width: 100%;
+  max-width: 412px;              /* samakan dengan device width */
+  margin: 12px auto 0;
+  background: linear-gradient(#faf8fb,#f6f4f8);
+  border-radius: 12px;
+  padding: 18px 20px 12px;
+  position: relative;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-sizing: border-box;
+   overflow: visible;   /* ⬅️ tambahkan ini */
+  z-index: 10; 
+}
+
+/* small "BY" and brand name centered */
+.brand-center{ text-align:center; pointer-events:none; }
+.brand-center .by{ display:block; font-size:11px; color:#222; margin-bottom:4px; font-family:'Rasa', serif; }
+.brand-center .name{ font-size:22px; font-weight:700; letter-spacing:1px; font-family:'Rasa', serif; color:#111; }
+
+/* bell icon on right inside the rounded header */
+.icon-bell{
+  position:absolute;
+  right:14px;
+  top:12px;
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #e6e6e6;
+  box-shadow:0 6px 12px rgba(0,0,0,0.06);
+  padding:4px;
+}
+.icon-bell img{ width:24px; height:24px; object-fit:contain; }
+
+/* thin purple underline sticking to the inner box bottom */
+.appbar-underline{
+  width: calc(100% - 40px); /* sedikit inset dari sisi device */
+  max-width: 412px;
+  height:6px;
+  background:#beb8c9; /* ungu */
+  margin: 6px auto 0;
+  border-radius:4px;
+  box-sizing:border-box;
+}
+
+/* responsive tweaks (keadaan mobile / preview) */
+@media (max-width: 430px){
+  .appbar-inner{ margin:10px 8px 0; padding:16px 16px 10px; }
+  .appbar-underline{ width: calc(100% - 32px); }
+  .brand-center .name{ font-size:20px; }
+}
+
+.brand-left{position:absolute;left:16px;top:18px;font-size:12px;color:var(--sub);font-family:'Rasa',serif;}
+header.appbar {
+  padding-top: 20px; /* ruang aman biar gak ketutupan notch */
+  background: transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.brand-center {
+  text-align: center;
+  pointer-events: none;
+  transform: translateY(-45px); /* naik tinggi */
+}
+
+
+
+.brand-center .by{display:block;font-size:14px;color:#000;margin-bottom:2px;}
+
+.brand-center .name{font-size:25px;letter-spacing:1px;font-weight:700;}
+.icon-bell{position:absolute;right:14px;top:14px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+.icon-bell img{width:20px;height:20px;opacity:0.9;}
+
+/* content */
+.content {
+  padding: 8px 18px 90px;
+  margin-top: -50px; /* tarikan kecil, jangan terlalu besar; sesuaikan -4px sampai -18px */
+}
+
+h2.section{margin:-20px 0 8px;font-size:15px;color:var(--text);font-weight:505;font-family:'Rasa';}
+#discover-title {
+  margin-top: 15px;
+}
+
+
+
+
+/* brands */
+.brands-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;}
+
+
+
+.brand-item{min-width:86px;height:64px;background:var(--card);border-radius:10px;box-shadow:0 2px 6px rgba(11,11,11,0.03);display:flex;align-items:center;justify-content:center;padding:8px;flex:0 0 auto;}
+
+
+.brand-item img{max-width:100%;max-height:100%;object-fit:contain;opacity:0.95;}
+
+/* --- Update: Brands hover & tighter layout --- */
+/* brands: compact + scrollable + hover scale */
+.brands-wrap{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:6px 12px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.brand-item{
+  flex:0 0 auto;
+  width:160px;
+  height:195px;
+  padding:6px;
+  border-radius:10px;
+  background:var(--card);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  transition: transform .18s ease, box-shadow .18s ease;
+  scroll-snap-align:center;
+  cursor:pointer;
+}
+
+.brand-item {
+  display: flex;
+  flex-direction: column;  /* ⬅️ ini bikin gambar di atas, tulisan di bawah */
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-label {
+  margin-top: 50px;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: center;
+}
+
+
+/* hover */
+.brand-item:hover{
+  transform:scale(1.07);
+  box-shadow:0 8px 18px rgba(0,0,0,0.12);
+}
+
+
+.brand-item img {
+  width: 50%;   /* gambar lebih kecil */
+  height: auto;
+  object-fit: contain;
+}
+
+/* saat hover, logo ikut membesar halus */
+.brand-item:hover img {
+  transform: scale(1.04);
+  opacity: 1;
+}
+
+.brands-wrap a.brand-item {
+  text-decoration: none;
+  color: inherit;   /* biar tulisan tetep warna normal */
+}
+
+
+.brand-item:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 0 18px rgba(66, 203, 173, 0.315); /* glow lembut */
+}
+
+/* ---------- DISCOVER: gaya card seperti like-card ---------- */
+.discover-row{
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* setiap product sebagai kartu vertikal, snapping, dan ukuran adaptif */
+.discover-row .product{
+  flex: 0 0 160px;          /* lebar dasar tiap kartu (sesuaikan jika perlu) */
+  min-width: 140px;
+  min-height: 240px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* gambar di atas, judul di bawah */
+  align-items: center;
+  position: relative;
+  overflow: visible;
+  scroll-snap-align: start;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+
+/* efek hover ringan */
+.discover-row .product:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.08);
+}
+
+/* image container & gambar (tidak terpotong) */
+.discover-row .product .image{
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding-top: 4px;
+  padding-bottom: 6px;
+  position: relative; /* agar .buy-pill bisa absolute relatif ke sini */
+}
+.discover-row .product .image img{
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  object-fit: contain;    /* tampilkan utuh, tidak terpotong */
+  border-radius: 10px;
+  display:block;
+}
+
+/* meta/title di bawah gambar */
+.discover-row .product .meta{
+  width: 100%;
+  text-align: center;
+  padding-top: 8px;
+  padding-bottom: 6px;
+}
+.discover-row .product .meta .title{
+  font-size: 15px;
+  font-weight:700;
+  color: var(--text);
+  line-height:1.1;
+}
+.discover-row .product .meta .brand{
+  font-size:13px;
+  color: var(--sub);
+  margin-top:4px;
+}
+
+/* price row */
+.discover-row .product .price-row{
+  width:100%;
+  font-weight:800;
+  font-size:14px;
+  color:var(--text);
+  margin-top:8px;
+  text-align:center;
+}
+
+.discover-row .product .buy-pill{
+  position: absolute;
+  top: -2px;                   /* sedikit lebih dekat ke atas */
+  right: -2px;                 /* sedikit lebih ke dalam */
+  background: rgba(255, 255, 255, 0.18); /* putih lembut transparan */
+  color: #3f3a3a;             /* warna teks seperti di gambar */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;        /* lengkung sedang */
+  padding: 5px 10px;          /* KECILKAN tombol */
+  font-size: 12px;            /* perkecil teks */
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.15s ease;
+  z-index: 6;
+}
+
+.discover-row .product .buy-pill:hover{
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(29, 94, 244, 0.95);      /* sedikit lebih terang saat hover */
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.12);
+}
+
+/* sembunyikan scrollbar tapi tetap bisa di-scroll */
+.discover-row::-webkit-scrollbar,
+.brands-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.discover-row,
+.brands-wrap {
+  -ms-overflow-style: none;  /* untuk Internet Explorer dan Edge lama */
+  scrollbar-width: none;     /* untuk Firefox */
+}
+
+/* responsive: tampilan kecil — tetap mempertahankan proporsi */
+@media (max-width:430px){
+  .discover-row .product{ flex: 0 0 160px; min-width:150px; min-height:220px; padding:10px; }
+  .discover-row .product .image img{ max-width: 140px; }
+  .discover-row{ gap:10px; padding:10px 12px; }
+}
+
+/* scrollbar styling (opsional, gunakan yang sudah ada) */
+.discover-row::-webkit-scrollbar{height:8px;}
+.discover-row::-webkit-scrollbar-thumb{background:#ddd;border-radius:8px;}
+
+
+
+.product .meta .title{color:var(--text);font-weight:600;margin-bottom:6px;font-size:15px;}
+.product .meta .brand{font-size:13px;color:var(--sub);}
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* harga jadi di tengah */
+  padding: 8px 12px;
+  background: var(--price-bg);
+  border-top: 1px solid #eee;
+  font-weight: 600;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* limited */
+.limited{margin-top:12px;background:var(--card);border-radius:12px;padding:12px;box-shadow:0 4px 14px rgba(0,0,0,0.04);text-align:center;}
+.limited .title{font-weight:700;margin-bottom:2px;font-family:'Rasa',serif;}
+.limited .msg{background:#fff;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--sub);display:inline-block;text-align:center;}
+
+
+
+
+/* ---------- VISIT OUR BOOTH (UPDATED: center grid, wider chips) ---------- */
+.visit{margin-top:12px;}
+
+/* ---------- Visit chips 2 columns + controllable size ---------- */
+:root {
+  --chip-w: 170px;     /* lebar chip */
+  --chip-h: 60px;      /* tinggi chip */
+  --chip-font: 12px;   /* ukuran font semua teks di dalam chip */
+}
+
+/* container */
+.visit {
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* grid fix 2 kolom, responsif dan center */
+.visit .grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: center;
+  gap: 14px;
+  width: calc(100% - 24px);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* setiap chip */
+.visit .chip {
+  background: var(--card);
+  width: var(--chip-w);
+  height: var(--chip-h);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* efek hover lembut */
+.visit .chip:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+}
+
+/* teks di dalam chip */
+.chip-title {
+  font-weight: 700;
+  font-size: var(--chip-font);
+  color: var(--text);
+  margin-bottom: 5px;
+  line-height: 1.1;
+}
+
+.visit .small {
+  font-size: var(--chip-font);
+  color: var(--sub);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.visit .section-row {
+  display: flex;
+  flex-direction: column;   /* ⬅️ ubah ini supaya teks ditumpuk vertikal */
+  align-items: flex-start;  /* sejajarkan ke kiri (bisa ganti ke center kalau mau tengah) */
+  gap: 4px;                 /* jarak kecil antara h2 dan paragraf */
+}
+
+
+/* gaya untuk judul dan deskripsi biar proporsional */
+.visit .section-row h2.section {
+  margin: 0;
+  font-size: 20px;            /* bisa kamu ubah */
+  font-weight: 600;
+  color: var(--text);
+}
+
+.visit .section-row p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sub);
+}
+
+
+/* ----- CTA WhatsApp: center & constrained inside .device ----- */
+.cta-whatsapp {
+  max-width: 360px;        /* batasi lebar sesuai device mockup */
+  margin: 28px auto 60px; /* auto center, cukup ruang bawah supaya nav tidak nutup */
+  padding: 22px 16px;
+  box-sizing: border-box;
+  text-align: center;
+  background: transparent;
+  font-family: 'Rasa', serif;
+}
+
+/* heading & text */
+.cta-whatsapp h2 {
+  font-size: 17px;
+  margin: 0 0 6px;
+  color: var(--text);
+  font-weight:700;
+}
+.cta-whatsapp .lead {
+  margin: 0;
+  color: #444;
+  line-height: 1.4;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+/* WA button */
+.wa-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:56px;
+  height:56px;
+  margin-top:12px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  text-decoration:none;
+}
+.wa-btn img{ width:28px; height:28px; object-fit:contain; }
+
+/* ensure the CTA never pushes outside .device on small screens */
+.device .cta-whatsapp { width: calc(100% - 36px); max-width:360px; }
+
+/* if you used .content padding-bottom for nav, keep it >= nav height */
+.content { padding-bottom: 20px; }
+
+
+/* bottom nav */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0; /* ⬅️ penting! dulu 24px, ubah jadi 0 */
+  width: 100%;
+  max-width: 412px; /* biar pas dengan ukuran device mockup */
+  background: var(--card);
+  border-radius: 14px 14px 0 0; /* sudut atas doang yang melengkung */
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  z-index: 60;
+}
+
+
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px;border-radius:10px;background:transparent;border:none;color:var(--sub);font-size:11px;}
+
+.nav-btn img {
+  width: 22px;
+  height: 22px;
+  display: block;
+  filter: grayscale(1) opacity(0.6); /* ikon lain jadi redup abu-abu */
+  transition: filter 0.2s ease;
+}
+
+.nav-btn.active img {
+  filter: none; /* ikon aktif (misal Home) berwarna normal */
+}
+
+.nav-btn.active{color:#000;font-weight:700;}
+.nav-btn.active img{filter:none;}
+.nav-btn span{line-height:1;}
+
+/* scrollbars */
+.brands-wrap::-webkit-scrollbar,.discover-row::-webkit-scrollbar{height:8px;}
+.brands-wrap::-webkit-scrollbar-thumb,.discover-row::-webkit-scrollbar-thumb{background:#ddd;border-radius:8px;}
+
+
+.nav-btn {
+  text-decoration: none;   /* hilangkan garis bawah */
+  color: inherit;          /* biar warna ikut parent */
+}
+
+.nav-btn span {
+  text-decoration: none;
+}
+

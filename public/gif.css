@@ -1,0 +1,269 @@
+:root{
+  --bg: #FAFAFA;
+  --card: #FFFFFF;
+  --muted: #7b7b84;
+  --accent: #FDE8EA;
+  --accent-strong: #FFDBE0;
+  --shadow: 0 10px 30px rgba(18,18,18,0.06);
+  --maxw: 412px;
+  --nav-h: 56px;
+  --radius: 12px;
+  --gap: 16px;
+  --text: #111;
+  --accent-border: rgba(0,0,0,0.04);
+  --active-border: rgba(255, 40, 90, 0.14);
+}
+
+/* Reset singkat */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Rasa';
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  padding:20px 0;
+}
+
+/* frame mobile - buat scrollable di HP */
+.frame{
+  width:100%;
+  max-width:var(--maxw);
+  /* batasi tinggi agar konten bisa di-scroll di mobile */
+  max-height:calc(100vh - 40px);
+  background:var(--bg);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch; /* smooth scrolling on iOS */
+  border:1px solid rgba(0,0,0,0.03);
+}
+
+/* Top nav */
+.top-nav{
+  height:var(--nav-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 18px;
+  background:transparent;
+  position:sticky;
+  top:0;
+  backdrop-filter: blur(4px);
+  z-index:6;
+}
+.nav-action{
+  background:transparent;
+  border:0;
+  color:#4b86b4;
+  font-weight:600;
+  font-size:14px;
+  padding:6px 8px;
+  cursor:pointer;
+}
+.title{
+  font-weight:700;
+  font-size:16px;
+  color:#111;
+  text-align:center;
+  flex:1;
+}
+
+/* Main content */
+.content{padding:18px}
+
+/* Hero */
+.hero{
+  background:var(--card);
+  border-radius:12px;
+  padding:24px 18px;
+  box-shadow:var(--shadow);
+  text-align:center;
+  margin-bottom:18px;
+  border:1px solid rgba(0,0,0,0.03);
+}
+.logo{height:36px;margin-bottom:10px; display:block; margin-left:auto; margin-right:auto}
+.hero-title{
+  margin:0;
+  font-family: 'Rasa';
+  font-size:28px;
+  line-height:1.05;
+  font-weight:700;
+  color:#000;
+}
+.hero-sub{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* Form elements */
+.label{
+  display:block;
+  font-size:13px;
+  color:#333;
+  margin:12px 0 6px;
+  font-weight:600;
+}
+.hint.small{
+  margin:0 0 8px 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* inputs */
+.input, .textarea{
+  width:100%;
+  background:var(--card);
+  border:1px solid #e6e6e9;
+  padding:12px;
+  border-radius:10px;
+  font-size:14px;
+  min-height:44px;
+  outline:none;
+  transition:box-shadow .12s, border-color .12s;
+}
+.input:focus, .textarea:focus{
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  border-color:var(--accent-border);
+}
+.textarea{min-height:110px; resize:vertical}
+
+/* Choice row (buttons) */
+.choice-row{
+  display:flex;
+  gap:12px;
+  margin:12px 0 18px;
+}
+.btn{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.06);
+  background:var(--card);
+  cursor:pointer;
+  font-weight:600;
+  font-size:14px;
+  transition:transform .06s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{
+  /* default primary style (if needed) */
+  background:linear-gradient(180deg,var(--accent) 0%, var(--accent-strong) 100%);
+  border:1px solid var(--accent-border);
+}
+.btn-ghost{
+  background:transparent;
+}
+
+/* active state for choices */
+.choice-btn.active{
+  background: linear-gradient(180deg,#ffbbc3 0%, #ffb6c0 100%);
+  border: 1px solid var(--active-border);
+  box-shadow: 0 8px 24px rgba(255, 20, 80, 0.08);
+  color: #000;
+}
+
+/* Theme swatches */
+.theme-row{
+  display:flex;
+  gap:35px;
+  margin-top:10px;
+  align-items:center;
+}
+.theme-swatch{
+  width:44px;
+  height:44px;
+  background:linear-gradient(180deg,var(--accent) 0%, var(--accent-strong) 100%);
+  border-radius:8px;
+  border:1px solid rgba(0,0,0,0.04);
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  cursor:pointer;
+  transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.theme-swatch.empty{
+  background:linear-gradient(180deg,#fff,#fff);
+  border:1px dashed #eee;
+}
+.theme-swatch.active{
+  transform:translateY(-4px);
+  box-shadow:0 14px 30px rgba(0,0,0,0.10);
+  border:2px solid var(--active-border);
+}
+
+/* small spacer and pink strip */
+.spacer{height:40px}
+.pink-strip{
+  height:120px;
+  margin-top:18px;
+  background:linear-gradient(0deg,#fff 0%, #fff 50%, #ffeef1 100%);
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,0.02);
+}
+
+/* Responsive tweaks */
+@media (max-width:460px){
+  body{padding:12px}
+  .frame{margin:0 auto}
+}
+
+/* Accessibility / small utility */
+.muted{color:var(--muted); font-size:13px}
+
+
+.theme-swatch.active {
+  background: linear-gradient(180deg, #ffd7dc 0%, #ffb6c0 100%);
+  border: 2px solid var(--active-border);
+  box-shadow: 0 8px 24px rgba(255, 20, 80, 0.08);
+  transform: translateY(-2px);
+}
+/* small image inside swatch */
+.theme-swatch img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  border-radius:8px;
+}
+
+.theme-swatch {
+  width: 55px;
+  height: 50px;
+  padding: 0;
+  background: none;  /* Hilangkan gradient belakang */
+  border-radius: 12px;
+  overflow: hidden; /* Biar gambar ikut radius */
+  border: 2px solid rgba(0,0,0,0.04);
+}
+
+.theme-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* isi penuh */
+  display: block;
+}
+
+
+
+/* preview box */
+.theme-preview {
+  background: #fff;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,0.04);
+  padding:14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow: 0 8px 30px rgba(18,18,18,0.06);
+  min-height:120px;
+}
+
+#theme-preview-img {
+  max-width:100%;
+  max-height:180px;
+  object-fit:contain;
+  border-radius:10px;
+  display:block;
+}

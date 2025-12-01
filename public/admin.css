@@ -1,0 +1,418 @@
+:root {
+  --bg: #f4fbf6;
+  --bg-accent: #e5f7ed;
+  --card: #ffffff;
+  --accent: #16a34a;
+  --accent-soft: #dcfce7;
+  --accent-dark: #15803d;
+  --text-main: #1f2933;
+  --text-muted: #6b7280;
+  --border-soft: #d1e3d7;
+  --danger: #e11d48;
+  --shadow-soft: 0 18px 45px rgba(15, 118, 110, 0.08);
+}
+
+/* ===== Layout & Global ===== */
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, #ccfbf1 0, transparent 55%),
+    radial-gradient(circle at bottom right, #bbf7d0 0, transparent 55%),
+    var(--bg);
+  margin: 0;
+  padding: 24px;
+  padding-bottom: 80px; /* ruang untuk bottom nav */
+  color: var(--text-main);
+}
+
+.wrap {
+  width: 100%;
+  max-width: 480px;     /* lebar mirip HP besar */
+  margin: 0 auto 80px;  /* tengah + ruang extra bawah untuk nav */
+}
+
+/* ===== Typography ===== */
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.lead {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  font-size: 14px;
+  max-width: 520px;
+}
+
+/* ===== Controls / Top Bar ===== */
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+button {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 30px rgba(22, 163, 74, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.12s ease;
+}
+
+button::after {
+  content: "💾";
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 45px rgba(22, 163, 74, 0.4);
+  filter: brightness(1.02);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+  filter: brightness(0.98);
+}
+
+button:focus-visible {
+  outline: 2px solid #2c7748;
+  outline-offset: 2px;
+}
+
+button.secondary {
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  color: #111827;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+button.secondary::after {
+  content: "";
+}
+
+/* ===== Grid / Card ===== */
+
+/* sekarang 1 kolom (HP feel) di semua ukuran */
+#inputs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+/* Kartu booth cantik dengan border gradient */
+.box {
+  position: relative;
+  padding: 18px 16px 14px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(45, 212, 191, 0.55), rgba(22, 163, 74, 0.65)) border-box;
+  box-shadow: 0 18px 45px rgba(15, 118, 110, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.2s ease,
+    border-radius 0.2s ease;
+}
+
+/* Glow lembut di dalam kartu */
+.box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(74, 222, 128, 0.18), transparent 55%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.box > * {
+  position: relative; /* biar konten di atas efek glow */
+}
+
+/* Hover efek */
+.box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 50px rgba(15, 118, 110, 0.16);
+  border-radius: 22px;
+}
+
+/* Badge Booth di pojok kanan atas */
+#inputs-grid .box::after {
+  content: "Booth";
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(248, 250, 252, 0.9);
+  color: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+}
+
+/* Beda warna sedikit tiap kartu */
+#inputs-grid .box:nth-child(1)::after {
+  content: "Booth 1";
+  background: rgba(219, 234, 254, 0.96);
+  border-color: rgba(59, 130, 246, 0.65);
+}
+
+#inputs-grid .box:nth-child(2)::after {
+  content: "Booth 2";
+  background: rgba(221, 239, 253, 0.96);
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+#inputs-grid .box:nth-child(3)::after {
+  content: "Booth 3";
+  background: rgba(240, 249, 255, 0.96);
+  border-color: rgba(59, 130, 246, 0.55);
+}
+
+#inputs-grid .box:nth-child(4)::after {
+  content: "Booth 4";
+  background: rgba(220, 252, 231, 0.96);
+  border-color: rgba(34, 197, 94, 0.7);
+}
+
+/* ===== Labels & Inputs ===== */
+
+label {
+  display: block;
+  margin-bottom: 4px;
+  color: #111827;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* semua input yang dipakai di halaman admin */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="url"] {
+  width: 100%;
+  padding: 10px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  margin-bottom: 10px;
+  background: #f9fafb;
+  font-size: 13px;
+  color: var(--text-main);
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.12s ease;
+}
+
+input[type="text"]::placeholder,
+input[type="url"]::placeholder {
+  color: #9ca3af;
+}
+
+input[type="text"]:hover,
+input[type="date"]:hover,
+input[type="time"]:hover,
+input[type="url"]:hover {
+  background: #ffffff;
+  border-color: #a7d9ba;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="url"]:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.8), 0 0 0 6px rgba(34, 197, 94, 0.14);
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* buat date/time nggak terlalu rapet */
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.row > div {
+  flex: 1;
+}
+
+/* ===== Optional Preview Section (kalau dipakai lagi nanti) ===== */
+
+.preview .chip {
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.chip-title {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.chip-small {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* sembunyikan input import file kalau pun masih ada di HTML */
+#import-file {
+  display: none;
+}
+
+/* ===== Bottom Navbar ===== */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  padding: 6px 10px 10px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 50;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #777;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+}
+
+/* Icon styling */
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.75;
+}
+
+/* Text */
+.nav-label {
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+/* Active state (halaman yang sedang dibuka) */
+.nav-item.active .nav-icon {
+  opacity: 1;
+  filter: brightness(0.3);
+}
+
+.nav-item.active .nav-label {
+  color: #000;
+  font-weight: 600;
+}
+
+/* ===== Mobile Responsive ===== */
+
+@media (max-width: 720px) {
+  body {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  .wrap {
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .lead {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 8px 0 14px;
+    margin-bottom: 12px;
+    background: linear-gradient(
+      to bottom,
+      rgba(244, 251, 246, 0.96),
+      rgba(244, 251, 246, 0.85),
+      transparent
+    );
+    backdrop-filter: blur(6px);
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 13px;
+    box-shadow: 0 10px 26px rgba(22, 163, 74, 0.35);
+  }
+
+  .box {
+    padding: 16px 13px 12px;
+    border-radius: 18px;
+  }
+
+  .box:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px rgba(15, 118, 110, 0.15);
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  input[type="url"] {
+    font-size: 13px;
+  }
+}

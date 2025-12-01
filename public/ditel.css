@@ -1,0 +1,522 @@
+:root{
+  --bg: #ffffff;
+  --card: #fff;
+  --muted: #7b7b84;
+  --accent: #0B84FF; /* shipped pill */
+  --shadow: 0 6px 18px rgba(18,18,18,0.06);
+  --radius: 14px;
+  --maxw: 412px;
+  --text: #111;
+  --green: #075e54;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:'Rasa';
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+
+  /* === Perubahan utama: jangan center vertical dengan flex === */
+  /* display:flex; align-items:center; justify-content:center; */
+  /* Biarkan body bisa scroll normal; kita center .screen secara horizontal */
+  display:block;
+  padding:20px 8px;
+}
+
+/* Screen sekarang di-center horizontal dan boleh tinggi > viewport */
+
+
+/* topbar */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 10px;
+  margin-bottom:8px;
+  position: sticky;       /* opsional: bikin topbar nempel saat scroll */
+  top: 0;
+  background: transparent;/* tetap transparan agar sesuai desain */
+  z-index: 20;
+}
+
+.logo{
+  height:28px;
+  object-fit:contain;
+}
+
+/* main content/card */
+.content{
+  display:flex;
+  margin-top: 20px;
+  flex-direction:column;
+  gap:12px;
+}
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.order-card{
+  padding-bottom:18px;
+}
+
+/* headings */
+.card-title{margin:0;font-size:18px;font-weight:700}
+.muted{color:var(--muted);font-size:13px;margin-top:6px}
+
+/* === Status Pill / Ribbon Style === */
+
+/*.status-pill {
+  display: block;
+  width: calc(100% + 36px);  karena padding card 18px kiri + kanan /
+  margin: -18px 0 12px -18px; * naik ke luar padding kiri-kanan 
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  padding: 10px 0;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}*/
+
+/* ===== Replace .status-pill with this absolute version ===== */
+
+/* make card a positioning context */
+.card {
+  position: relative;
+  overflow: visible; /* biar pill yang keluar masih terlihat */
+  padding-top: 64px; /* beri ruang untuk pill agar konten tidak tertutup */
+}
+
+/* the ribbon-style status at the very top of the card */
+/* ===== Status Pill (ribbon di bawah judul) ===== */
+.status-pill {
+  display: block;
+  width: calc(100% + 36px);   /* ikut padding card kiri-kanan */
+  margin: 12px 0 16px -18px;  /* geser keluar padding card kiri-kanan */
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.4px;
+  padding: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.status-pill.shipped {
+  background: #0B84FF;
+}
+
+
+/* responsive: jika layar kecil, kurangi padding-top agar tidak terlalu besar */
+@media (max-width: 420px){
+  .card { padding-top: 56px; }
+  .status-pill{ font-size:15px; padding:10px 0; border-radius:10px 10px 0 0; }
+}
+
+
+
+/* meta */
+.meta{font-size:13px;color:#333;display:grid;gap:6px;margin:8px 0}
+
+/* products */
+/* === Product card — menonjol, modern, embossed look === */
+.product{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  background: linear-gradient(180deg,#ffffff,#fbfbfd);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow: 0 8px 18px rgba(16,16,30,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  border: 1px solid rgba(18,18,24,0.04);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+/* subtle hover lift for desktop */
+.product:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 18px 34px rgba(16,16,30,0.08);
+}
+
+/* left side contains thumb + text vertically stacked */
+.product .left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width: 0; /* allow text to ellipsis */
+}
+
+/* thumbnail larger and rounded */
+.product .thumb{
+  width:112px;
+  height:92px;
+  border-radius:14px;
+  background:linear-gradient(180deg,#e9e9ec,#dfdee3);
+  box-shadow: 0 6px 10px rgba(10,10,25,0.03);
+  flex-shrink:0;
+  border:1px solid #eee;
+}
+
+/* product text */
+.meta-text{min-width:0}
+.pname{
+  font-family: "Georgia", "Rasa", serif; /* serif look like screenshot */
+  font-size:20px;
+  font-weight:700;
+  line-height:1.05;
+  color:#111;
+  margin-bottom:6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.psub{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.price{
+  font-size:20px;
+  font-weight:700;
+  color:#111;
+}
+
+/* right column: qty + subtotal, stacked vertically and right aligned */
+.product .right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+  min-width:110px;
+}
+
+/* quantity pill */
+.qty{
+  background:#fff;
+  border-radius:10px;
+  padding:8px 12px;
+  border:1px solid #eee;
+  box-shadow: 0 2px 6px rgba(10,10,25,0.04);
+  font-weight:600;
+  min-width:48px;
+  text-align:center;
+}
+
+/* subtotal text */
+.subtotal{
+  font-size:14px;
+  color:#222;
+  font-weight:700;
+  background:rgba(11,132,255,0.04);
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(11,132,255,0.08);
+}
+
+/* make cards responsive: smaller thumb/text on narrow screens */
+@media (max-width:420px){
+  .product{padding:14px;border-radius:12px}
+  .product .thumb{width:72px;height:60px;border-radius:10px}
+  .pname{font-size:18px}
+  .price{font-size:18px}
+  .product .right{min-width:78px}
+  .qty{padding:6px 10px}
+}
+
+
+/* summary */
+/* === SUMMARY === */
+.summary {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+/* Setiap baris dalam summary */
+.summary-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 4px 0;
+}
+
+/* Kolom kiri */
+.summary-row .left {
+  font-family: 'Ras';
+  font-weight: 600;
+  color: #111;
+}
+
+/* Kolom kanan */
+.summary-row .right {
+  text-align: right;
+  font-family: 'Rasa';
+}
+
+/* Garis pembatas hanya di atas total */
+.summary-row.total {
+  border-top: 1px solid #dcdcdc;
+  margin-top: 6px;
+  padding-top: 8px;
+}
+
+/* Teks total lebih tebal */
+.summary-row.total .left,
+.summary-row.total .right {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.summary + hr {
+  display: none;
+}
+
+
+/* tracking table */
+.tracking{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+  font-size:13px;
+}
+.tracking td{padding:8px 4px;border-bottom:1px solid #f1f1f4}
+.status{font-weight:600;text-align:right}
+.status.done{color:green}
+.status.upcoming{color:var(--accent)}
+.status.not{color:var(--muted)}
+
+/* gift + actions */
+.gift{display:flex;justify-content:space-between;align-items:center;padding-top:8px}
+.view-link{font-size:13px;color:var(--accent);text-decoration:none}
+.actions{display:flex;justify-content:center;margin-top:12px}
+.cancel{
+  background:transparent;
+  border:none;
+  color:#d64545;
+  font-weight:700;
+  padding:8px 12px;
+  cursor:pointer;
+}
+
+/* help box */
+.help{
+  margin-top:10px;
+}
+.help-box{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:linear-gradient(180deg,#fff,#fbfbfd);
+  padding:12px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.wa-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;height:44px;border-radius:10px;
+  border:1px solid #e6e6e9;background:white;text-decoration:none;
+}
+
+/* footer */
+.mobile-footer{display:flex;justify-content:center;margin-top:12px}
+.small-note{font-size:12px;color:var(--muted)}
+
+/* responsive tweak smaller screens */
+@media (max-width:420px){
+  .card{border-radius:16px;padding:14px}
+  .thumb{width:64px;height:52px}
+}
+
+
+/* ===== Appbar (centered brand text inside rounded card) ===== */
+/* ===== Appbar (BY VERENT) — fix: mepet ke atas ===== */
+header.appbar {
+  position: static;         /* ⬅️ sekarang ikut scroll biasa */
+  width: 100%;
+  max-width: 412px;
+  margin: 0 auto;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  z-index: -10;              /* boleh kecil, nggak masalah */
+}
+
+
+/* isi putihnya */
+.appbar-inner {
+  width: 100%;
+  background: linear-gradient(#faf8fb, #f6f4f8);
+  border-radius: 0 0 12px 12px;   /* sudut bawah aja yang melengkung */
+  padding: 18px 20px 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* teks tengah */
+.brand-center {
+  text-align: center;
+  pointer-events: none;
+}
+.brand-center .by {
+  display: block;
+  font-size: 11px;
+  color: #222;
+  margin-bottom: 4px;
+  font-family: 'Rasa', serif;
+  letter-spacing: 1px;
+}
+.brand-center .name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-family: 'Rasa', serif;
+  color: #111;
+}
+
+/* tombol lonceng */
+.icon-bell {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+}
+.icon-bell img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* garis bawah ungu — opsional, bisa kamu hapus total kalau mau bersih */
+.appbar-underline {
+  display: none; /* ⬅️ hapus garis bawahnya kalau bikin ganggu */
+}
+.title-area {
+  margin-top: 96px; /* kasih ruang sesuai tinggi header */
+  padding: 8px 12px;
+}
+
+
+.brand-center{
+  text-align:center;
+}
+
+/* box-nya tetap kecil, tapi gambarnya di-zoom */
+.brand-logo{
+  height:28px;              /* jangan dibesarin lagi */
+  object-fit:contain;
+  display:block;
+  margin:0 auto;
+  transform: scale(3.5);    /* atur 1.2 / 1.3 / 1.5 sesuai selera */
+  transform-origin:center;
+}
+
+.screen {
+  max-width: 430px;
+  margin: 0 auto;
+  /* JANGAN pakai height: 100vh supaya bisa lebih tinggi dari layar */
+  min-height: 100vh;
+  /* ga perlu flex di sini, cukup block biasa */
+  display: block;
+}
+
+.content {
+  padding: 1px;
+  /* penting: biar ngikut scroll page, bukan scroll area sendiri */
+  overflow: visible;   /* atau hapus properti overflow-y kalau ada */
+  /* juga boleh hapus flex:1 kalau ada */
+}
+.appbar {
+  position: static;  /* atau cukup hapus baris position & top */
+}
+
+/* layout item dalam Order Items */
+.product {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  min-height: 64px; /* biar space cukup */
+}
+
+/* Qty bubble fix */
+.product .qty {
+  background: #fff;
+  border: 1px solid #e5e5e8;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #333;
+  position: absolute;
+  right: 10px;       /* selalu di kanan dalam card */
+  bottom: 10px;      /* turun kebawah dikit */
+}
+
+.thumb {
+  width: 60px; /* sebelumnya 64px (lebih kecil & lebih rapi) */
+  height: 60px;
+  border-radius: 12px;
+  background: #f6f6f8;
+  overflow: hidden;
+  flex-shrink: 0; /* gambar jangan mengecil */
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pname {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;   /* maks 2 baris */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pinfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 0; /* pastikan tidak ada margin tak terlihat */
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #49d2ff;
+  cursor: pointer;
+  padding: -2px 19px;    /* perbaikin padding */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -20px;   /* 🔥 NAIGIN POSISI */
+}
+

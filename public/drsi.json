@@ -1,0 +1,57 @@
+[
+  {
+    "id": "drink-matcha-001",
+    "category": "drinks",
+    "title": "Matcha Latte 🍵",
+    "subtitle": "MORI-Ceremonial calm in every sip",
+    "price": 65000,
+    "images": ["Dsr/dr1.png"],
+    "description": "Discover the pure taste of MORI, made with ceremonial grade matcha powder, delivering a smooth umami with seaweed notes and light bitterness."
+  },
+  {
+    "id": "drink-hojicha-001",
+    "category": "drinks",
+    "title": "Hojicha Latte🍂",
+    "subtitle": "Roasted comfort,cozy moments",
+    "price": 65000,
+    "images": ["Dsr/dr2.png"],
+
+    "description": "Indulge in the comforting warmth of Hojicha Latte, made with finely roasted green tea leaves for a nutty and deeply roasted flavor, low in bitterness with a naturally sweet, aromatic, and earthy finish."
+  },
+  {
+    "id": "drink-strawberry-001",
+    "category": "drinks",
+    "title": "Strawberry Matcha Latte",
+    "subtitle": "MORI-Strawberry vibes with matcha soul",
+    "price": 70000,
+    "images": ["Dsr/dr4.png"],
+    "description": "A delightful twist on MORI ceremonial grade matcha blended with sweet strawberry for a refreshing and creamy taste experience."
+  },
+  {
+    "id": "drink-lotus-001",
+    "category": "drinks",
+    "title": "Lotus Biscoff Matcha Latte",
+    "subtitle": "MORI-Crunchy caramel dreams",
+    "price": 75000,
+    "images": ["Dsr/dr3.png"],
+    "description": "A creamy blend of ceremonial grade matcha with the warm caramelized flavor of Lotus Biscoff for an indulgent latte."
+  },
+  {
+    "id": "drink-banana-001",
+    "category": "drinks",
+    "title": "Banana Pudding Matcha Latte",
+    "subtitle": "Velvety banana delight, stirred with matcha.",
+    "price": 80000,
+    "images": ["Dsr/dr5.png"],
+    "description": "Matcha blended with creamy banana pudding, banana slices, and whipped cream for a rich, dessert-like drink."
+  },
+  {
+    "id": "drink-cloudly-001",
+    "category": "drinks",
+    "title": "Cloudly Garden Matcha Latte",
+    "subtitle": "Soft as clouds, rich as matcha can be",
+    "price": 70000,
+    "images": ["Dsr/dr6.png"],
+    "description": "Made with YUKI ceremonial matcha and Meiji fresh milk for an extra creamy texture and delicate matcha art finish."
+  }
+]

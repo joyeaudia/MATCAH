@@ -1,0 +1,203 @@
+/* ==== Admin Delivery Detail (versi cantik) ==== */
+
+/* wrapper khusus halaman detail */
+#admin-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+/* latar belakang seluruh halaman admin sedikit lembut */
+body {
+  background: radial-gradient(circle at top, #f6f4ff 0, #f4f4f7 45%, #f3f3f5 100%);
+}
+
+/* header di halaman detail */
+.admin-header h1 {
+  margin-bottom: 2px;
+}
+
+.admin-header .subtitle {
+  margin-top: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ===== CARD RINGKAS ORDER DI ATAS ===== */
+#adm-summary-card {
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  background: radial-gradient(circle at top left, #f9f7ff 0, #ffffff 55%);
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.10);
+}
+
+#adm-summary-card .admin-order-header {
+  margin-bottom: 6px;
+}
+
+#adm-summary-card .admin-status-row {
+  margin-bottom: 4px;
+}
+
+#adm-summary-card .admin-items {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+/* ===== SECTION CARD (Delivery Settings & Tracking) ===== */
+.admin-detail-section {
+  border-radius: 16px;
+  padding: 14px 16px 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.035);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+/* judul section */
+.admin-section-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1e1e23;
+}
+
+.admin-section-title::before {
+  content: "";
+  width: 4px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+/* baris label + input / toggle */
+.admin-form-row,
+.admin-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.admin-form-row label,
+.admin-toggle-row label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* INPUT (date, text, number) */
+.admin-form-row input[type="text"],
+.admin-form-row input[type="number"],
+.admin-form-row input[type="date"] {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid #dadcf4;
+  font-size: 13px;
+  background: #f7f7ff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, transform 0.08s ease;
+}
+
+.admin-form-row input[type="text"]:focus,
+.admin-form-row input[type="number"]:focus,
+.admin-form-row input[type="date"]:focus {
+  border-color: var(--accent);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* placeholder lebih lembut */
+.admin-form-row input::placeholder {
+  color: #b2b3c8;
+}
+
+/* TOGGLE checkbox */
+.admin-toggle-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* garis pemisah di tengah section */
+.admin-detail-section hr {
+  border: none;
+  border-top: 1px dashed #e1e1f1;
+  margin: 10px 0 8px;
+}
+
+/* ===== TOMBOL ===== */
+.admin-detail-section .admin-actions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* gaya umum tombol di detail */
+.admin-detail-section .btn {
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 12px;
+}
+
+/* tombol utama: Mark as Delivered */
+#btn-mark-delivered {
+  background: #0f9b6c;
+  border-color: #0a7a54;
+  color: #ffffff;
+}
+
+/* tombol Save */
+#btn-save-tracking {
+  background: #f2f4ff;
+  border-color: #dfe3ff;
+  color: #27335a;
+}
+
+/* tombol Back */
+#btn-back-list {
+  background: #ffffff;
+  color: #444;
+  border-color: #e0e1ee;
+}
+
+/* hover lembut */
+.admin-detail-section .btn:hover {
+  filter: brightness(0.97);
+  transform: translateY(-0.5px);
+}
+
+/* ===== RESPONSIVE KECIL ===== */
+@media (max-width: 480px) {
+  #admin-detail {
+    gap: 14px;
+  }
+
+  .admin-detail-section {
+    padding: 12px 14px 10px;
+  }
+
+  .admin-form-row,
+  .admin-toggle-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-toggle-row {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .admin-form-row label {
+    font-size: 12px;
+  }
+}

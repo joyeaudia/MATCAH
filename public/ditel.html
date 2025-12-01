@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Order Details — Verent</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="ditel.css" />
+</head>
+<body>
+  <div class="screen">
+<header class="appbar" role="banner">
+  <div class="appbar-inner" aria-hidden="false">
+    <div class="brand-center">
+      <img src="logos/lg3.png" alt="Verent" class="brand-logo">
+    </div>
+
+<button id="back-btn" class="back-btn" aria-label="Back">
+  &lt;= Back
+</button>
+
+
+
+    <button class="icon-bell" aria-label="Notifications" type="button">
+      <img src="acs/lcng.png" alt="Notifications">
+    </button>
+  </div>
+  <div class="appbar-underline" aria-hidden="true"></div>
+
+</header>
+
+
+    <main class="content">
+      
+<section class="card order-card">
+  <h2 class="card-title">Order Details</h2>
+  <p class="muted">Keep track of your package from processing to delivery.</p>
+
+  <div class="status-pill shipped" id="detail-status-pill">Active</div>
+
+  <div class="meta">
+    <div><strong>Order ID</strong> : <span id="detail-order-id">-</span></div>
+    <div><strong>Order Date</strong> : <span id="detail-order-date">-</span></div>
+    <div><strong>Scheduled Delivery</strong> : <span id="detail-scheduled">-</span></div>
+    <div><strong>Payment Method</strong> : <span id="detail-payment-method">-</span></div>
+  </div>
+
+  <hr/>
+
+  <h3 class="section-title">Order Items</h3>
+  <div id="detail-items"></div>
+
+  <h3 class="section-title">Summary</h3>
+  <div class="summary" id="detail-summary"></div>
+
+  <hr/>
+
+  <h3 class="section-title">Delivery Tracking</h3>
+  <table class="tracking">
+    <tbody>
+      <tr><td>Order Placed</td><td class="status" id="track-placed">-</td></tr>
+      <tr><td>Payment Confirmed</td><td class="status" id="track-payment">-</td></tr>
+      <tr><td>Waiting for Schedule</td><td class="status" id="track-wait">-</td></tr>
+      <tr><td>Preparing Order</td><td class="status" id="track-prep">-</td></tr>
+      <tr><td>Out for Delivery</td><td class="status" id="track-out">-</td></tr>
+      <tr><td>Delivered</td><td class="status" id="track-delivered">-</td></tr>
+    </tbody>
+  </table>
+
+  <div class="gift">
+    <strong>Gift Message</strong> <a href="#" class="view-link">View Details</a>
+  </div>
+
+  <div class="actions">
+    <button class="cancel" id="detail-cancel-btn">Cancel Order</button>
+  </div>
+</section>
+
+
+      <aside class="help">
+        <div class="help-box">
+          <div>
+            <strong>Still have questions?</strong>
+            <p class="muted">Our team would love to assist you. Tap the WhatsApp icon to connect with us personally.</p>
+          </div>
+          <a class="wa-btn" href="#" aria-label="WhatsApp">
+            <!-- simple WhatsApp bubble SVG -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M21 12.08A9 9 0 1 0 12.92 21l.01-.01L21 21" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 21l-2.2-1.2" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="mobile-footer">
+      <div class="small-note">© Verent</div>
+    </footer>
+  </div>
+  
+  <script src="ditel.js"></script>
+</body>
+</html>

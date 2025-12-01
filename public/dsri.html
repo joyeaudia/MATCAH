@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Luxfleurid — Matcha Latte</title>
+  <link rel="stylesheet" href="dsri.css" />
+</head>
+<body>
+  <main class="product-page">
+
+    <header class="header">
+      <a href="Desserts.html" class="back-link">← Back</a>
+      <img src="logos/lg3.png" alt="Luxfleurid" class="brand-logo" />
+    </header>
+
+    <section class="product-info">
+      <h1 class="product-name">Matcha Latte — MORI 🍵</h1>
+      <p class="product-subtitle">Discover the pure taste of MORI, made with ceremonial grade matcha powder, delivering a smooth umami with seaweed notes and light bitterness.</p>
+
+      <!-- IMPORTANT: store numeric base & old price in data-* attributes -->
+<p class="product-price">
+  <span id="product-price" data-base="65000">Rp 65.000</span>
+</p>
+    </section>
+
+    <section class="product-media">
+      <img src="Dsr/dr1.png" alt="Matcha Latte" class="product-image" />
+    </section>
+
+    <!-- OPTIONS -->
+    <section id="product-options">
+      <div class="option-group" role="group" aria-label="Milk Options" data-key="milk">
+        <div class="group-title">Milk Options</div>
+        <div class="choices">
+          <button type="button" class="opt-btn" data-value="fresh" aria-pressed="true" data-price="0">Fresh Milk</button>
+          <button type="button" class="opt-btn" data-value="oat" aria-pressed="false" data-price="3000">Oat Milk (+3K)</button>
+        </div>
+        <div class="small-note">If no note is added, Fresh Milk is used by default.</div>
+      </div>
+
+      <div class="option-group" role="group" aria-label="Sugar Level" data-key="sugar">
+        <div class="group-title">Sugar Level</div>
+        <div class="choices">
+          <button type="button" class="opt-btn" data-value="0" aria-pressed="false">0%</button>
+          <button type="button" class="opt-btn" data-value="50" aria-pressed="false">50%</button>
+          <button type="button" class="opt-btn" data-value="100" aria-pressed="true">100%</button>
+          <button type="button" class="opt-btn" data-value="125" aria-pressed="false">125%</button>
+        </div>
+      </div>
+
+      <div class="option-group" role="group" aria-label="Add Ons" data-key="addons">
+        <div class="group-title">Add-Ons</div>
+        <div class="choices">
+          <button type="button" class="addon-btn" data-id="yuki" data-price="15000" aria-pressed="false">Powder Upgrade: YUKI (+15K)</button>
+          <button type="button" class="addon-btn" data-id="thermal-bag" data-price="10000" aria-pressed="false">Thermal Bag (+10K)</button>
+        </div>
+        <div class="small-note">Thermal Bag: Keep your drink cold and ice intact (available for deliveries within 3 km only).</div>
+      </div>
+    </section>
+
+    <section class="product-actions">
+      <button class="add-btn" id="add-to-cart" type="button">Add to Bag</button>
+      <div class="right-icons">
+        <button class="icon-btn" aria-label="Share product" title="Share">
+<button id="share-btn" class="icon-btn" aria-label="Share product" title="Share">
+  <img src="acs/By.png" alt="Share" width="20" height="20" />
+</button>
+
+
+<!-- simple share menu (initially hidden) -->
+<div id="share-menu" class="share-menu" role="dialog" aria-hidden="true" style="display:none;">
+  <button data-action="copy">Copy Link</button>
+  <button data-action="native">Share</button>
+  <button id="share-close">Close</button>
+</div>
+
+<!-- toast -->
+ <div id="share-toast" class="share-toast" hidden>Link copied!</div>
+
+        <button class="heart" aria-pressed="false" aria-label="Like product" title="Like">
+          <svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true" focusable="false" width="20" height="20">
+            <path class="heart-path" d="M12.1 21.35l-1.1-1.02C5.14 15.24 2 12.44 2 8.9 2 6.24 4.24 4 6.9 4c1.94 0 3.6 1.12 4.2 2.72C11.5 5.12 13.16 4 15.1 4 17.76 4 20 6.24 20 8.9c0 3.54-3.14 6.35-8.99 11.43l-1.0 1.02z" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="details">
+      <h2>Product Details</h2>
+      <p id="detail-desc"><strong>Description:</strong> Indulge in the comforting warmth of Hojicha Latte... (example)</p>
+
+      <h3>Noted :</h3>
+      <ul id="tips-list">
+        <li>Serve chilled for best taste.</li>
+        <li>Consume within 4 hours for optimal freshness.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <section class="contact-section">
+    <h2>Got a question about this product?</h2>
+    <p>Our team will be happy to<br>assist you via WhatsApp</p>
+    <a href="https://wa.me/628118281416" target="_blank" class="whatsapp-btn" aria-label="Contact via WhatsApp">
+      <img src="acs/wa.png" alt="WhatsApp" class="wa-icon" />
+    </a>
+  </section>
+
+  <script src="dsri.js"></script>
+</body>
+</html>

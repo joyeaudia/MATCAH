@@ -1,0 +1,663 @@
+:root{
+  --bg: #F3F2F7;
+  --card: #FFFFFF;
+  --muted: #7b7b84;
+  --accent: #ffffff;
+  --accent-strong: #ffffff;
+  --shadow: 0 8px 30px rgba(18,18,18,0.06);
+  --maxw: 412px;
+  --nav-h: 76px;
+  --gap: 14px;
+}
+
+/* Reset & body */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: 'Rasa', serif;
+  -webkit-font-smoothing:antialiased;
+  background: var(--accent);
+  display:flex;
+  justify-content:center;
+  padding: env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 12px);
+}
+
+/* App container */
+.app{
+  width:100%;
+  max-width:var(--maxw);
+  min-height:calc(100vh - (env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  background:var(--bg);
+  border-radius:12px;
+  overflow:auto; /* allow scrolling */
+  -webkit-overflow-scrolling: touch;
+  position:relative;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+}
+
+/* APPBAR */
+.appbar{ display:flex; justify-content:center; padding:0; background:transparent; }
+.appbar-inner {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  width:100%;
+  max-width:412px;
+  margin:12px auto 8px;
+  padding:12px 18px;
+  background: linear-gradient(#faf8fb,#f6f4f8);
+  border-radius:12px;
+  position:relative;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+}
+
+/* Brand centered */
+.brand-center {
+  grid-column: 2;
+  justify-self: center;
+  text-align: center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+.brand-center .by {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.1;
+}
+.brand-center .name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #111;
+  margin-top: 2px;
+  line-height: 1.1;
+}
+
+/* Icon (bell) in right column */
+.icon-bell {
+  grid-column: 3;
+  justify-self: end;
+  position: static;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+}
+.icon-bell img{ width:20px; height:20px; display:block; }
+
+/* MAIN container */
+.container{
+  padding: 8px 16px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  flex:1 1 auto;
+  padding-bottom: calc(var(--nav-h) + 28px);
+}
+
+/* Page head */
+.page-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.page-title{ font-size:18px; font-weight:700; color:#111; }
+.btn{ padding:8px 12px; border-radius:12px; border:none; cursor:pointer; font-weight:600; }
+.btn-primary{ background: #0B84FF; color:#fff; box-shadow: 0 6px 18px rgba(11,132,255,0.08); }
+
+/* CART: list & item */
+.cart-list{ display:flex; flex-direction:column; gap:14px; }
+
+/* Consolidated cart-item */
+.cart-item{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  background:#fff;
+  padding:12px;
+  border-radius:12px;
+  position:relative;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  box-sizing:border-box;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+/* thumbnail variations (cart and generic thumb) */
+.thumb,
+.cart-thumb{
+  width:92px;
+  height:92px;
+  border-radius:10px;
+  background:#f2f2f4;
+  object-fit: contain;
+  flex:0 0 auto;
+}
+.cart-thumb{ width:72px; height:72px; border-radius:8px; }
+
+/* body holds head (title + remove) and controls */
+.item-body{ flex:1; display:flex; flex-direction:column; gap:10px; min-width:0; }
+
+/* top row: title left, trash right */
+.item-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+}
+
+/* title styling */
+.item-title{
+  font-weight:700;
+  color:#111;
+  font-size:18px;
+  margin-bottom:6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* muted meta */
+.item-meta{ font-size:13px; color:var(--muted); }
+
+/* controls row: qty left, subtotal right (flex) */
+.item-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+}
+
+/* right column inside controls: stack remove above subtotal */
+.item-controls .right-col {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px;
+  min-width:92px;
+}
+
+/* quantity control (pill) */
+.qty-control{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background: #f2f2f4;
+  padding:4px 8px;
+  border-radius:999px;
+  min-width:86px;
+  justify-content:center;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+}
+.qty-btn{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  width:28px;
+  height:28px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+}
+.qty-btn:active{ transform:scale(.98); }
+
+/* quantity number */
+.qty{ min-width:20px; display:inline-block; text-align:center; font-weight:600; }
+
+/* subtotal aligned right */
+.item-sub{ font-size:14px; color:#111; font-weight:800; text-align:right; margin-top:2px; }
+
+/* remove button (trash icon) - visual floating above price */
+.remove{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#ff4b4b;
+  transform: translateY(-6px);
+  transition: transform .12s ease, opacity .12s;
+  z-index: 5;
+}
+.remove img{ width:20px; height:20px; display:block; object-fit:contain; }
+
+/* subtle hover for remove icon */
+.remove:hover { transform: translateY(-8px) scale(1.05); }
+
+/* Help card */
+.help-card{ display:flex; gap:12px; align-items:center; background:#fff; border-radius:10px; padding:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04); }
+.help-left strong{ display:block; margin-bottom:6px; }
+.help-left p{ margin:0; font-size:13px; color:var(--muted); }
+.whatsapp img{ width:36px; height:36px; display:block; }
+
+/* Gift */
+.gift, .gift-card{ background:#fff; border-radius:10px; padding:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04); }
+.gift h3{ margin:0 0 6px 0; font-size:15px; }
+.gift .muted{ color:var(--muted); font-size:13px; }
+
+/* gift-card refined */
+.gift-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border: 1px solid rgba(0,0,0,0.03);
+}
+.gift-left { flex:1; min-width:0; }
+.gift-title{ margin:0 0 6px 0; font-size:15px; font-weight:700; color:#111; }
+.gift-desc{ margin:0; font-size:13px; color:var(--muted); line-height:1.4; opacity:0.95; }
+.gift-right { flex:0 0 auto; display:flex; align-items:center; justify-content:center; }
+.gift-toggle{
+  transition: all .2s ease;
+}
+.gift-toggle[aria-pressed="true"]{
+  background: linear-gradient(135deg, #A5C9FF, #0B84FF);
+  border-color: #0B84FF;
+  box-shadow: 0 0 10px rgba(11,132,255,0.4);
+  transform: scale(1.12);
+  transition: all .2s ease;
+}
+/* Summary */
+.summary{ background:transparent; padding:8px 0; }
+.summary .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.summary .label{ color:var(--muted); }
+.summary .value{ font-weight:700; color:#111; }
+
+/* summary-card & rows */
+.summary-card{ background:transparent; padding-top:12px; padding-bottom:6px; }
+.summary-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 12px;
+  border-top:1px solid rgba(0,0,0,0.06);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+.summary-label{ font-size:14px; color: var(--muted); font-weight:600; }
+.summary-value{ font-size:15px; font-weight:800; color:#111; }
+.summary-note{ margin-top:10px; font-size:13px; color:#9a9aa0; line-height:1.4; padding-left:6px; padding-right:6px; }
+
+/* Liked by you (horizontal scroll) */
+.liked h3{ margin:6px 0; font-size:15px; }
+.liked-row{ display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; }
+
+/* Consolidated like-card */
+.like-card {
+  min-width: 180px;
+  min-height: 260px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+}
+
+/* like-thumb & image */
+.like-thumb{
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding-top:4px;
+  padding-bottom:6px;
+}
+.like-thumb img{
+  width:100%;
+  max-width:160px;
+  height:auto;
+  object-fit:contain;
+  border-radius:10px;
+  display:block;
+}
+
+/* body/title area for like-card */
+.like-body{ width:100%; display:flex; justify-content:center; align-items:flex-end; padding-top:8px; padding-bottom:6px; }
+.like-title{ margin:0; font-size:15px; font-weight:700; text-align:center; line-height:1.1; color:#111; }
+
+/* like heart (consolidated) */
+.like-heart{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border: none;
+  cursor: pointer;
+  font-size:16px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  z-index: 20;
+  padding: 4px;
+  transition: transform .12s ease, color .18s ease, box-shadow .12s ease, background .12s ease;
+}
+.like-heart:hover,
+.like-heart:focus{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.10); outline: none; }
+.like-heart[aria-pressed="true"]{ color: #ffffff; background: #fff; box-shadow: 0 12px 28px rgba(255,59,48,0.08); transform: translateY(-2px) scale(1.03); }
+
+/* Bottom nav */
+.bottom-nav{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:env(safe-area-inset-bottom);
+  width:100%;
+  max-width:var(--maxw);
+  background:var(--card);
+  border-radius:14px 14px 0 0;
+  box-shadow:0 -8px 30px rgba(0,0,0,0.12);
+  padding:8px 10px;
+  display:flex;
+  gap:6px;
+  z-index:999;
+  height:var(--nav-h);
+}
+.nav-btn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; background:transparent; border:none; font-size:12px; color:var(--muted); cursor:pointer; }
+.nav-btn img{ width:22px; height:22px; filter:grayscale(1) opacity(.9); }
+.nav-btn.active{ color:#000; font-weight:700; }
+.nav-btn.active img{ filter:none; }
+
+/* small responsive tweaks */
+@media (max-width:380px){
+  .thumb{ width:78px; height:78px; }
+  .cart-thumb{ width:64px; height:64px; }
+  .item-title{ font-size:16px; }
+  .item-meta{ font-size:12px; }
+  .item-sub{ font-size:13px; }
+  .qty-control{ min-width:64px; padding:5px 6px; gap:5px; }
+  .qty-btn{ width:24px; height:24px; font-size:14px; }
+  .qty{ font-size:14px; }
+  .item-controls .right-col { min-width:80px; }
+  .item-head .remove img { width:18px; height:18px; }
+}
+
+/* additional small-screen adjustments */
+@media (max-width:360px){
+  .like-card{ min-width:150px; min-height:230px; padding:10px; }
+  .like-thumb img{ max-width:130px; }
+  .like-heart{ top:8px; right:10px; width:32px; height:32px; font-size:14px; }
+  .page-title{ font-size:16px; }
+  :root{ --nav-h:70px; }
+}
+.by-logo {
+  position: absolute !important;
+  left: 50%;
+  top: -50px;                 /* 🔥 ATUR INI BUAT NAIKIN */
+  transform: translateX(-50%);
+  transform-origin: center top;
+  width: 80px;
+  height: auto;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+
+
+/* Header bar tetap */
+.topbar {
+    background: transparent;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    box-shadow: none;
+}
+
+/* ===== Header: fixed top, centered logo, bell at right ===== */
+
+/* --- make inner header visually gone but keep layout --- */
+.appbar-inner {
+  position: relative;
+  height: 52px;          /* <-- tambahin tinggi header */
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 18px;       /* kiri kanan saja */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ensure header still centers logo */
+.brand-center {
+  grid-column: 2;
+  justify-self: center;
+  align-self: center;
+  position: relative;
+}
+
+/* place bell absolutely inside the header area so it stays at right */
+.icon-bell {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2001;
+}
+
+
+/* ensure icon size */
+.icon-bell img { width:22px; height:22px; }
+
+/* make header area clickable-safe while not visually boxed */
+.appbar { background: transparent; pointer-events: none; }
+.appbar .appbar-inner { pointer-events: auto; } /* allow clicks inside */
+
+/* ----- kecilkan thumbnail cart (safe) ----- */
+/* wrapper */
+.cart-item .thumb,
+.cart-item .cart-thumb {
+  width: 72px;            /* ukuran thumbnail di cart (ubah 72 -> 64/56 jika mau lebih kecil) */
+  height: 72px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex: 0 0 72px;        /* tetap ambil ruang 72px di layout flex */
+  display: block;
+  background: #fafafa;
+  box-shadow: none;
+}
+
+/* .cart-item .thumb img,
+.cart-item .cart-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     
+  display: block;
+ */
+.cart-item .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* supaya ga kepotong */
+  display: block;
+}
+
+
+/* jika markup mu saat ini hanya <img class="thumb">, juga tutupi itu */
+.cart-item img.thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* responsive tweak untuk layar kecil */
+@media (max-width:420px) {
+  .cart-item .thumb, .cart-item .cart-thumb, .cart-item img.thumb {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+  }
+}
+
+.cart-item .thumb {
+  width: 100px;   /* dari 84 → 100 */
+  height: 100px;  /* dari 84 → 100 */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f7f7f7;
+}
+
+/* Simple circular gift toggle (replace existing .gift-toggle rules) */
+.gift-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  display: inline-block;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: all .18s ease;
+  vertical-align: middle;
+}
+
+/* inner visual (optional subtle ring) */
+.gift-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .18s ease, transform .18s ease;
+}
+
+/* pressed: fill with gradient + subtle glow */
+.gift-toggle[aria-pressed="true"] {
+  background: linear-gradient(135deg, #1cd6df 0%, #54a0e6 50%, #2183b0 100%);
+  border-color: rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(255,150,150,0.12);
+  transform: scale(1.03);
+}
+
+/* pressed inner: optional highlight */
+.gift-toggle[aria-pressed="true"]::after {
+  background: rgba(255,255,255,0.08);
+  transform: scale(0.98);
+}
+
+/* focus/fallback accessibility */
+.gift-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(255,150,150,0.08);
+  border-color: rgba(11,132,255,0.12);
+}
+
+.item-controls .right-col {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px;
+  min-width:92px;
+}
+.item-controls .right-col {
+  margin-top:-6px;   /* angkat seluruh kolom kanan */
+}
+
+
+.like-card {
+  position: relative;
+}
+
+.like-card .like-price {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+}
+
+.like-card .like-heart {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.like-card { position: relative; overflow: visible; }
+/* default heart = MERAH */
+.like-heart {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f7f7f7; /* merah */
+  color: #eb0a0a;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform .12s ease, background .18s ease, color .18s ease;
+  z-index: 20;
+  line-height: 1;
+}
+
+/* ketika ditekan = PUTIH (tak berwarna) */
+.like-heart[aria-pressed="true"],
+.like-heart.like-heart-pressed {
+  background: #ffffff;   /* putih */
+  color: #ff3b30;        /* hati merah outline (optional) */
+  border: 2px solid #ff3b30;
+  transform: scale(0.96);
+}
+ooter style: price + heart aligned horizontally */
+.like-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; padding:0 8px; }
+.like-price.footer-price { font-weight:800; font-size:15px; color:#111; }
+.like-footer .like-heart { margin-left:auto; }
+
+
+.nav-btn {
+  text-decoration: none;   /* hilangkan garis bawah */
+  color: inherit;          /* biar warna ikut parent */
+}
+
+.nav-btn span {
+  text-decoration: none;
+}
+
+.empty-bag {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.empty-bag img {
+  width: 200px; /* atur sesuai selera */
+  opacity: 0.85;
+}

@@ -1,0 +1,649 @@
+:root {
+  --bg: #f4f4f7;
+  --bg-soft: #eef0f8;
+  --card: #ffffff;
+  --card-soft: #fafbff;
+
+  --accent: #007aff;
+  --accent-soft: #e5f0ff;
+
+  --danger: #e74c3c;
+  --danger-soft: #fdecec;
+
+  --pink: #ffe6f4;
+  --pink-soft: #ffeef7;
+
+  --muted: #7b7b8a;
+  --text-main: #1f2430;
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Rasa', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top, #fdfbff 0, #f4f4f7 55%, #eceef5 100%);
+  color: var(--text-main);
+}
+
+/* ========== LAYOUT UTAMA ADMIN LIST ========== */
+
+.admin-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 18px 14px 20px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+
+.subtitle {
+  margin: 4px 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ========== FILTER PILLS (Semua / Gift / History) ========== */
+
+.admin-filter-pills {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
+  background: #f7f7fb;
+}
+
+.admin-pill {
+  border: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  background: transparent;
+  color: #777;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.admin-pill.is-active {
+  background: #ffb7d4;
+  color: #fff;
+  font-weight: 600;
+  transform: translateY(-1px);
+}
+
+/* ========== KARTU ORDER ADMIN ========== */
+
+/* Default card (non gift, belum bayar) */
+.admin-order-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 12px 13px 11px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eee;
+  font-size: 12px;
+  transition: box-shadow 0.15s ease, transform 0.1s ease, background 0.15s ease;
+}
+
+.admin-order-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* GIFT BELUM BAYAR = pink */
+.admin-order-card.gift {
+  background: #ffe5f2; /* pink soft */
+  border-color: #ffb6d9;
+}
+
+/* GIFT SUDAH ACC (PAID) → UNGU */
+.admin-order-card.is-paid.gift {
+  background: #f4e8ff !important; /* ungu soft */
+  border-color: #d8c2ff !important;
+}
+
+/* NON-GIFT SUDAH PAID (kalau ada case ini) */
+.admin-order-card.is-paid:not(.gift) {
+  background: #e8fff0;
+  border-color: #b2f5c0;
+}
+
+/* COMPLETED (History) → BIRU soft (override semua) */
+.admin-order-card.is-completed {
+  background: #e6f0ff !important; /* biru lembut */
+  border-color: #b3d1ff !important;
+}
+
+/* header: ID + waktu + total */
+
+.admin-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.admin-order-id {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.admin-order-created {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.admin-order-total {
+  text-align: right;
+  font-size: 11px;
+}
+
+.admin-total-label {
+  display: block;
+  color: var(--muted);
+}
+
+.admin-total-value {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* status & payment badges */
+
+.admin-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 6px;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  text-transform: capitalize;
+}
+
+.badge-status {
+  background: #eef1ff;
+  color: #343a5a;
+}
+
+.badge-payment {
+  background: #fff7e1;
+  color: #86622c;
+}
+
+.badge-payment.paid {
+  background: #e7f8ee;
+  color: #176136;
+}
+
+.badge-payment.rejected {
+  background: var(--danger-soft);
+  color: #a93226;
+}
+
+/* ========== BLOK GIFT INFO ========== */
+
+.admin-gift-block {
+  margin: 6px 0;
+  padding: 8px 9px;
+  border-radius: 12px;
+  background: var(--pink-soft);
+  border: 1px solid #ffd0e6;
+  font-size: 12px;
+}
+
+.admin-gift-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.admin-gift-line {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ========== ITEMS DI DALAM ORDER ========== */
+
+.admin-items {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: var(--card-soft);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.admin-item-row + .admin-item-row {
+  margin-top: 6px;
+  border-top: 1px solid #ececf2;
+  padding-top: 6px;
+}
+
+.admin-item-title {
+  font-weight: 600;
+}
+
+.admin-item-addons {
+  color: #666;
+  margin-top: 3px;
+}
+
+.admin-item-price {
+  color: #444;
+  margin-top: 3px;
+}
+
+/* ========== ALAMAT / RECIPIENT ========== */
+
+.admin-address {
+  margin: 8px 0 6px;
+  line-height: 1.4;
+}
+
+.admin-address-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+.admin-address-main {
+  font-size: 12px;
+}
+
+/* ========== BUTTON AKSI ADMIN ========== */
+
+.admin-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 7px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: filter 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.btn:hover {
+  filter: brightness(0.97);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.btn-approve {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-reject {
+  background: #fff;
+  color: var(--danger);
+  border-color: rgba(231, 76, 60, 0.7);
+}
+
+.btn-details {
+  background: #f5f5f8;
+  color: #444;
+}
+
+/* tombol responsif di layar kecil */
+.admin-actions .btn {
+  flex: 1 1 calc(50% - 4px);
+}
+
+@media (max-width: 380px) {
+  .admin-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* ========== FALLBACK KARTU .order-card (kalau dipakai di tempat lain) ========== */
+
+.order-card {
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+.order-card.gift {
+  background: var(--pink);
+  border-color: #ff8ac2;
+}
+
+.order-card .gift-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #ff8ac2;
+  color: #fff;
+  margin-left: 4px;
+}
+
+/* ========== HALAMAN DETAIL ADMIN (diteladm) ========== */
+
+#admin-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+/* Kartu ringkasan order */
+#adm-summary-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 14px 16px 14px;
+  border: 1px solid #ececf5;
+  box-shadow: var(--shadow-md);
+}
+
+/* reuse layout dari list */
+#adm-summary-card .admin-order-header {
+  margin-bottom: 6px;
+}
+
+#adm-summary-card .admin-status-row {
+  margin-bottom: 4px;
+}
+
+#adm-summary-card .admin-items {
+  margin-top: 4px;
+}
+
+/* Section detail (Delivery Settings + Tracking) */
+
+.admin-detail-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px 16px;
+  border: 1px solid #ececf5;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-section-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #20212b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-section-title::before {
+  content: "";
+  width: 3px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* form rows */
+
+.admin-form-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 8px 0 10px;
+  width: 100%;
+}
+
+.admin-form-row label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* inputs */
+
+.admin-form-row input[type="text"],
+.admin-form-row input[type="number"],
+.admin-form-row input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #d7d8ee;
+  background: #f7f7ff;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    transform 0.08s ease;
+}
+
+.admin-form-row input::placeholder {
+  color: #aaabc3;
+}
+
+.admin-form-row input:focus {
+  border-color: var(--accent);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* toggle row */
+
+.admin-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.admin-toggle-row label {
+  color: #444;
+}
+
+.admin-toggle-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* garis pemisah */
+
+.admin-detail-section hr {
+  border: none;
+  border-top: 1px dashed #e3e4f3;
+  margin: 10px 0 8px;
+}
+
+/* tombol di section detail */
+
+.admin-detail-section .admin-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-detail-section .btn {
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 12px;
+}
+
+/* jenis tombol detail */
+
+#btn-save-tracking {
+  background: #eef1ff;
+  border-color: #dde2ff;
+  color: #27335a;
+}
+
+#btn-mark-delivered {
+  background: #10b981;
+  border-color: #0f9366;
+  color: #ffffff;
+}
+
+#btn-back-list {
+  background: #ffffff;
+  color: #444;
+  border-color: #e1e2ee;
+}
+
+.admin-detail-section .btn:hover {
+  filter: brightness(0.97);
+  transform: translateY(-0.5px);
+}
+
+/* responsive kecil */
+
+@media (max-width: 480px) {
+  #admin-detail {
+    gap: 14px;
+  }
+
+  .admin-detail-section {
+    padding: 12px 14px 14px;
+  }
+}
+
+/* ========== SUMMARY ROW + TOGGLE DETAIL DI KARTU LIST ========== */
+
+.admin-summary-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 2px;
+  font-size: 12px;
+}
+
+.summary-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff7e1;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.admin-order-card.gift .summary-chip {
+  background: #ffcfe7;
+}
+
+.summary-main {
+  font-weight: 500;
+}
+
+.summary-schedule {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* tombol kecil buat buka-tutup detail */
+.btn-toggle-detail {
+  margin-left: auto;
+  border-radius: 999px;
+  border: 1px solid #d8daf0;
+  background: #f5f5ff;
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+/* area detail yang bisa collapse */
+.admin-details {
+  margin-top: 6px;
+}
+
+.admin-details.collapsed {
+  display: none;
+}
+
+/* ===== Bottom Navbar — sama seperti admin page ===== */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px 10px 10px;
+  z-index: 100;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #777;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+}
+
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.7;
+}
+
+.nav-label {
+  font-size: 11px;
+}
+
+.nav-item.active .nav-icon {
+  opacity: 1;
+  filter: brightness(0.3);
+}
+
+.nav-item.active .nav-label {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Pastikan konten tidak ketimpa navbar */
+body {
+  padding-bottom: 80px;
+}
+
+/* Centering HP view in desktop — meniru admin-shell layout */
+.admin-shell {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto 80px; /* space bottom-nav */
+}

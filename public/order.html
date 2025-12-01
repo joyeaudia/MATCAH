@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Orders — Mobile</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="order.css">
+</head>
+<body>
+  <div class="app-shell">
+<!-- HEADER: card style with centered brand text -->
+<header class="appbar" role="banner">
+  <div class="appbar-inner">
+    <div class="brand-center">
+      <img src="logos/lg3.png" alt="logo" class="brand-logo">
+    </div>
+
+<a class="icon-bell" aria-label="Notifications" href="notif.html">
+  <!-- titik merah kecil -->
+  <span class="icon-bell-badge" id="notif-badge"></span>
+  <img src="acs/lcng.png" alt="Notifications">
+</a>
+
+  </div>
+
+  <div class="appbar-underline" aria-hidden="true"></div>
+</header>
+
+
+    <!-- title & subtitle -->
+    <section class="title-area">
+      <h1>Your Orders</h1>
+      <p class="subtitle">Track, manage, and revisit your orders.</p>
+    </section>
+
+    <!-- tabs (modified untuk JS tab-switching) -->
+    <nav class="tabs" role="tablist" aria-label="Order tabs">
+      <button role="tab" class="tab tab-active" data-tab="active" aria-selected="true">Active</button>
+      <button role="tab" class="tab" data-tab="scheduled" aria-selected="false">Scheduled</button>
+      <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
+    </nav>
+
+    <!-- order list area: panels untuk tiap tab -->
+    <main class="content">
+      <!-- Tab panel: ACTIVE -->
+      <section id="tab-active" class="tab-panel">
+        <article class="order-card">
+          <div class="thumb"></div>
+          <div class="order-info">
+            <div class="order-top">
+              <h3 class="product-title">Matcha Latte 🍵</h3>
+              <span class="more">+5 More</span>
+            </div>
+
+            <p class="brand">Desserts</p>
+
+            <div class="status-row">
+              <span class="status">Status : <strong>Shipped</strong></span>
+              <span class="eta">ETA : <em>12 October 2025</em></span>
+            </div>
+
+            <div class="order-actions">
+              <button class="btn-outline">Track Order</button>
+              <button class="btn-light">View Details</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Tab panel: SCHEDULED (hidden by default) -->
+      <section id="tab-scheduled" class="tab-panel hidden">
+        <article class="order-card">
+          <div class="thumb"></div>
+          <div class="order-info">
+            <div class="order-top">
+              <h3 class="product-title">Scheduled Item</h3>
+              <span class="more">+2 More</span>
+            </div>
+
+            <p class="brand">Affinities Attire</p>
+
+            <div class="status-row">
+              <span class="status">Status : <strong>Processing</strong></span>
+              <span class="eta">ETA : <em>20 October 2025</em></span>
+            </div>
+
+            <div class="order-actions">
+              <button class="btn-outline">Track Order</button>
+              <button class="btn-light">View Details</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Tab panel: HISTORY (hidden by default) -->
+<section id="tab-history" class="tab-panel hidden" role="tabpanel" aria-labelledby="tabbtn-history">
+  <article class="order-card">
+    <div class="thumb"></div>
+    <div class="order-info">
+      <div class="order-top">
+        <h3 class="product-title">Polkadot Top</h3>
+        <span class="more">+5 More</span>
+      </div>
+      <p class="brand">Affinities Attire</p>
+      <div class="order-price">Rp 159.000,00</div>
+      <div class="order-actions">
+        <button class="btn-outline">Reorder</button>
+        <button class="btn-light">View Details</button>
+      </div>
+    </div>
+  </article>
+</section>
+
+
+      <!-- spacer so footer isn't overlapped -->
+      <div class="spacer"></div>
+
+      <!-- customer support area -->
+      <section class="support">
+        <h4>Customer Support</h4>
+        <p class="support-note">Need help? <br/>Chat with our support team for order assistance or product info.</p>
+        <button class="whatsapp-btn">
+          <a 
+  href="https://wa.me/628118281416?text=halo%20cici%20maziii%20mau%20tanya"
+  class="whatsapp-btn"
+  target="_blank"
+  rel="noopener"
+>
+  <img src="acs/wa.png" alt="WA" class="wa-icon">
+</a>
+
+</button>
+
+      </section>
+    </main>
+
+    <!-- bottom navigation (tidak diubah) -->
+
+  <!-- BOTTOM NAV -->
+<nav class="bottom-nav" aria-label="Main navigation">
+  <a href="order.html" class="nav-btn active" aria-label="Orders">
+    <img src="acs/order.png" alt=""><span>Orders</span>
+  </a>
+
+  <a href="bagfr.html" class="nav-btn" aria-label="Bag">
+    <img src="acs/Bag.png" alt=""><span>Bag</span>
+  </a>
+
+  <a href="home.html" class="nav-btn" aria-current="page" aria-label="Home">
+    <img src="acs/home.png" alt=""><span>Home</span>
+  </a>
+
+  <a href="cari.html" class="nav-btn" aria-label="Search">
+    <img src="acs/src.png" alt=""><span>Search</span>
+  </a>
+
+  <a href="prl.html" class="nav-btn" aria-label="Profile">
+    <img src="acs/prf.png" alt=""><span>Profile</span>
+  </a>
+</nav>
+
+  </div>
+
+<script src="./order.js"></script>
+
+</body>
+</html>

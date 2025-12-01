@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Address</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="alamat.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="card">
+            <h2>Shipping Address</h2>
+            <form>
+
+
+<!-- muncul hanya jika pilih Other -->
+<input 
+    type="text" 
+    id="custom-label" 
+    placeholder="Custom Label (optional)" 
+    style="display:none; margin-top:6px;"
+>
+<label for="address-label">Address Label</label>
+<input type="text" id="address-label" placeholder="Contoh: Home / Office / Ashley's" />
+
+                <label for="recipient-name">Recipient Name</label>
+                <input type="text" id="recipient-name" placeholder="Enter Recipient Name" required />
+
+                <label for="phone-number">Phone Number</label>
+                <input type="tel" id="phone-number" placeholder="08xxxxxxxx" required />
+
+                <label for="street-address">Street Address</label>
+                <input type="text" id="street-address" placeholder="Enter Street Address" required />
+
+                <label for="city">City</label>
+                <select id="city" required>
+                    <option value="" disabled selected>Select City</option>
+                    <option value="jakarta">Jakarta</option>
+                    <option value="bandung">Bandung</option>
+                </select>
+
+                <label for="province">Province / State</label>
+                <select id="province" required>
+                    <option value="" disabled selected>Select Province/State</option>
+                    <option value="jawa-barat">Jawa Barat</option>
+                    <option value="dki-jakarta">DKI Jakarta</option>
+                    <option value="dki-jakarta">Tanggerang</option>
+                </select>
+                
+                <label for="postal-code">Postal Code</label>
+                <input type="text" id="postal-code" placeholder="Enter Postal Code" required />
+
+                <button type="submit" class="create-btn save-btn">Save Address</button>
+            </form>
+        </div>
+    </div>
+     <script src="alamat.js"></script>
+</body>
+</html>

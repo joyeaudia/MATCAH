@@ -1,0 +1,309 @@
+[
+{
+  "id": "dessert-cookie-ice-bomb",
+  "category": "dessert",
+  "title": "Cookie Ice Bomb",
+  "subtitle": "A chilled indulgence of gooey cookie richness",
+  "price": 45000,
+  "images": [
+    "Drs/dk2.png"
+  ],
+  "description": "~ Indulge in the rich, melt-in-your-mouth!!! Cookie Bomb, a dark chocolate cookie that’s deep in flavor but not bitter, paired with a scoop of creamy vanilla ice cream for the perfect hot-and-cold dessert combo.  <br><br> ~ Topping : a Smooth Vanilla Ice Cream, creamy, and perfectly balanced with dark chocolate.",
+  "tips": [
+    "Microwave the cookie for 30 seconds before eating to bring back its warm, gooey center and fresh-baked aroma.",
+    "Available for Instant Delivery Only to preserve the texture and temperature balance."
+  ],
+  "options": [
+    {
+      "key": "addons",
+      "title": "Add-Ons",
+      "type": "checkbox",
+      "choices": [
+        {
+          "id": "thermal-bag",
+          "label": "Thermal Bag",
+          "price": 10000,
+          "enabled": true,
+          "default": false
+        }
+      ]
+    }
+  ]
+},
+
+
+  {
+    "id": "dessert-special-003",
+    "category": "dessert",
+    "title": "Creme Brulee Cheesecake",
+    "price": 55000,
+    "subtitle": "Silky cheesecake crowned with caramelized luxury.r",
+    "images": [
+      "Drs/dk1.png"
+    ],
+    "description": "A luxurious dessert experience in every spoon, our Creme Brulee Cheesecake combines the silky smoothness of cheesecake with the caramelized sweetness of brûléed sugar, topped with a scoop of creamy vanilla ice cream for the perfect finish.",
+    "tips": [
+      "Available for Instant Delivery Only to maintain the perfect creamy texture and brûlée crispness."
+    ],
+    "options": [
+      {
+        "key": "sauce",
+        "title": "Sauce Options",
+        "type": "radio",
+        "choices": [
+          {
+            "id": "sauce-matcha",
+            "label": "Matcha",
+            "price": 0,
+            "enabled": true
+          },
+          {
+            "id": "sauce-biscoff",
+            "label": "Lotus Biscoff",
+            "price": 0,
+            "enabled": true
+          },
+          {
+            "id": "sauce-strawberry",
+            "label": "Strawberry Jam",
+            "price": 0,
+            "enabled": true
+          },
+          {
+            "id": "sauce-choco",
+            "label": "Chocolate",
+            "price": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "key": "crumble",
+        "title": "Crumble Choices",
+        "type": "radio",
+        "choices": [
+          {
+            "id": "crumble-regal",
+            "label": "Regal",
+            "price": 0,
+            "enabled": true,
+            "default": true
+          },
+          {
+            "id": "crumble-biscoff",
+            "label": "Lotus Biscoff",
+            "price": 0,
+            "enabled": true
+          },
+          {
+            "id": "crumble-oreo",
+            "label": "Oreo",
+            "price": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag: keeps your dessert cool and ice cream fresh.",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+
+  {
+    "id": "dessert-strawberry-kunafa",
+    "title": "Strawberry Pistachio Kunafa",
+    "subtitle": "Crisp kunafa layered with refined fruity nutty harmony.",
+    "price": 40000,
+    "images": [
+      "Drs/dk3.png"
+    ],
+    "description": "Our Strawberry Pistachio Kunafa layers crispy, buttery kunafa with sweet-tangy strawberry, rich chocolate sauce, and crushed pistachios. The flavors come together into a dessert that’s sweet, lightly tangy, and subtly savory, perfectly balanced and irresistibly addictive.",
+    "tips": [
+      "Available for Instant Delivery Only to maintain the perfect creamy texture and brûlée crispness."
+    ],
+    
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+  {
+    "id": "dessert-brownie-ice-bomb",
+    "title": "Brownie Ice Bomb",
+    "price": 45000,
+    "subtitle": "Fudgy chocolate decadence served ice-cold.",
+    "images": [
+      "Drs/dk4.png"
+    ],
+    "description":"~ Decadent, fudgy, and irresistibly rich, the Brownie Bomb is made from premium dark chocolate that’s intense yet not bitter, baked to achieve a perfectly crisp edge and a soft, molten center. <br><br>  ~ Topping : a SmoothVanilla Ice Cream, Adds smooth sweetness that perfectly complements the rich chocolate base",
+      "tips": [
+      "Available for Instant Delivery Only to preserve the texture and temperature balance."
+    ],
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag ",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+
+  {
+    "id": "dessert-cookie",
+    "title": "Cookie",
+    "price": 40000,
+    "subtitle": "A warm, buttery classic with luxurious simplicity.",
+    "images": [
+      "Drs/dk5.png"
+    ],
+    "description": "Indulge in the rich, melt-in-your-mouth Cookie, a dark chocolate cookie that’s deep in flavor but not bitter.",
+    "tips": [
+      "Microwave the cookie for 30 seconds before eating to bring back its warm, gooey center and fresh-baked aroma.",
+      "Available for Regular, Nextday, SameDay, Instant, and PickUp Delivery."
+    ],
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+  {
+    "id": "dessert-cheesecake",
+    "title": "Cheesecake",
+    "price": 45000,
+    "subtitle": "Timeless creaminess crafted to perfection.",
+    "images": [
+      "Drs/dk6.png"
+    ],
+    "description": "~ Pure, creamy, and irresistibly smooth, our Classic Cheesecake Cup is all about simplicity done right.A soft, melt-in-your-mouth cheesecake with a rich and velvety texture, baked to perfection for a perfectly balanced sweetness. <br><br> ~ No sauce, no toppings: just the pure, authentic taste of classic cheesecake in every bite." ,
+    "tips": [
+      "Available for Instant Delivery Only to maintain the perfect creamy texture and brûlée crispness."
+    ],
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+  {
+    "id": "dessert-brownie",
+    "title": "Brownie",
+    "price": 40000,
+    "subtitle": "Dense chocolate richness with indulgent depth.",
+    "images": [
+      "Drs/dk7.png"
+    ],
+    "description": "Decadent, fudgy, and irresistibly rich, the Brownie is made from premium dark chocolate that’s intense yet not bitter, baked to achieve a perfectly crisp edge and a soft, molten center.",
+    "tips": [
+      "Microwave the brownie for 30 seconds before eating to bring back its warm, melted chocolate, and fresh-baked aroma.",
+      "Available for Regular, Nextday, SameDay, Instant, and PickUp Delivery."
+
+    ],
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+
+
+  {
+    "id": "dessert-choco-mellow-berry",
+    "title": "Choco Mellow Berry",
+    "price": 40000,
+    "subtitle": "A sweet and fluffy combo you’ll fall in love with!",
+    "images": [
+      "Drs/dk8.png"
+    ],
+    "description": "Each skewer features soft marshmallows and fresh strawberries drizzled with rich chocolate sauce. The creamy chocolate melts perfectly with the juicy berries, creating a heavenly dessert experience.",
+    "tips": [
+      "Microwave for 10–15 seconds to make the chocolate warm and melty, even more delicious!",
+      "Available for Instant Delivery Only to maintain  to ensure maximum freshness."
+    ],
+    "options": [
+      {
+        "key": "addons",
+        "title": "Add-Ons",
+        "type": "checkbox",
+        "choices": [
+          {
+            "id": "thermal-bag",
+            "label": "Thermal Bag ",
+            "price": 10000,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  }
+  
+]

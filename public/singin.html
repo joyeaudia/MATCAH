@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In / Login</title>
+
+  <!-- CSS eksternal -->
+  <link rel="stylesheet" href="singin.css" />
+</head>
+
+<body>
+  <div class="sign-in-page">
+    <div class="card">
+      <h2>Welcome Back!</h2>
+      <p class="card-subtitle">Let’s continue where you left off.</p>
+
+      <form id="signin-form" onsubmit="return false;">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" />
+
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" name="password" placeholder="Enter your password" />
+          <span class="toggle" title="Show/Hide password"></span>
+        </div>
+
+        <div class="options-row">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember" class="custom-checkbox">
+            <label for="remember">Remember me</label>
+          </div>
+
+          <a href="#" class="forgot-password-link">Forgot Password?</a>
+        </div>
+
+        <button type="button" class="create-btn" id="signInBtn">Sign In</button>
+
+        <p class="signin-text">
+          Don’t have an account? <a href="singup.html">Sign Up</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1️⃣ Supabase client -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    // bikin 1 client global
+    window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+  </script>
+
+  <!-- 2️⃣ Logic sign in -->
+  <script type="module" src="singin.js"></script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+:root{
+  --bg: #ffffff;
+  --text: #111;
+  --muted: #7a7a7a;
+  --accent: #007aff;
+  --btn-blue: #0a84ff;
+  --heart-gray: #cfcfcf;
+  --heart-red: #c61b1b;
+  --max-w: 420px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+    font-family: 'Rasa';
+ background:var(--bg);
+  color:var(--text);
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.product-page{
+  max-width:var(--max-w);
+  margin:0 auto;
+  padding:18px;
+}
+
+/* HEADER: back kiri, logo di tengah layar */
+.header {
+  position: relative;
+  height: 60px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* back di kiri (absolute agar logo tetap centered) */
+.back-link {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--btn-blue);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* logo di tengah layar */
+.brand-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: auto;
+}
+
+/* product-info: centered, rapet (margins kecil) */
+.product-info {
+  text-align: center;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-name{
+  font-size:20px;
+  margin:0 0 4px 0;      /* mepet antara title - material */
+  font-weight:700;
+}
+
+.product-material{
+  color:var(--muted);
+  margin:0 0 4px 0;      /* mepet antara material - price */
+  font-size:0.96rem;
+}
+
+.product-price{
+  font-weight:700;
+  margin:0;              /* rapet dengan atas */
+  color:#111;
+  margin-bottom:10px;    /* sedikit jarak sebelum gambar */
+}
+
+.product-media{
+  text-align:center;
+  margin-top:6px;
+}
+
+.product-image{
+  width:100%;
+  max-width:380px;     /* batas lebar container */
+  height:auto;         /* biarkan tinggi mengikuti proporsi */
+  object-fit: contain; /* jangan crop, skala untuk muat */
+  border-radius:12px;
+  background:#ffffff;
+  display:block;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  padding: 18px;       /* opsional: beri ruang putih di sekitar gambar */
+}
+
+
+/* actions: Add to Bag center, icons (heart + share) on the right of the button */
+.product-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  margin-top:14px;
+}
+
+/* make the add button fixed width so heart sits to the right */
+.add-btn{
+  background:linear-gradient(180deg,var(--btn-blue), #0066d6);
+  border:none;
+  color:white;
+  padding:10px 95px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(10,132,255,0.18);
+  transition:transform .12s ease, box-shadow .12s ease, opacity .12s;
+}
+
+.add-btn:active{ transform:translateY(1px) scale(.997) }
+.add-btn:hover{ box-shadow:0 9px 24px rgba(10,132,255,0.22) }
+
+/* container for right-side icons (share + heart) */
+.right-icons{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* small icon */
+.icon-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  border:none;
+  padding:6px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.icon-btn img{ width:20px; height:20px; object-fit:contain }
+
+/* HEART styling */
+.heart{
+  width:40px;
+  height:40px;
+  padding:6px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  transition:background .12s ease;
+}
+.heart-icon{
+  width:22px;
+  height:22px;
+  transition:transform .18s ease;
+  display:block;
+}
+.heart-path{
+  fill:var(--heart-gray);
+  transition:fill .25s cubic-bezier(.2,.9,.3,1), transform .18s;
+  transform-origin:center;
+}
+.heart.active .heart-path,
+.heart[aria-pressed="true"] .heart-path{
+  fill:var(--heart-red);
+  transform:scale(1.08);
+  filter:drop-shadow(0 6px 12px rgba(233,75,75,0.18));
+}
+.heart-path.pulse{
+  animation: heart-pulse 420ms cubic-bezier(.2,.9,.3,1);
+}
+@keyframes heart-pulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.25); }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(1.08); }
+}
+
+/* SECTION Tips (details) */
+.details {
+  margin-top: 26px;
+  padding-bottom: -22px; /* sebelumnya 0 atau besar, kita kecilkan */
+}
+
+.details ul {
+  margin-bottom: 6px; /* tambahkan sedikit agar tidak terlalu rapat */
+}
+.details h2{ margin:6px 0 8px; font-size:18px }
+.details p{ color:var(--text); margin:6px 0; }
+.details ul{ margin:8px 0 0 18px; color:var(--muted) }
+
+/* CONTACT SECTION (pink) */
+.contact-section {
+  background: #ffffff;
+  text-align: center;
+  padding: 28px 16px 50px;
+  border-radius: 12px;
+  margin-top: 10px;  /* ⬅️ ini kuncinya! ubah dari 40px jadi 10px */
+  position: relative;
+}
+.contact-section h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.contact-section p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+  margin: 0 0 6px;
+}
+
+.contact-subtext {
+  display: block;
+  color: #a0a0a0;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* WhatsApp button floating di bawah tengah section */
+.whatsapp-btn {
+  position: absolute;
+  left: 50%;
+  bottom: -25px;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-btn:hover {
+  transform: translateX(-50%) scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.wa-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+
+
+/* responsive tweaks */
+@media (min-width:520px){
+  .product-page{ padding:24px; }
+  .brand-logo{ width:140px; }
+}
+
+
+.option-group { margin:12px 0; }
+.group-title { font-weight:600; margin-bottom:8px; }
+.choices { display:flex; gap:8px; flex-wrap:wrap; }
+.opt-btn, .addon-btn {
+  border:1px solid #0a84ff;
+  background:#fff;
+  padding:8px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:14px;
+}
+.opt-btn[aria-pressed="true"],
+.addon-btn[aria-pressed="true"] {
+  background:#1c2458;
+  color:#fff;
+  border-color:rgba(0,0,0,0.06);
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
+.opt-btn:focus, .addon-btn:focus { outline:3px solid rgba(30,168,94,0.12); }
+.small { color:#6f766e; font-size:13px; margin-top:6px; }
+
+.add-btn {
+  width: ture;
+}
+
+
+.product-name {
+  font-size: 130%;        /* title lebih besar */
+  font-weight: 700;       /* lebih tebal */
+  margin-bottom: 4px;     /* jarak kecil ke subtitle */
+  line-height: 1.2;
+}
+
+.product-subtitle {
+  font-size: 100%;      /* sedikit lebih kecil dari title */
+  font-weight: 400;
+  margin-top: 0;          /* hilangkan jarak atas */
+  margin-bottom: 1rem;    /* jarak bawah normal */
+  color: #555;            /* opsional: warna lebih soft */
+}
+
+.share-menu { position: absolute; display: none; background:#fff; border:1px solid #ddd; padding:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.share-menu button { display:block; margin:6px 0; }
+.share-toast { position: fixed; bottom: 20px; left:50%; transform:translateX(-50%); background:#222; color:#fff; padding:8px 12px; border-radius:6px; }
+
+
+/* === SHARE MENU (versi clean & premium, posisi tetap) === */
+
+.share-menu {
+  position: absolute;
+  top: 40px;      /* posisi TETAP seperti versi awal */
+  right: 0;       /* posisi TETAP */
+  display: none;
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.10);
+  border: 1px solid rgba(0,0,0,0.06);
+  min-width: 150px;
+  z-index: 999;
+  animation: shareFade .18s ease-out;
+}
+
+@keyframes shareFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.share-menu button {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border: none;
+  background: #f7f7f7;
+  color: #222;
+  border-radius: 10px;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s ease, transform .12s ease;
+}
+
+.share-menu button:hover {
+  background: #eef3ff;
+  transform: translateX(4px);
+}
+
+.share-menu button:last-child {
+  margin-bottom: 0;
+}
+
+/* === TOAST / NOTIFICATION === */
+.share-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity .25s ease;
+  z-index: 1200;
+}
+
+.share-toast.show {
+  opacity: 1;
+}
+/* FIX posisi popup share supaya tepat di atas tombol share */
+.right-icons {
+  position: relative; /* container jadi anchor */
+}
+
+#share-menu {
+  position: absolute;
+  top: -10px;          /* naikkan menu */
+  right: 0;            /* sejajarkan ke kanan icon */
+  transform: translateY(-100%); /* tepat muncul di atas tombol */
+  z-index: 999;
+}
+#share-menu {
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+}
+
