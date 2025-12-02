@@ -344,195 +344,153 @@ document.addEventListener("DOMContentLoaded", function () {
     if (totalEl) totalEl.textContent = formatRp(grandTotal);
   }
 
+
+
+
+
+
   // ---- Place Order: create scheduled order and redirect ----
-  const placeOrderBtn = document.getElementById("placeOrder");
+  // ---- Place Order: create scheduled order and redirect ----
+  const placeOrderBtn = document.getElementById('placeOrder');
   if (placeOrderBtn) {
-    placeOrderBtn.addEventListener("click", async function () {
+    placeOrderBtn.addEventListener('click', async function () {
       const cart = loadCart();
       if (!cart || !cart.length) {
-        alert("Keranjang kosong — tidak ada yang dipesan.");
+        alert('Keranjang kosong — tidak ada yang dipesan.');
         return;
       }
 
       // jadwal (optional)
       let scheduledAt = null;
       try {
-        const dateSel = document.querySelector('select[aria-label="Date"]');
-        const monthSel = document.querySelector(
-          'select[aria-label="Month"]'
-        );
-        const yearSel = document.querySelector('select[aria-label="Year"]');
-        const dateVal = dateSel?.value || "";
-        const monthVal = monthSel?.value || "";
-        const yearVal = yearSel?.value || "";
+        const dateSel  = document.querySelector('select[aria-label="Date"]');
+        const monthSel = document.querySelector('select[aria-label="Month"]');
+        const yearSel  = document.querySelector('select[aria-label="Year"]');
+        const dateVal  = dateSel?.value || '';
+        const monthVal = monthSel?.value || '';
+        const yearVal  = yearSel?.value || '';
 
         const d = Number(dateVal);
         const y = Number(yearVal);
 
         if (!isNaN(d) && !isNaN(y) && monthVal) {
-          const monthMap = {
-            jan: 1,
-            feb: 2,
-            mar: 3,
-            apr: 4,
-            may: 5,
-            jun: 6,
-            jul: 7,
-            aug: 8,
-            sep: 9,
-            oct: 10,
-            nov: 11,
-            dec: 12,
-          };
+          const monthMap = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
           let mIndex = Number(monthVal);
           if (isNaN(mIndex)) {
-            const mm = String(monthVal).trim().slice(0, 3).toLowerCase();
+            const mm = String(monthVal).trim().slice(0,3).toLowerCase();
             mIndex = monthMap[mm] || NaN;
           }
           if (!isNaN(mIndex)) {
             const isoDate = new Date(y, mIndex - 1, d, 9, 0, 0);
-            if (!isNaN(isoDate.getTime()))
-              scheduledAt = isoDate.toISOString();
+            if (!isNaN(isoDate.getTime())) scheduledAt = isoDate.toISOString();
           }
         }
       } catch (e) {}
 
-      const notes =
-        document.getElementById("notes")?.value?.trim() || "";
-      const recipient =
-        document.getElementById("recipient")?.value?.trim() || "";
+      const notes     = document.getElementById('notes')?.value?.trim()     || '';
+      const recipient = document.getElementById('recipient')?.value?.trim() || '';
 
       // compute totals again
       let totalPrice = 0;
-      cart.forEach((it) => {
+      cart.forEach(it => {
         totalPrice += Number(
           it.subtotal ||
-            Number(it.unitPrice || it.price || 0) *
-              Number(it.qty || 0) ||
-            0
+          (Number(it.unitPrice || it.price || 0) * Number(it.qty || 0)) ||
+          0
         );
       });
 
-      const selectedDelivery =
-        document.querySelector(".delivery-item.active")?.dataset
-          .method || "regular";
+      const selectedDelivery = document.querySelector('.delivery-item.active')?.dataset.method || 'regular';
       let baseOngkir = 15000;
       switch (selectedDelivery) {
-        case "regular":
-          baseOngkir = 15000;
-          break;
-        case "nextday":
-          baseOngkir = 20000;
-          break;
-        case "sameday":
-          baseOngkir = 30000;
-          break;
-        case "instant":
-          baseOngkir = 50000;
-          break;
-        case "self":
-          baseOngkir = 5000;
-          break;
-        default:
-          baseOngkir = 15000;
-          break;
+        case 'regular': baseOngkir = 15000; break;
+        case 'nextday': baseOngkir = 20000; break;
+        case 'sameday': baseOngkir = 30000; break;
+        case 'instant': baseOngkir = 50000; break;
+        case 'self':    baseOngkir = 5000;  break;
       }
-      const totalItems = cart.reduce(
-        (s, it) => s + Number(it.qty || 0),
-        0
-      );
-      const kelipatan = Math.max(1, Math.ceil(totalItems / 5));
-      const shippingFee = baseOngkir * kelipatan;
+      const totalItems = cart.reduce((s, it) => s + (Number(it.qty || 0)), 0);
+      const kelipatan  = Math.max(1, Math.ceil(totalItems / 5));
+      const shippingFee= baseOngkir * kelipatan;
       const grandTotal = Number(totalPrice) + Number(shippingFee);
 
       // gift config (optional)
       let giftConfig = null;
       try {
-        giftConfig = JSON.parse(
-          localStorage.getItem("giftConfig_v1") || "null"
-        );
+        giftConfig = JSON.parse(localStorage.getItem('giftConfig_v1') || 'null');
       } catch (e) {
         giftConfig = null;
       }
-      const isGift = !!(giftConfig && giftConfig.type === "gift");
+      const isGift = !!(giftConfig && giftConfig.type === 'gift');
 
       const order = {
         id: genOrderId(),
         createdAt: Date.now(),
-        status: "scheduled",
+        status: 'scheduled',
         scheduledAt: scheduledAt,
         total: grandTotal,
         shippingFee: shippingFee,
-        items: cart.map((it) => ({
+        items: cart.map(it => ({
           id: it.id,
           title: it.title,
           qty: Number(it.qty || 1),
           unitPrice: Number(it.unitPrice || it.price || 0),
           subtotal: Number(
             it.subtotal ||
-              Number(it.unitPrice || it.price || 0) *
-                Number(it.qty || 1)
+            (Number(it.unitPrice || it.price || 0) * Number(it.qty || 1))
           ),
           addons: it.addons || [],
-          image:
-            it.image || (it.images && it.images[0]) || "",
+          image: it.image || (it.images && it.images[0]) || ''
         })),
         meta: {
           notes: notes,
           recipient: recipient,
-          deliveryMethod: selectedDelivery,
+          deliveryMethod: selectedDelivery
         },
-        paymentStatus: "pending",
+        paymentStatus: 'pending'
       };
 
       if (isGift) {
         order.isGift = true;
         order.gift = {
-          message: giftConfig.message || "",
-          fromName: giftConfig.fromName || "",
-          revealMode: giftConfig.revealMode || "reveal",
-          theme: giftConfig.theme || null,
+          message:   giftConfig.message   || '',
+          fromName:  giftConfig.fromName  || '',
+          revealMode:giftConfig.revealMode|| 'reveal',
+          theme:     giftConfig.theme     || null
         };
       }
 
-// 🟢 1) SIMPAN ke Supabase (mirror)
-      const supabase = window.supabase;
-      if (supabase) {
-        try {
-          const { data: userData, error: userErr } =
-            await supabase.auth.getUser();
-
-
+      // 🟢 Mirror ke Supabase
+      try {
+        const supabase = window.supabase;
+        if (supabase) {
+          const { data: userData, error: userErr } = await supabase.auth.getUser();
           if (!userErr && userData?.user) {
             const supaUser = userData.user;
-
-            // Insert ke orders
-            const { data: insertedOrder, error: orderError } =
-              await supabase
-                .from("orders")
-                .insert({
-                  user_id: supaUser.id,
-                  client_order_id: order.id, // simpan ORD-xxx di kolom text
-                  status: order.status,
-                  is_gift: !!order.isGift,
-                  scheduled_at: order.scheduledAt || null,
-                  total: order.total,
-                  shipping_fee: order.shippingFee,
-                  payment_status: order.paymentStatus,
-                  delivery_method: selectedDelivery,
-                  notes: notes || null,
-                  recipient_name: null,
-                  recipient_phone: null,
-                  recipient_address: recipient || null,
-                })
-                .select("id")
-                .single();
+            const { data: insertedOrder, error: orderError } = await supabase
+              .from('orders')
+              .insert({
+                user_id: supaUser.id,
+                client_order_id: order.id,
+                status: 'scheduled',
+                is_gift: isGift,
+                scheduled_at: scheduledAt,
+                total: order.total,
+                shipping_fee: order.shippingFee,
+                payment_status: order.paymentStatus,
+                delivery_method: selectedDelivery,
+                notes: notes || null,
+                recipient_name: recipient || null,
+                recipient_phone: null,
+                recipient_address: null,
+              })
+              .select('id')
+              .single();
 
             if (orderError) {
-              console.warn("Supabase orders insert error:", orderError);
+              console.warn('Supabase orders insert error (cekout):', orderError);
             } else if (insertedOrder) {
-              // Insert items
-              const itemsPayload = order.items.map((item) => ({
+              const itemsPayload = order.items.map(item => ({
                 order_id: insertedOrder.id,
                 product_id: item.id ? String(item.id) : null,
                 title: item.title,
@@ -540,55 +498,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 unit_price: item.unitPrice,
                 subtotal: item.subtotal,
                 image_url: item.image || null,
-                addons_json:
-                  item.addons && item.addons.length
-                    ? item.addons
-                    : null,
+                addons_json: item.addons && item.addons.length ? item.addons : null,
               }));
-
               const { error: itemsError } = await supabase
-                .from("order_items")
+                .from('order_items')
                 .insert(itemsPayload);
               if (itemsError) {
-                console.warn(
-                  "Supabase order_items insert error:",
-                  itemsError
-                );
+                console.warn('Supabase order_items insert error (cekout):', itemsError);
               }
             }
           } else {
-            console.warn(
-              "Supabase getUser error / no user, skip remote order save",
-              userErr
-            );
+            console.warn('Supabase getUser error / no user (cekout), skip remote order save', userErr);
           }
-        } catch (err) {
-          console.warn("Unexpected Supabase error during checkout:", err);
         }
+      } catch (err) {
+        console.warn('Unexpected Supabase error during scheduled checkout:', err);
       }
 
-      // 🟡 2) SIMPAN KE ORDERS_<uid> lokal (tetap, supaya order.js/admin lama jalan)
+      // 🟡 SIMPAN KE LOCAL (tetap sama seperti dulu)
       const orders = loadOrders();
       orders.unshift(order);
       saveOrders(orders);
 
       // clear cart & gift config (per user)
-      try {
-        localStorage.removeItem(userKey("cart"));
-      } catch (e) {}
-      try {
-        localStorage.removeItem("giftConfig_v1");
-      } catch (e) {}
+      try { localStorage.removeItem(userKey('cart')); } catch (e) {}
+      try { localStorage.removeItem('giftConfig_v1'); } catch (e) {}
 
-      // 🟣 3) WhatsApp + redirect (PERILAKU SAMA PERSIS)
+      // WhatsApp + redirect (tetap sama)
       try {
-        const waNumber = "628118281416";
-        let waText = "";
+        const waNumber = '628118281416';
+        let waText = '';
 
         if (isGift) {
           const tgl = scheduledAt
-            ? new Date(scheduledAt).toLocaleString("id-ID")
-            : "(tanpa jadwal)";
+            ? new Date(scheduledAt).toLocaleString('id-ID')
+            : '(tanpa jadwal)';
           waText =
             `Halo mimin Mazi, ini pesanan GIFT terjadwal dengan ID ${order.id}. ` +
             `Mohon dibantu proses untuk jadwal ${tgl}.`;
@@ -597,40 +541,39 @@ document.addEventListener("DOMContentLoaded", function () {
             `Halo mimin Mazi, tolong proses pesanan terjadwal saya dengan ID ${order.id}.`;
         }
 
-        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(
-          waText
-        )}`;
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`;
 
-        const overlay = document.getElementById("ddno-overlay");
-        const logo = document.getElementById("ddno-logo");
+        const overlay = document.getElementById('ddno-overlay');
+        const logo    = document.getElementById('ddno-logo');
 
         if (overlay) {
-          overlay.classList.add("show");
+          overlay.classList.add('show');
         }
         if (logo) {
-          logo.classList.remove("show");
+          logo.classList.remove('show');
           setTimeout(() => {
-            logo.classList.add("show");
+            logo.classList.add('show');
           }, 50);
         }
 
         setTimeout(() => {
           try {
-            window.open(waUrl, "_blank");
+            window.open(waUrl, '_blank');
           } catch (err) {
-            console.warn("Failed to open WhatsApp", err);
+            console.warn('Failed to open WhatsApp', err);
           }
 
           window.location.href =
-            "./order.html?order=" + encodeURIComponent(order.id);
+            './order.html?order=' + encodeURIComponent(order.id);
         }, 1500);
       } catch (e) {
-        console.warn("Failed to prepare WhatsApp redirect", e);
+        console.warn('Failed to prepare WhatsApp redirect', e);
         window.location.href =
-          "./order.html?order=" + encodeURIComponent(order.id);
+          './order.html?order=' + encodeURIComponent(order.id);
       }
     });
   }
+
 
   // init
   populateScheduleSelectors({ yearsAhead: 5 });
