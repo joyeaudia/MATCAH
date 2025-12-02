@@ -34,11 +34,16 @@ body{
   flex-direction:column;
 }
 
-.header{
-  padding:20px 24px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+.brand{
+  height:80px; /* Tinggi logo (ukuran visual) */
+  object-fit:contain;
+  position:absolute;
+  left:50%;
+  /* Dua baris di bawah ini adalah trik 'absolute centering' */
+  transform:translateX(-50%); 
+  top:50%;
+  transform: translate(-50%, -50%); /* Menggeser logo 50% dari tingginya ke atas */
+  pointer-events:none; 
 }
 .brand{height:28px; object-fit:contain}
 .bell{background:none;border:none;font-size:18px}
@@ -195,7 +200,7 @@ body{
   align-items:center;
   justify-content:space-between; /* keeps left spacer and bell at edges */
   position:relative;
-  min-height:56px;
+  min-height:60px;
   box-sizing:border-box;
 }
 
@@ -384,4 +389,34 @@ body{
 
 .page-title {
   font-weight: 800 !important;
+}
+
+
+.brand{
+  height:80px; /* Tinggi logo (ukuran visual) */
+  object-fit:contain;
+  position:absolute;
+  left:50%;
+  /* Dua baris di bawah ini adalah trik 'absolute centering' */
+  transform:translateX(-50%); 
+  top:70%;
+  transform: translate(-60%, -50%); /* Menggeser logo 50% dari tingginya ke atas */
+  pointer-events:none; 
+}
+
+/* bell button */
+.bell{
+  background:none;
+  border:0;
+  padding:6px;
+  width:36px;
+  height:36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:10px;
+  
+  /* TAMBAHKAN INI UNTUK MENDORONGNYA KE BAWAH: */
+  margin-top: 10px; 
 }

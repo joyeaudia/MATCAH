@@ -54,7 +54,7 @@
     }
   }
 
-  // ===== ORDERS per user =====
+  // ===== ORDERS per user (LOCAL) =====
   function loadOrders() {
     const key = userKey('orders');
     return safeParseRaw(key, '[]');
@@ -72,6 +72,91 @@
   function loadSavedAddresses() {
     const key = userKey('savedAddresses_v1');
     return safeParseRaw(key, '[]');
+  }
+
+  // === 🟢 SUPABASE SYNC → LOCALSTORAGE ===
+  async function syncOrdersFromSupabase() {
+    const supabase = window.supabase;
+    if (!supabase) {
+      console.warn('Supabase client not found on window, skip sync');
+      return;
+    }
+
+    try {
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
+      if (userErr || !userData?.user) {
+        console.warn('No Supabase user for orders, skip sync', userErr);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*, order_items(*)')
+        .eq('user_id', userData.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('Supabase orders fetch error:', error);
+        return;
+      }
+
+      const remoteOrders = (data || []).map((row) => {
+        const items = Array.isArray(row.order_items)
+          ? row.order_items.map((it) => ({
+              id: it.product_id || null,
+              title: it.title,
+              qty: it.qty,
+              unitPrice: it.unit_price,
+              subtotal: it.subtotal,
+              image: it.image_url || '',
+              addons: it.addons_json || [],
+            }))
+          : [];
+
+        return {
+          id: row.client_order_id || `DB-${row.id}`,
+          createdAt: row.created_at ? Date.parse(row.created_at) : Date.now(),
+          status: row.status || 'active',
+          scheduledAt: row.scheduled_at || null,
+          total: row.total || 0,
+          shippingFee: row.shipping_fee || 0,
+          paymentStatus: row.payment_status || 'pending',
+          isGift: !!row.is_gift,
+          items,
+          meta: {
+            notes: row.notes || '',
+            recipient: row.recipient_name || '',
+            deliveryMethod: row.delivery_method || null,
+          },
+          // kalau suatu saat kamu mau simpan detail gift di DB, ini tinggal diisi
+          gift: row.is_gift
+            ? {
+                message: row.gift_message || '',
+                fromName: row.gift_from_name || '',
+                revealMode: row.gift_reveal_mode || 'reveal',
+                theme: row.gift_theme || null,
+              }
+            : null,
+        };
+      });
+
+      const localOrders = loadOrders() || [];
+
+      // gabung & dedupe berdasarkan id (Supabase override local kalau id sama)
+      const map = new Map();
+      localOrders.forEach((o) => {
+        if (o && o.id) map.set(String(o.id), o);
+      });
+      remoteOrders.forEach((o) => {
+        if (o && o.id) map.set(String(o.id), o);
+      });
+
+      const merged = Array.from(map.values());
+      saveOrders(merged);
+      console.log('Orders synced from Supabase:', merged.length);
+    } catch (e) {
+      console.warn('syncOrdersFromSupabase error:', e);
+    }
   }
 
   // ===== small utils =====
@@ -288,7 +373,7 @@
         subtotal: subtotal,
         image: it.image || (it.images && it.images[0]) || 'assets/placeholder.png',
         addons: it.addons || [],
-        source: 'reorder'  // optional, cuma penanda
+        source: 'reorder'
       };
 
       cart.push(item);
@@ -427,8 +512,6 @@
         : '';
 
     if (rawRecipient) {
-      // Kalau user isi "Recipient Information" di checkout,
-      // pakai ini sebagai tujuan pengiriman order
       const addrBlock = document.createElement('div');
       addrBlock.className = 'order-address-block';
 
@@ -444,7 +527,6 @@
       `;
       panel.appendChild(addrBlock);
     } else {
-      // fallback ke Saved Address profil (alamat.html) per user
       const savedAddrs = loadSavedAddresses();
       let chosenAddr = null;
       if (Array.isArray(savedAddrs) && savedAddrs.length) {
@@ -539,13 +621,12 @@
     const key = userKey('notifications_v1');
     const notifs = safeParseRaw(key, '[]');
 
-    // cuma hitung notif yang belum dibaca
     const hasUnread = Array.isArray(notifs) && notifs.some(n => !n.isRead);
 
     if (hasUnread) {
-      badge.classList.add('show');    // 🔴 munculin titik merah
+      badge.classList.add('show');
     } else {
-      badge.classList.remove('show'); // sembunyiin kalau semua sudah dibaca / kosong
+      badge.classList.remove('show');
     }
   }
 
@@ -563,7 +644,6 @@
         const targetName = this.dataset.orderTab || this.dataset.tab;
         if (!targetName) return;
 
-        // simpan tab terakhir yg dibuka
         localStorage.setItem('lastOrderTab', targetName);
 
         const nameToId = {
@@ -581,14 +661,10 @@
 
           const isActive = id === targetId;
 
-          // atur display
           el.style.display = isActive ? '' : 'none';
-
-          // kontrol class .hidden juga
           el.classList.toggle('hidden', !isActive);
         });
 
-        // toggle state tombol tab
         document.querySelectorAll('[data-order-tab],[data-tab]').forEach(tb => {
           const name = tb.dataset.orderTab || tb.dataset.tab;
           const isActive = name === targetName;
@@ -602,10 +678,10 @@
   // ===== init =====
   document.addEventListener('DOMContentLoaded', function () {
     try {
+      // Render dulu dari localStorage (biar cepat)
       renderAllLists();
       attachTabHandlers();
 
-      // 🔹 BUKA TAB DARI URL (?tab=...) atau dari lastOrderTab
       const sp = new URLSearchParams(window.location.search);
       const tabFromUrl = sp.get('tab');
       const lastTab = localStorage.getItem('lastOrderTab');
@@ -615,17 +691,20 @@
         `[data-order-tab="${tabToOpen}"], [data-tab="${tabToOpen}"]`
       );
       if (btn) {
-        btn.click();  // trigger logic yg sama seperti user klik
+        btn.click();
       }
 
-      // cek notif sekali waktu page load
       updateNotifBadge();
 
-      // kalau localStorage notif berubah dari tab lain, update juga
       window.addEventListener('storage', function (e) {
         if (e.key && e.key.startsWith('notifications_v1_')) {
           updateNotifBadge();
         }
+      });
+
+      // 🟢 Setelah itu sync ke Supabase → merge → render ulang
+      syncOrdersFromSupabase().then(() => {
+        renderAllLists();
       });
     } catch (e) {
       console.error('order render error', e);
