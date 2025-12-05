@@ -5,8 +5,8 @@ const q = document.getElementById('q');
 const clearBtn = document.getElementById('clear-recent');
 
 const JSON_PATHS = [
-  'drsi.json', // drinks
-  'dsri.json'  // desserts
+  '../drsi.json', // PATH MODIFIED: Naik satu level ke root
+  '../dsri.json'  // PATH MODIFIED: Naik satu level ke root
 ];
 
 let catalog = []; // merged JSON
@@ -67,6 +67,14 @@ function setRecent(arr) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(arr.slice(0, MAX_RECENT)));
 }
 
+// Helper untuk path gambar (Tambahan agar path aman)
+function fixImgPath(src) {
+  if (!src) return '../assets/placeholder.png';
+  if (src.startsWith('http')) return src;
+  if (src.startsWith('../')) return src;
+  return '../' + src; 
+}
+
 // === buka detail produk (dipakai Recent + Results) ===
 function openProductDetail(item) {
   if (!item) return;
@@ -117,10 +125,10 @@ function renderRecent() {
 
     // image
     const img = document.createElement('img');
-    img.src =
-      item.images && item.images.length
-        ? item.images[0]
-        : 'assets/placeholder.png';
+    // PATH MODIFIED: Gunakan fixImgPath
+    img.src = item.images && item.images.length
+        ? fixImgPath(item.images[0])
+        : '../assets/placeholder.png';
     img.alt = item.title;
 
     // price tag
@@ -173,10 +181,10 @@ function renderResults(items) {
     card.className = 'result-card';
 
     const img = document.createElement('img');
-    img.src =
-      it.images && it.images.length
-        ? it.images[0]
-        : 'assets/placeholder.png';
+    // PATH MODIFIED: Gunakan fixImgPath
+    img.src = it.images && it.images.length
+        ? fixImgPath(it.images[0])
+        : '../assets/placeholder.png';
     img.alt = it.title;
 
     const meta = document.createElement('div');

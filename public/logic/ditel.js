@@ -1,7 +1,7 @@
 /**
  * @file ditel.js - Skrip Halaman Detail Pesanan (User View)
  * Integrasi dengan Supabase Sync dan Smart Merge lokal.
- * FIX: Menambahkan timeout pada inisialisasi untuk mengatasi Supabase AuthSessionMissingError (Timing Issue).
+ * FIX: Menambahkan render alamat ke elemen #detail-address
  */
 (function () {
   'use strict';
@@ -9,53 +9,28 @@
   // --- Konfigurasi ---
   const SUPABASE_ORDERS_TABLE = 'orders';
   const SUPABASE_ORDER_ITEMS_TABLE = 'order_items';
-  const SYNC_WAIT_MS = 300; // Waktu tunggu untuk pemulihan sesi Supabase
+  const SYNC_WAIT_MS = 500; // Waktu tunggu sesi (diperpanjang sedikit)
 
   // --- 🛠️ HELPER FUNCTIONS ---
 
-  /**
-   * Mengambil ID Pengguna (UID) saat ini dari localStorage.
-   * @returns {string} UID atau 'guest' jika tidak ditemukan.
-   */
   function getCurrentUID() {
     return localStorage.getItem('maziUID') || 'guest';
   }
 
-  /**
-   * Membuat kunci unik untuk pesanan berdasarkan UID.
-   * @returns {string} Kunci localStorage.
-   */
   function userOrdersKey() {
     return 'orders_' + getCurrentUID();
   }
 
-  /**
-   * Memformat angka menjadi format Rupiah (Rp).
-   * @param {number|string} n Angka yang akan diformat.
-   * @returns {string} String format Rupiah.
-   */
   function fmt(n) {
-    // Menggunakan locale 'id-ID' untuk format Rupiah yang benar
     return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n || 0));
   }
 
-  /**
-   * Melakukan HTML escaping untuk mencegah XSS.
-   * @param {string} s String input.
-   * @returns {string} String yang sudah di-escape.
-   */
   function escapeHtml(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[c]));
   }
 
-  /**
-   * Mengurai JSON dari localStorage dengan penanganan error.
-   * @param {string} key Kunci localStorage.
-   * @param {string} [fallbackJson='[]'] String JSON default.
-   * @returns {any} Data yang diurai.
-   */
   function safeParseRaw(key, fallbackJson = '[]') {
     try {
       const item = localStorage.getItem(key);
@@ -66,10 +41,6 @@
     }
   }
 
-  /**
-   * Mengambil ID pesanan dari URL parameter.
-   * @returns {string|null} ID pesanan.
-   */
   function getOrderIdFromURL() {
     const sp = new URLSearchParams(window.location.search);
     return sp.get('id');
@@ -77,14 +48,10 @@
 
   // --- 📦 LOCAL STORAGE DATA MANAGEMENT ---
 
-  /**
-   * Memuat pesanan dari localStorage, termasuk migrasi dari kunci 'orders' lama.
-   * @returns {Array<Object>} Daftar pesanan yang valid.
-   */
   function loadOrders() {
     const perUser = safeParseRaw(userOrdersKey(), '[]');
+    // Migrasi legacy orders jika ada
     const legacy = safeParseRaw('orders', '[]');
-
     if (Array.isArray(legacy) && legacy.length) {
       const ids = new Set(perUser.map(o => String(o?.id || '')));
       legacy.forEach(o => {
@@ -99,30 +66,12 @@
     return perUser.filter(o => o && o.id);
   }
 
-  /**
-   * Menyimpan daftar pesanan ke localStorage untuk UID saat ini.
-   * @param {Array<Object>} list Daftar pesanan.
-   */
   function saveOrders(list) {
     localStorage.setItem(userOrdersKey(), JSON.stringify(list || []));
   }
 
-  /**
-   * Memuat alamat yang tersimpan.
-   * @returns {Array<Object>} Daftar alamat.
-   */
-  function loadSavedAddresses() {
-    const key = 'savedAddresses_v1_' + getCurrentUID();
-    return safeParseRaw(key, '[]');
-  }
+  // --- 🔄 SUPABASE SYNC ---
 
-  // --- 🔄 SUPABASE SYNC (SMART MERGE) ---
-
-  /**
-   * Mentransformasi data pesanan dari format Supabase/DB ke format lokal/UI.
-   * @param {Object} row Baris data pesanan dari Supabase.
-   * @returns {Object} Objek pesanan dalam format lokal.
-   */
   function transformRemoteOrder(row) {
     const items = Array.isArray(row.order_items)
       ? row.order_items.map((it) => ({
@@ -148,406 +97,281 @@
       items,
       meta: {
         notes: row.notes || '',
-        recipient: row.recipient_name || '',
+        recipient: row.recipient_name || '', // Ini yang menyimpan alamat gabungan
         deliveryMethod: row.delivery_method || null,
       },
       gift: row.is_gift ? {
         message: row.gift_message || '',
         fromName: row.gift_from_name || '',
-        revealMode: row.gift_reveal_mode || 'reveal',
-        theme: row.gift_theme || null,
       } : null,
     };
   }
 
-  /**
-   * Sinkronisasi pesanan dari Supabase ke localStorage dengan Smart Merge Agresif.
-   * @returns {boolean} True jika sinkronisasi berhasil mendapatkan data user dan orders.
-   */
   async function syncOrdersFromSupabase() {
     const supabase = window.supabase;
-    if (!supabase) {
-      console.warn('Supabase client not found on window, skip sync.');
-      return false;
-    }
+    if (!supabase) return false;
 
     try {
-      // Tunggu hingga sesi pengguna terpulihkan
       const { data: userData, error: userErr } = await supabase.auth.getUser();
-
-      if (userErr || !userData?.user) {
-        // Ini adalah peringatan yang muncul jika sesi tidak ada/belum pulih
-        console.warn('No Supabase user for orders, skip sync (Auth status: Not Ready or Missing)', userErr);
-        return false;
-      }
+      if (userErr || !userData?.user) return false;
       
-      // 1. Ambil data dari Supabase
       const { data, error } = await supabase
         .from(SUPABASE_ORDERS_TABLE)
         .select(`*, ${SUPABASE_ORDER_ITEMS_TABLE}(*)`)
         .eq('user_id', userData.user.id)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Supabase orders fetch error:', error.message);
-        return false;
-      }
+      if (error) return false;
 
       const remoteOrders = (data || []).map(transformRemoteOrder);
       const localOrders = loadOrders() || [];
       const map = new Map();
 
-      // A. Masukkan data lokal dulu (Prioritas Awal)
-      localOrders.forEach((o) => {
-        if (o && o.id) map.set(String(o.id), o);
-      });
+      localOrders.forEach(o => { if (o && o.id) map.set(String(o.id), o); });
 
-      // B. Smart Merge Agresif
       remoteOrders.forEach((remoteO) => {
         if (!remoteO || !remoteO.id) return;
         const orderId = String(remoteO.id);
         const localO = map.get(orderId);
 
         if (localO) {
-          const localStatusLower = String(localO.status || '').toLowerCase();
-          const isLocalFinal = ['delivered', 'completed', 'cancelled'].includes(localStatusLower);
-
-          if (isLocalFinal) {
-            // Jaga status final lokal, hanya update detail lain
-            const { status: remoteStatus, paymentStatus: remotePayStatus, ...remoteData } = remoteO;
-            Object.assign(localO, remoteData);
-            return;
-          }
-
-          // Jaga status pembayaran PAID lokal
-          if ((localO.paymentStatus || '').toLowerCase() === 'paid') {
-            remoteO.paymentStatus = 'paid';
+          const localStatus = String(localO.status || '').toLowerCase();
+          const isFinal = ['delivered', 'completed', 'cancelled'].includes(localStatus);
+          
+          if (isFinal) {
+             // Pertahankan status final lokal
+             return;
           }
         }
-        // Timpa/Masukkan remoteO
         map.set(orderId, remoteO);
       });
 
-      // C. Simpan hasil merge
       saveOrders(Array.from(map.values()));
       return true;
     } catch (e) {
-      console.error('syncOrdersFromSupabase error:', e);
+      console.error('Sync error:', e);
       return false;
     }
   }
 
   // --- 🎨 RENDERING UI FUNCTIONS ---
 
-  /**
-   * Mengatur tampilan satu sel di tracking progress.
-   */
-  function setTrackCell(id, stateText, stateType) {
+  function setTrackCell(id, text, type) {
     const el = document.getElementById(id);
     if (!el) return;
-
-    el.textContent = stateText || '';
-    el.classList.remove('done', 'upcoming', 'not');
-
-    if (stateType === 'done') el.classList.add('done');
-    else if (stateType === 'upcoming') el.classList.add('upcoming');
+    el.textContent = text || '';
+    el.className = 'status'; // reset
+    if (type === 'done') el.classList.add('done');
+    else if (type === 'upcoming') el.classList.add('upcoming');
     else el.classList.add('not');
   }
 
-  /**
-   * Merender status tracking pesanan.
-   */
   function renderTracking(order) {
-    const rawStatus = (order.status || 'active').toLowerCase();
-    const payStatus = (order.paymentStatus || 'pending').toLowerCase();
+    const st = (order.status || 'active').toLowerCase();
+    const ps = (order.paymentStatus || 'pending').toLowerCase();
+    const isPaid = ps === 'paid';
+    const isScheduled = st === 'scheduled';
+    const isPrep = st === 'preparing order';
+    const isOut = st === 'out for delivery';
+    const isDelivered = st === 'delivered' || st === 'completed';
+    const isCancelled = st === 'cancelled' || st === 'rejected';
 
-    const isPaid = payStatus === 'paid';
-    const isScheduled = rawStatus === 'scheduled';
-    const isPreparing = rawStatus === 'preparing order';
-    const isOut = rawStatus === 'out for delivery';
-    const isDelivered = rawStatus === 'delivered' || rawStatus === 'completed';
-    const isCancelled = rawStatus === 'cancelled' || rawStatus === 'rejected';
-
-    // Logika Status Pembatalan
     if (isCancelled) {
-      setTrackCell('track-placed', 'Completed', 'done');
-      setTrackCell('track-payment', isPaid ? 'Completed' : 'Pending', isPaid ? 'done' : 'not');
-      ['track-wait', 'track-prep', 'track-out', 'track-delivered'].forEach(id => {
-        setTrackCell(id, 'Cancelled', 'not');
-      });
-      return;
+        setTrackCell('track-placed', 'Completed', 'done');
+        setTrackCell('track-payment', 'Cancelled', 'not');
+        setTrackCell('track-prep', 'Cancelled', 'not');
+        setTrackCell('track-out', 'Cancelled', 'not');
+        setTrackCell('track-delivered', 'Cancelled', 'not');
+        return;
     }
 
-    // 1. Order Placed
     setTrackCell('track-placed', 'Completed', 'done');
+    setTrackCell('track-payment', isPaid ? 'Completed' : 'Pending', isPaid ? 'done' : 'not');
 
-    // 2. Payment Confirmed
-    setTrackCell(
-      'track-payment',
-      isPaid ? 'Completed' : 'Pending',
-      isPaid ? 'done' : 'not'
-    );
+    let waitSt = 'not', waitTx = 'Pending';
+    if (isScheduled || isPrep || isOut || isDelivered) { waitSt='done'; waitTx='Completed'; }
+    else if (isPaid) { waitSt='upcoming'; waitTx='Upcoming'; }
+    setTrackCell('track-prep', waitTx, waitSt); // Using track-prep as 'Processing' general step
 
-    // 3. Waiting for Schedule
-    let waitStatus = 'not', waitText = '';
-    if (isScheduled || isPreparing || isOut || isDelivered) {
-      waitStatus = 'done'; waitText = 'Completed';
-    } else if (isPaid) {
-      waitStatus = 'upcoming'; waitText = 'Upcoming';
-    }
-    setTrackCell('track-wait', waitText, waitStatus);
+    let outSt = 'not', outTx = 'Pending';
+    if (isOut || isDelivered) { outSt='done'; outTx='Completed'; }
+    else if (isPrep) { outSt='upcoming'; outTx='Upcoming'; }
+    setTrackCell('track-out', outTx, outSt);
 
-    // 4. Preparing Order
-    let prepStatus = 'not', prepText = '';
-    if (isPreparing || isOut || isDelivered) {
-      prepStatus = 'done'; prepText = 'Completed';
-    } else if (isScheduled) {
-      prepStatus = 'upcoming'; prepText = 'Upcoming';
-    }
-    setTrackCell('track-prep', prepText, prepStatus);
-
-    // 5. Out for Delivery
-    let outStatus = 'not', outText = '';
-    if (isOut || isDelivered) {
-      outStatus = 'done'; outText = 'Completed';
-    } else if (isPreparing) {
-      outStatus = 'upcoming'; outText = 'Upcoming';
-    }
-    setTrackCell('track-out', outText, outStatus);
-
-    // 6. Delivered
-    setTrackCell(
-      'track-delivered',
-      isDelivered ? 'Completed' : (isOut ? 'Upcoming' : ''),
-      isDelivered ? 'done' : (isOut ? 'upcoming' : 'not')
-    );
+    let delSt = 'not', delTx = 'Pending';
+    if (isDelivered) { delSt='done'; delTx='Completed'; }
+    else if (isOut) { delSt='upcoming'; delTx='Upcoming'; }
+    setTrackCell('track-delivered', delTx, delSt);
   }
 
-  /**
-   * Merender header dan meta-data pesanan.
-   */
   function renderHeader(order) {
-    const pill = document.getElementById('detail-status-pill');
-    const idEl = document.getElementById('detail-order-id');
-    const dateEl = document.getElementById('detail-order-date');
-    const schedEl = document.getElementById('detail-scheduled');
-    const payEl = document.getElementById('detail-payment-method');
-    const orderIdDisplayEl = document.getElementById('order-id-display');
+    const els = {
+        pill: document.getElementById('detail-status-pill'),
+        id: document.getElementById('detail-order-id'),
+        date: document.getElementById('detail-order-date'),
+        sched: document.getElementById('detail-scheduled'),
+        pay: document.getElementById('detail-payment-method'),
+        address: document.getElementById('detail-address') // 🔥 TARGET BARU
+    };
 
-    // Order ID
-    const orderId = getOrderIdFromURL() || order.id || '-';
-    if (orderIdDisplayEl) {
-      orderIdDisplayEl.textContent = orderId;
-    } else if (idEl) {
-      idEl.textContent = orderId;
+    if (els.id) els.id.textContent = order.id || '-';
+    
+    if (els.date) {
+        const d = order.createdAt ? new Date(order.createdAt) : new Date();
+        els.date.textContent = d.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
     }
 
-    // Tanggal Pesanan
-    if (dateEl) {
-      const d = order.createdAt ? new Date(order.createdAt) : new Date();
-      dateEl.textContent = d.toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      });
+    if (els.sched) {
+        let txt = '-';
+        if (order.scheduledAt) {
+            txt = new Date(order.scheduledAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+        els.sched.textContent = txt;
     }
 
-    // Jadwal Pengiriman
-    let scheduledDisplay = '-';
-    if (order.scheduledDelivery) {
-      scheduledDisplay = order.scheduledDelivery;
-    } else if (order.scheduledAt) {
-      const d = new Date(order.scheduledAt);
-      scheduledDisplay = d.toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      });
-    }
-    if (schedEl) schedEl.textContent = scheduledDisplay;
+    if (els.pay) els.pay.textContent = order.paymentMethod || 'QRIS';
 
-    // Metode Pembayaran
-    if (payEl) {
-      payEl.textContent = order.paymentMethod || 'QRIS';
+    // 🔥 LOGIKA RENDER ALAMAT
+    if (els.address) {
+        // Data di meta.recipient biasanya gabungan (Nama\nNoHP\nAlamat)
+        // Kita ganti \n jadi <br> agar rapi di HTML
+        const rawAddr = order.meta && order.meta.recipient ? order.meta.recipient : 'Alamat tidak tersedia.';
+        els.address.innerHTML = escapeHtml(rawAddr).replace(/\n/g, '<br>');
     }
 
-    // Status Pill Logic
-    if (pill) {
-      const st = (order.status || 'active').toLowerCase();
-      let label = 'Active';
-      let bgColor = '#0B84FF'; // Biru
-
-      if (st === 'scheduled') label = 'Scheduled';
-      else if (st === 'preparing order' || st === 'out for delivery') label = 'On Progress';
-      else if (st === 'delivered' || st === 'completed') {
-        label = 'Delivered';
-        bgColor = '#10b981'; // Hijau
-      } else if (st === 'cancelled' || st === 'rejected') {
-        label = 'Cancelled';
-        bgColor = '#ef4444'; // Merah
-      }
-
-      pill.textContent = label;
-      pill.style.background = bgColor;
-      pill.classList.remove('shipped');
+    if (els.pill) {
+        const s = (order.status || '').toLowerCase();
+        let lb = 'Active', bg = '#0B84FF';
+        if (s === 'scheduled') lb = 'Scheduled';
+        else if (s === 'delivered' || s === 'completed') { lb = 'Delivered'; bg = '#10b981'; }
+        else if (s === 'cancelled' || s === 'rejected') { lb = 'Cancelled'; bg = '#ef4444'; }
+        
+        els.pill.textContent = lb;
+        els.pill.style.background = bg;
     }
   }
 
-  /**
-   * Merender daftar item pesanan.
-   */
   function renderItems(order) {
     const wrap = document.getElementById('detail-items');
     if (!wrap) return;
-
     wrap.innerHTML = '';
     const items = order.items || [];
 
-    if (items.length === 0) {
-      wrap.innerHTML = '<p style="text-align:center;color:#888;">Tidak ada item dalam pesanan ini.</p>';
-      return;
+    if (!items.length) {
+        wrap.innerHTML = '<p class="muted">No items.</p>';
+        return;
     }
 
     items.forEach(it => {
-      const row = document.createElement('div');
-      row.className = 'product';
-
-      const thumbUrl = escapeHtml(it.image || '');
-      const thumbHtml = it.image
-        ? `<div class="thumb"><img src="${thumbUrl}" alt="${escapeHtml(it.title || '')}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;"></div>`
-        : `<div class="thumb no-image"></div>`;
-
-      row.innerHTML = `
-        ${thumbHtml}
-        <div class="pinfo">
-          <div class="pname" style="font-size:13px;line-height:1.3;">${escapeHtml(it.title || '')}</div>
-          <div class="psub" style="font-size:11px;color:#888;">${escapeHtml(it.brand || '')}</div>
-          <div class="price" style="font-size:13px;margin-top:4px;">${fmt(it.unitPrice || it.subtotal || 0)}</div>
-        </div>
-        <div class="qty">x${it.qty || 1}</div>`;
-
-      wrap.appendChild(row);
+        const row = document.createElement('div');
+        row.className = 'product';
+        const img = it.image 
+            ? `<img src="${escapeHtml(it.image)}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;margin-right:10px;">`
+            : '';
+        
+        row.innerHTML = `
+            <div style="display:flex; align-items:center; margin-bottom:10px;">
+                ${img}
+                <div>
+                    <div style="font-weight:600; font-size:14px;">${escapeHtml(it.title)}</div>
+                    <div style="font-size:12px; color:#666;">${fmt(it.unitPrice)} x ${it.qty}</div>
+                </div>
+                <div style="margin-left:auto; font-weight:bold;">${fmt(it.subtotal || (it.unitPrice * it.qty))}</div>
+            </div>
+        `;
+        wrap.appendChild(row);
     });
   }
 
-  /**
-   * Merender ringkasan total pesanan.
-   */
   function renderSummary(order) {
     const box = document.getElementById('detail-summary');
     if (!box) return;
 
-    // Hitung Product Subtotal
-    const productSubtotal = (order.items || []).reduce((sum, it) => {
-      const qty = Number(it.qty || 1);
-      const unit = it.unitPrice != null ? Number(it.unitPrice) : Number(it.subtotal || 0);
-      let sub = 0;
-
-      if (it.subtotal != null && !isNaN(Number(it.subtotal))) {
-        sub = Number(it.subtotal);
-      } else if (!isNaN(qty) && !isNaN(unit)) {
-        sub = qty * unit;
-      }
-
-      return sum + sub;
-    }, 0);
-
-    const shippingFee = !isNaN(Number(order.shippingFee)) ? Number(order.shippingFee) : 0;
-    const total = productSubtotal + shippingFee;
+    let sub = 0;
+    (order.items||[]).forEach(i => {
+        sub += Number(i.subtotal || (i.unitPrice * i.qty) || 0);
+    });
+    const ship = Number(order.shippingFee || 0);
+    const tot = sub + ship;
 
     box.innerHTML = `
-      <div class="summary-row"><div class="left">Product Subtotal</div><div class="right">${fmt(productSubtotal)}</div></div>
-      <div class="summary-row"><div class="left">Shipping Fee</div><div class="right">${fmt(shippingFee)}</div></div>
-      <div class="summary-row total"><div class="left">Order Total</div><div class="right">${fmt(total)}</div></div>`;
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="color:#666;">Subtotal</span><span>${fmt(sub)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:#666;">Shipping</span><span>${fmt(ship)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:16px;border-top:1px solid #eee;padding-top:8px;">
+            <span>Total</span><span>${fmt(tot)}</span>
+        </div>
+    `;
   }
 
-  // --- 🛎️ EVENT HANDLERS ---
-
-  /**
-   * Menyiapkan fungsionalitas tombol pembatalan pesanan.
-   */
   function setupCancel(order) {
     const btn = document.getElementById('detail-cancel-btn');
     if (!btn) return;
-
-    const rawPaymentStatus = (order.paymentStatus || 'pending').toLowerCase();
-    const rawStatus = (order.status || '').toLowerCase();
-    const isPaid = rawPaymentStatus === 'paid';
-    const isFinal = ['delivered', 'completed', 'cancelled', 'rejected'].includes(rawStatus);
-
-    if (isPaid || isFinal) {
-      btn.style.display = 'none';
-      return;
+    
+    const s = (order.status||'').toLowerCase();
+    const p = (order.paymentStatus||'').toLowerCase();
+    // Hide cancel if paid or final state
+    if (p === 'paid' || ['delivered','completed','cancelled','rejected'].includes(s)) {
+        btn.style.display = 'none';
+        return;
     }
 
     btn.style.display = 'block';
-    btn.addEventListener('click', function () {
-      if (!confirm('Yakin ingin membatalkan order ini? Aksi ini tidak dapat dibatalkan.')) {
-        return;
-      }
-
-      const all = loadOrders() || [];
-      const idx = all.findIndex(o => String(o.id) === String(order.id));
-
-      if (idx !== -1) {
-        all[idx].status = 'cancelled';
-        all[idx].paymentStatus = 'rejected';
-        saveOrders(all);
-      }
-
-      alert('Order telah dibatalkan. Status: cancelled. Silakan refresh halaman.');
-      window.location.href = 'order.html?tab=cancelled';
-    });
+    btn.onclick = function() {
+        if(!confirm('Batalkan pesanan ini?')) return;
+        const all = loadOrders();
+        const idx = all.findIndex(x => String(x.id) === String(order.id));
+        if(idx >= 0) {
+            all[idx].status = 'cancelled';
+            all[idx].paymentStatus = 'rejected';
+            saveOrders(all);
+            alert('Order cancelled.');
+            window.location.reload();
+        }
+    };
   }
 
-  // --- 🚀 INITIALIZATION ---
-
-  /**
-   * Fungsi inisialisasi yang dipanggil setelah DOM dimuat.
-   */
+  // --- 🚀 MAIN INIT ---
   document.addEventListener('DOMContentLoaded', async function () {
     const orderId = getOrderIdFromURL();
-    
-    // 1. Validasi ID Pesanan
     if (!orderId) {
-      alert('Order ID tidak ditemukan di URL. Kembali ke halaman list.');
-      window.location.href = 'order.html';
-      return;
+        alert('No Order ID.');
+        window.location.href = 'order.html';
+        return;
     }
 
-    // 2. 🔥 FIX TIMING ISSUE: Tunggu sebentar agar Supabase bisa memulihkan sesi
-    console.log(`Waiting ${SYNC_WAIT_MS}ms for Supabase session recovery...`);
-    await new Promise(resolve => setTimeout(resolve, SYNC_WAIT_MS));
+    // Tunggu sesi supabase sebentar
+    await new Promise(r => setTimeout(r, SYNC_WAIT_MS));
+    await syncOrdersFromSupabase();
 
-    // 3. Sync data dari server (Menggunakan versi yang diperbaiki)
-    const isSyncSuccessful = await syncOrdersFromSupabase(); 
-    
-    if (!isSyncSuccessful) {
-        console.warn("Supabase sync failed or user not logged in, rendering data from local storage only.");
-    }
-
-    // 4. Muat dan Cari Pesanan
     const orders = loadOrders();
-    const order = (orders || []).find(o => String(o.id) === String(orderId));
+    const order = orders.find(o => String(o.id) === String(orderId));
 
     if (!order) {
-      alert('Order tidak ditemukan. Mencoba kembali ke halaman list.');
-      window.location.href = 'order.html';
-      return;
+        alert('Order not found.');
+        window.location.href = 'order.html';
+        return;
     }
 
-    // 5. Render UI
     renderHeader(order);
     renderItems(order);
     renderSummary(order);
     renderTracking(order);
     setupCancel(order);
-
-    // 6. Setup Back Button
-    const backBtn = document.getElementById('back-btn');
-    if (backBtn) {
-      backBtn.addEventListener('click', function () {
-        const last = localStorage.getItem('lastOrderTab') || 'active';
-        window.location.href = `order.html?tab=${last}`;
-      });
+    
+    // WA Button Logic
+    const waBtn = document.getElementById('wa-btn');
+    if(waBtn) {
+        const phone = '628118281416';
+        const txt = `Halo, saya butuh bantuan untuk Order ID: ${order.id}`;
+        waBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent(txt)}`;
     }
+
+    const back = document.getElementById('back-btn');
+    if(back) back.onclick = () => window.location.href = 'order.html';
   });
+
 })();

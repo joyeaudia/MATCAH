@@ -6,11 +6,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* ... (CSS Styles) ... */
-    /* (Styles tidak dimodifikasi, karena Anda hanya meminta path HTML) */
+    /* RESET DASAR */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* BINGKAI HP */
+    .phone-frame {
+      width: 100%;
+      max-width: 375px; /* Lebar standar HP */
+      height: 812px;    /* Tinggi standar HP */
+      background-color: #ffffff;
+      border-radius: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow-y: auto; /* Bisa discroll jika konten panjang */
+      position: relative;
+      border: 8px solid #333; /* Simulasi bezel HP */
+    }
+
+    /* HEADER */
+    .header {
+      padding: 20px;
+      text-align: center;
+      background-color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid #eee;
+    }
+
+    .header-img {
+      height: 50px; /* Batasi tinggi logo header */
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* WRAPPER KARTU (GRID SYSTEM) */
+    .cards-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 2 Kolom */
+      gap: 15px; /* Jarak antar kartu */
+      padding: 20px;
+    }
+
+    /* KARTU MENU */
+    .nav-card {
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      aspect-ratio: 1 / 1; /* Membuat kartu jadi kotak */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-image-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    /* PENTING: MENGATUR UKURAN GAMBAR MENU */
+    .card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Gambar pas di kotak tanpa terpotong */
+    }
+
+    /* TOMBOL LOGOUT */
+    .logout-link {
+      text-align: center;
+      color: #ff4757;
+      font-weight: 600;
+      padding: 20px;
+      cursor: pointer;
+      margin-top: auto; /* Dorong ke paling bawah jika pakai flex column */
+    }
+    
+    .logout-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Scrollbar cantik (opsional) */
+    .phone-frame::-webkit-scrollbar {
+      width: 6px;
+    }
+    .phone-frame::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
+
   <div class="phone-frame">
     <div class="header">
       <img src="../logos/logo.png" alt="Mazi Menu" class="header-img" />
@@ -21,30 +133,33 @@
         <div class="card-image-wrap">
           <img src="../logos/lg1.png" alt="Menu 1" />
         </div>
-        </div>
+      </div>
 
       <div class="nav-card" data-target="#">
         <div class="card-image-wrap">
           <img src="../logos/lg2.png" alt="Menu 2" />
         </div>
-        </div>
+      </div>
 
-      <div class="nav-card" data-target="ordadm.html"> <div class="card-image-wrap">
+      <div class="nav-card" data-target="ordadm.html">
+        <div class="card-image-wrap">
           <img src="../logos/lg3.png" alt="Menu 3" />
         </div>
-        </div>
+      </div>
 
       <div class="nav-card" data-target="#">
         <div class="card-image-wrap">
           <img src="../logos/lg4.png" alt="Menu 4" />
         </div>
-        </div>
+      </div>
 
-      <div class="nav-card" data-target="page5.html"> <div class="card-image-wrap">
+      <div class="nav-card" data-target="page5.html">
+        <div class="card-image-wrap">
           <img src="../logos/lg5.png" alt="#" />
         </div>
-        </div>
+      </div>
     </div>
+
     <p class="logout-link" onclick="window.location.href='../index.html'">
       Log Out
     </p>
@@ -52,15 +167,16 @@
   </div>
 
   <script>
-    // Semua card bisa ditekan dan pindah ke HTML yang ada di data-target
     document.addEventListener("DOMContentLoaded", () => {
       const cards = document.querySelectorAll(".nav-card");
 
       cards.forEach(card => {
         card.addEventListener("click", () => {
           const target = card.getAttribute("data-target");
-          if (target) {
-            window.location.href = target; // Target adalah nama file di folder page/
+          if (target && target !== "#") {
+            window.location.href = target;
+          } else {
+            console.log("Link belum diatur (target='#')");
           }
         });
       });

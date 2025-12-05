@@ -3,7 +3,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   "use strict";
 
-
   // ---- helpers ----
   const formatRp = (n) => {
     const num = Math.round(Number(n) || 0);
@@ -169,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const useSavedBtn = document.getElementById("btnUseSavedAddress");
   if (useSavedBtn) {
     useSavedBtn.addEventListener("click", function () {
+      // PATH OK: sesama folder page/
       window.location.href = "drafamt.html?from=checkout";
     });
   }
@@ -573,11 +573,13 @@ document.addEventListener("DOMContentLoaded", function () {
             console.warn('Failed to open WhatsApp', err);
           }
 
+          // PATH OK: sesama folder page/
           window.location.href =
             './order.html?order=' + encodeURIComponent(order.id);
         }, 1500);
       } catch (e) {
         console.warn('Failed to prepare WhatsApp redirect', e);
+        // PATH OK: sesama folder page/
         window.location.href =
           './order.html?order=' + encodeURIComponent(order.id);
       }

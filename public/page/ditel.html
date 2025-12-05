@@ -4,95 +4,102 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Order Details — Verent</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Rasa:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style/ditel.css" /> 
 </head>
 <body>
   <div class="screen">
     
     <header class="appbar" role="banner">
-      <div class="appbar-inner" aria-hidden="false">
+      <div class="appbar-inner">
         <div class="brand-center">
           <img src="../logos/lg3.png" alt="Verent" class="brand-logo">
         </div>
-
         <button id="back-btn" class="back-btn" aria-label="Back">
           &lt;= Back
         </button>
-
         <button class="icon-bell" aria-label="Notifications" type="button">
           <img src="../acs/lcng.png" alt="Notifications">
         </button>
       </div>
-      <div class="appbar-underline" aria-hidden="true"></div>
     </header>
 
     <main class="content">
       
       <section class="card order-card">
-        <h2>Order #<span id="order-id-display">Nacpp1622</span></h2>
-        <p class="detail-status-pill" id="detail-status-pill">
-          Status: <span id="status-text">Pending</span>
-        </p>
+        <h2>Order #<span id="detail-order-id">Loading...</span></h2>
+        
+        <span class="status-pill" id="detail-status-pill">Loading Status...</span>
+        
+        <div class="meta">
+            <div style="display:flex;justify-content:space-between;">
+                <span class="muted">Date:</span>
+                <span id="detail-order-date">-</span>
+            </div>
+            <div style="display:flex;justify-content:space-between; margin-top:4px;">
+                <span class="muted">Scheduled:</span>
+                <span id="detail-scheduled">-</span>
+            </div>
+        </div>
 
-        <div class="order-items" id="order-items-list">
-          <div id="order-details-content">
-            <div class="skeleton-line" style="width: 80%;"></div>
-            <div class="skeleton-line" style="width: 100%;"></div>
-            <div class="skeleton-line" style="width: 60%;"></div>
-          </div>
+        <div class="order-items" id="detail-items">
+           <div class="skeleton-line" style="width: 80%; height: 20px; margin-bottom: 10px; background:#eee;"></div>
+           <div class="skeleton-line" style="width: 100%; height: 20px; margin-bottom: 10px; background:#eee;"></div>
         </div>
       </section>
 
       <section class="card detail-shipping-card">
         <h3>Alamat Kirim</h3>
-        <p id="shipping-address">
+        <p id="detail-address" style="color: #555; line-height: 1.5; white-space: pre-line;">
           Loading address...
         </p>
       </section>
 
       <section class="card detail-summary-card">
         <h3>Ringkasan</h3>
-        <table class="summary-table">
-          <tr>
-            <td>Subtotal</td>
-            <td id="summary-subtotal">Rp 0,00</td>
-          </tr>
-          <tr>
-            <td>Biaya Kirim</td>
-            <td id="summary-shipping">Rp 0,00</td>
-          </tr>
-          <tr>
-            <td class="bold">Total Pembayaran</td>
-            <td class="bold total-amount" id="summary-total">Rp 0,00</td>
-          </tr>
-        </table>
-        <div class="payment-note" id="payment-note">
-          Status Pembayaran: <span id="payment-status-display">Belum Bayar</span>
+        <div id="detail-summary">
+            <div style="display:flex;justify-content:space-between; margin-bottom:5px;">
+                <span>Loading...</span><span>Rp 0</span>
+            </div>
+        </div>
+
+        <div class="payment-note" id="payment-note" style="margin-top: 15px; padding-top:10px; border-top:1px dashed #ddd;">
+          Metode: <span id="detail-payment-method" style="font-weight:bold;">-</span>
         </div>
       </section>
 
       <aside class="card detail-tracking-card">
-        <h3>Tracking & Bantuan</h3>
-        <div id="tracking-steps">
-          <div class="skeleton-line" style="width: 50%;"></div>
-        </div>
+        <h3>Tracking</h3>
+        <table class="tracking">
+            <tr>
+                <td>Order Placed</td>
+                <td id="track-placed" class="status done">Completed</td>
+            </tr>
+            <tr>
+                <td>Payment</td>
+                <td id="track-payment" class="status not">Pending</td>
+            </tr>
+            <tr>
+                <td>Processing</td>
+                <td id="track-prep" class="status not">...</td>
+            </tr>
+            <tr>
+                <td>Delivery</td>
+                <td id="track-out" class="status not">...</td>
+            </tr>
+             <tr>
+                <td>Delivered</td>
+                <td id="track-delivered" class="status not">...</td>
+            </tr>
+        </table>
 
-        <div class="help-links">
-          <h4>Need Help?</h4>
-          <a href="#" id="cancel-btn" class="btn btn-secondary btn-cancel">
-            Cancel Order
-          </a>
-          <a href="#" id="wa-btn" class="btn btn-primary btn-whatsapp" target="_blank">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="wa-icon">
-              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.9318 2.50201 15.759 3.41165 17.3697L2 22L6.82998 20.5901C8.36881 21.3653 10.1264 21.82 12 21.82" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M8.2 8.5C8.3 8.3 8.7 8 9.3 8C9.9 8 10.4 8.7 10.5 8.9C10.6 9.1 11.2 10.5 11.8 11.2C12.3 11.8 12.8 12.1 13.3 12.4C14.1 12.9 14.6 13.1 15.3 13.5C15.9 13.8 16.5 13.8 16.9 13.6C17.3 13.4 17.7 12.8 17.9 12.3C18 12 18.2 12 18.5 12C18.8 12 19.3 12.1 19.3 12.4C19.3 12.8 19 13.4 18.5 14.2C18.1 15 17.2 15.5 16.6 15.6C15.8 15.8 15.3 15.7 14.8 15.7C14.2 15.7 13.1 15.5 11.7 14.9C10.4 14.4 9.4 13.4 8.8 12.1C8.2 10.9 8.1 9.9 8.2 9.4C8.2 9 8.2 8.7 8.2 8.5Z" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M17 7l-2.2 1.2" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M21 21l-2.2-1.2" stroke="#075E54" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
+        <div class="help-links" style="margin-top:20px;">
+          <div style="display:flex; gap:10px;">
+             <button id="detail-cancel-btn" class="cancel" style="display:none;">Cancel Order</button>
+             <a href="#" id="wa-btn" class="wa-btn" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="24" height="24"> Chat Admin
+             </a>
+          </div>
         </div>
       </aside>
     </main>
@@ -103,21 +110,17 @@
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // 🔧 KONFIGURASI SUPABASE (HARUS SAMA DENGAN order.html)
-  const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co'; 
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; 
+  <script>
+    const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; 
 
-  // Inisialisasi Klien Supabase
-  try {
-    // Supabase client provided globally for ditel.js to use
-    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("Supabase Client Init OK in ditel.html");
-  } catch (e) {
-    console.error("Supabase init failed in ditel.html:", e);
-  }
-</script>
+    try {
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.error("Supabase init failed:", e);
+    }
+  </script>
 
-<script src="../logic/ditel.js"></script> 
+  <script src="../logic/ditel.js"></script> 
 </body>
 </html>

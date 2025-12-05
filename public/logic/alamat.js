@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rawEmail = (localStorage.getItem("maziEmail") || "").toLowerCase().trim();
   if (!rawEmail) {
     // kalau ga ada email berarti belum login → lempar ke sign in
+    // PATH OK: sesama folder page/
     window.location.href = "singin.html";
     return;
   }
@@ -116,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fromCheckout = from === "checkout";
     const fromSignup   = from === "signup";
 
+    // PATH OK: Semua redirect ke halaman yang ada di folder yang sama (page/)
     if (fromCheckout) {
       // dipanggil dari halaman checkout → balik ke checkout
       try {

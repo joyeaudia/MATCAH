@@ -28,35 +28,47 @@
 
     <section class="title-area">
       <h1>Your Orders</h1>
-      <p class="subtitle">Track, manage, and review your orders history.</p>
+      <p class="subtitle">Track, manage, and revisit your orders.</p>
     </section>
 
-    <nav class="tab-nav" role="tablist">
-      <button type="button" class="tab-btn is-active" role="tab" data-tab="active" aria-selected="true">
-        Active
-      </button>
-      <button type="button" class="tab-btn" role="tab" data-tab="scheduled" aria-selected="false">
-        Scheduled
-      </button>
-      <button type="button" class="tab-btn" role="tab" data-tab="history" aria-selected="false">
-        History
-      </button>
+    <nav class="tabs" role="tablist" aria-label="Order tabs">
+      <button role="tab" class="tab tab-active" data-tab="active" aria-selected="true">Active</button>
+      <button role="tab" class="tab" data-tab="scheduled" aria-selected="false">Scheduled</button>
+      <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
     </nav>
-    
-    <main class="content-area">
-      <div class="order-list" id="order-list-active" role="tabpanel" data-order-tab="active">
-        <p class="list-placeholder">Loading active orders...</p>
-      </div>
-      <div class="order-list" id="order-list-scheduled" role="tabpanel" data-order-tab="scheduled" hidden>
-        <p class="list-placeholder">Loading scheduled orders...</p>
-      </div>
-      <div class="order-list" id="order-list-history" role="tabpanel" data-order-tab="history" hidden>
-        <p class="list-placeholder">Loading history...</p>
-      </div>
+
+    <main class="content">
+      <section id="tab-active" class="tab-panel">
+        <div id="order-list-active"></div> 
+      </section>
+
+      <section id="tab-scheduled" class="tab-panel hidden">
+        <div id="order-list-scheduled"></div>
+      </section>
+
+      <section id="tab-history" class="tab-panel hidden" role="tabpanel">
+        <div id="order-list-history"></div>
+      </section>
+
+      <div class="spacer"></div>
+
+      <section class="support">
+        <h4>Customer Support</h4>
+        <p class="support-note">Need help? <br/>Chat with our support team for order assistance or product info.</p>
+        <a 
+          href="https://wa.me/628118281416?text=halo%20cici%20maziii%20mau%20tanya"
+          class="whatsapp-btn"
+          target="_blank"
+          rel="noopener"
+        >
+          <img src="../acs/wa.png" alt="WA" class="wa-icon">
+          Chat Support
+        </a>
+      </section>
     </main>
 
-    <nav class="mobile-nav">
-      <a href="order.html" class="nav-btn is-active" aria-current="page" aria-label="Orders">
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="order.html" class="nav-btn active" aria-label="Orders">
         <img src="../acs/order.png" alt=""><span>Orders</span>
       </a>
 
@@ -80,20 +92,17 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // 🔧 SUPABASE CONFIGURATION
+    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
-
-    // Inisialisasi Klien Supabase
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; 
     try {
-      // Supabase client provided globally for order.js to use
       window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log("Supabase Client Init OK in order.html");
-    } catch (e) {
-      console.error("Supabase init failed in order.html:", e);
+    } catch (error) {
+      console.error('Supabase init failed:', error);
     }
   </script>
 
   <script src="../logic/order.js"></script>
+
 </body>
 </html>
