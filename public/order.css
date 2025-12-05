@@ -1,491 +1,124 @@
-/* order.css - cleaned & final (mobile-first, ~412px) */
+/* order.css — Fix Layout & Images */
 
-/* Variables */
-:root{
-  --bg: #ffffff;
-  --card: #ffffff;
-  --muted: #9b98a3;
-  --accent: #007bff;
-  --accent-2: #7a4cf7;
-  --radius: 12px;
-  --font: "Rasa", serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Reset & font */
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; font-family: var(--font); background: var(--bg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; color: #111; }
-
-/* app shell (center mobile viewport) */
-.app-shell {
-  width: 412px;
-  max-width: 100%;
-  min-height: 100vh;
-  margin: 12px auto;
-  background: transparent;
-  position: relative;
-  padding-bottom: 100px; /* beri ruang untuk bottom nav */
-}
-
-/* ===== Appbar (centered brand text inside rounded card) ===== */
-/* ===== Appbar (BY VERENT) — fix: mepet ke atas ===== */
-header.appbar {
-  position: fixed;              /* ⬅️ tempelkan ke atas layar */
-  top: 0;                       /* mepet banget di atas */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 412px;             /* ukuran device */
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  z-index: 100;                 /* pastikan di atas konten */
-}
-
-/* isi putihnya */
-.appbar-inner {
-  width: 100%;
-  background: linear-gradient(#faf8fb, #f6f4f8);
-  border-radius: 0 0 12px 12px;   /* sudut bawah aja yang melengkung */
-  padding: 18px 20px 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
-  position: relative;
-}
-
-/* teks tengah */
-.brand-center {
-  text-align: center;
-  pointer-events: none;
-}
-.brand-center .by {
-  display: block;
-  font-size: 11px;
-  color: #222;
-  margin-bottom: 4px;
-  font-family: 'Rasa', serif;
-  letter-spacing: 1px;
-}
-.brand-center .name {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  font-family: 'Rasa', serif;
+body {
+  background-color: #f5f7fa;
+  font-family: 'Inter', sans-serif;
   color: #111;
-}
-
-/* tombol lonceng */
-.icon-bell {
-  position: absolute;
-  right: 14px;
-  top: 12px;
-  width: 38px;
-  height: 38px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid #e6e6e6;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
-  padding: 4px;
-}
-.icon-bell img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+  min-height: 100vh;
 }
 
-/* garis bawah ungu — opsional, bisa kamu hapus total kalau mau bersih */
-.appbar-underline {
-  display: none; /* ⬅️ hapus garis bawahnya kalau bikin ganggu */
-}
-
-
-
-.title-area {
-  margin-top: 96px; /* kasih ruang sesuai tinggi header */
-  padding: 8px 12px;
-}
-
-.title-area h1 {
-  margin: 0;
-  font-size: 20px;
-  letter-spacing: 0.2px;
-}
-.subtitle {
-  margin-top: 6px;
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* Tabs - clean interactive */
-.tabs {
-  position: relative;
-  display: flex;
-  gap: 10px;
-  padding: 8px 14px 6px; /* ⬅️ dikurangi, dulu 12px */
-  align-items: center;
-  margin-bottom: -1px;    /* tambahin dikit biar ada jarak halus */
-}
-
-.content {
-  padding: 4px 12px 12px; /* ⬅️ kurangi padding-top dari 12 ke 4 */
-}
-
-
-/* moving pill (solid blue) */
-.tabs .tab-pill {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 8px;
-  height: 36px;
-  border-radius: 999px;
-  background: rgba(135, 190, 255, 0.35);
-  /*background: linear-gradient(90deg, rgba(170, 150, 255, 0.3), rgba(200, 180, 255, 0.25));*/
-  box-shadow: none;
- transition: left 300ms cubic-bezier(.25, .8, .25, 1),
-            width 300ms cubic-bezier(.25, .8, .25, 1),
-            background-color 300ms ease,
-            opacity 200ms ease;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* tab buttons */
-.tab {
-  position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
-  background: #d9d9d9;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  color: #000;
-  transition: background-color 180ms ease, transform 140ms ease, color 140ms ease;
-}
-.tab:hover { background: #c7c7c7; transform: translateY(-1px); }
-
-/* active */
-.tab[aria-selected="true"], .tab.tab-active {
-  background: #007bff;
-  color: #fff;
-}
-
-/* focus */
-.tab:focus { outline: none; box-shadow: 0 0 0 3px rgba(0,123,255,0.12); }
-
-/* small screens tweak */
-@media (max-width: 420px) {
-  .tabs .tab-pill { height: 34px; }
-}
-
-/* content */
-.content { padding: 12px; }
-
-
-/* Pindahkan tombol ke pojok kanan bawah
-.order-card {
-  position: relative;
-}
-
-.order-actions {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}=> COBA DI SEBELAH*/ 
-
-
-/* order card */
-.order-card {
-  display: flex;
-  position: relative;
-  gap: 12px;
-  background: var(--card);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  align-items: flex-start;
-  max-width: 380px;
-  margin: 10px auto;
-}
-.thumb { width: 68px; height: 68px; background: #eee; border-radius: 8px; flex: 0 0 68px; }
-.order-info { flex: 1; }
-.order-top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
-.product-title { margin:0; font-size:15px; }
-.more { color: var(--muted); font-size:12px; }
-.brand { margin:6px 0; font-size:12px; color:var(--muted); }
-.status-row {
-  display: flex;
-  flex-direction: column;   /* ⬅️ ini yang bikin turun ke bawah */
-  gap: 2px;                 /* jarak kecil antar baris */
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-.order-actions { display:flex; gap:8px; }
-.btn-outline { background: transparent; border:1px solid #ddd; padding:6px 10px; border-radius:8px; font-size:12px; cursor:pointer; }
-.btn-light { background: #f3f3f3; border:none; padding:6px 10px; border-radius:8px; font-size:12px; cursor:pointer; }
-
-/* tombol di dalam order-card */
-.order-actions {
-  position: absolute;
-  right: 10px;
-  bottom: 16px;              /* dinaikkan sedikit dari bawah */
-  display: flex;
-  flex-direction: column;
-  gap: 4px;                  /* jarak antar tombol lebih rapat */
-}
-
-/* gaya tombol kecil */
-.order-actions button {
-  background: #e7e7e7;       /* abu-abu lembut */
-  color: #000;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;          /* lebih kecil */
-  font-size: 8px;           /* teks lebih kecil */
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-  width: 6-px;               /* biar ukurannya konsisten */
-  text-align: center;
-}
-
-/* hover lembut */
-.order-actions button:hover {
-  background: #d4d4d4;
-  transform: translateY(-1px);
-}
-
-
-
-/* spacer for bottom nav */
-.spacer { height: 120px; }
-
-/* support area */
-.support { text-align:center; color:#222; padding: 18px 12px 40px; }
-.support h4 { margin:0; font-size:14px; font-weight:600; }
-.support-note { margin:8px auto 12px; font-size:12px; color:var(--muted); max-width:260px; }
-.whatsapp-btn {
-  width:44px;
-  height:44px;
-  border: none;
-  background: none;
-  padding: 0;
-}
-/* bottom nav */
-.bottom-nav {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0; /* ⬅️ penting! dulu 24px, ubah jadi 0 */
+.mobile-wrapper {
   width: 100%;
-  max-width: 412px; /* biar pas dengan ukuran device mockup */
-  background: var(--card);
-  border-radius: 14px 14px 0 0; /* sudut atas doang yang melengkung */
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  z-index: 60;
-}
-
-
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px;border-radius:10px;background:transparent;border:none;color:var(--sub);font-size:11px;}
-.nav-btn img{width:22px;height:22px;display:block;filter:grayscale(1) opacity(.9);}
-.nav-btn.active{color:#000;font-weight:700;}
-.nav-btn.active img{filter:none;}
-.nav-btn span{line-height:1;}
-/* utility */
-.hidden { display: none; }
-
-/* sembunyikan underline */
-.appbar-underline { display: none !important; }
-
-/* atau: buat transparan jika mau tetap ada di DOM */
-.appbar-underline { background: transparent !important; height: 0 !important; visibility: hidden !important; }
-
-.nav-btn {
-  text-decoration: none;   /* hilangkan garis bawah */
-  color: inherit;          /* biar warna ikut parent */
-}
-
-.nav-btn span {
-  text-decoration: none;
-}
-
-/* Make logo large without expanding header container */
-.brand-center {
+  max-width: 480px;
+  background-color: #ffffff;
+  min-height: 100vh;
   position: relative;
-  height: 40px;              /* tingginya tetap kecil agar tidak mendorong teks ke bawah */
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: visible;          /* penting supaya logo boleh keluar container */
+  flex-direction: column;
+  padding-bottom: 80px;
 }
 
-.brand-center img.brand-logo {
-  position: absolute;         /* ← INI KUNCI UTAMA */
-  top: 50%;
-  transform: translateY(-50%);  /* center secara vertikal */
-  height: 90px;               /* BESARKAN LOGO TANPA BIKIN HEADER IKUT BESAR */
-  object-fit: contain;
-  pointer-events: none;
+/* HEADER */
+.appbar { padding: 16px 20px; background: #fff; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #f0f0f0; }
+.appbar-inner { display: flex; justify-content: space-between; align-items: center; }
+.brand-logo { height: 28px; object-fit: contain; }
+.icon-bell img { width: 24px; }
+
+.title-area { padding: 16px 20px; }
+.title-area h1 { font-family: 'Rasa', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #777; }
+
+/* TABS */
+.tabs { display: flex; padding: 0 20px; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; }
+.tab {
+  flex: 1; padding: 10px; font-size: 14px; font-weight: 600;
+  border-radius: 30px; border: none; cursor: pointer;
+  background: #f0f0f0; color: #666; transition: 0.2s;
 }
-/* FORCE header to participate in normal document flow (NOT fixed/sticky) */
-header.appbar,
-.appbar {
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-  transform: none !important;
-  width: auto !important;
-  z-index: 100 !important; /* boleh tetap, tidak mengganggu flow */
+.tab-active { background: #007bff; color: white; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
+
+/* CONTENT */
+.content { padding: 0 20px; flex: 1; }
+.hidden { display: none !important; }
+
+/* CARD */
+.order-card {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: transform 0.1s;
 }
 
-/* if there is inner wrapper that was fixed, reset it too */
-.appbar-inner {
-  position: static !important;
-  transform: none !important;
+.card-main {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  align-items: flex-start;
 }
 
-/* ensure content below header doesn't assume fixed header spacing */
-.title-area, .content, main, .page {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-/* Note di halaman Order Details */
-.order-payment-note {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: #fff8e5;
-  border-radius: 8px;
-  border: 1px solid #ffe0a3;
-  font-size: 12px;
-  color: #8a6d3b;
-  line-height: 1.4;
-}
-
-.order-payment-note .status {
-  margin-top: 4px;
-  color: #c0392b;
-  font-weight: 600;
-}
-/* Address block di dalam Order Details */
-.order-address-block {
-  margin-top: 14px;
-  padding: 10px 12px;
-  background: #ffffff;
-  border-radius: 10px;
+/* FIX GAMBAR (Tidak Zoom) */
+.thumb {
+  width: 80px; height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f9f9f9;
   border: 1px solid #eee;
-  font-size: 12px;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.order-info { flex: 1; min-width: 0; }
+.product-title { font-size: 16px; font-weight: 700; margin: 0; color: #222; }
+.more-badge { font-size: 10px; background: #eee; padding: 2px 6px; border-radius: 4px; color: #666; }
+
+.status-row { margin-top: 6px; font-size: 13px; font-weight: 600; }
+.eta { font-weight: 700; color: #000; margin-top: 4px; display: block; }
+
+/* TOMBOL */
+.order-actions { margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
+
+.btn-light {
+  padding: 8px 12px; font-size: 11px; font-weight: 600;
+  border-radius: 8px; border: 1px solid #e0e0e0;
+  background: #f9f9f9; color: #555; cursor: pointer;
+}
+.btn-track {
+  padding: 8px 12px; font-size: 11px; font-weight: 600;
+  border-radius: 8px; border: 1px solid #007bff;
+  background: #007bff; color: white; cursor: pointer;
 }
 
-.order-address-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+/* SUMMARY DETAILS (Hidden by default) */
+.card-details {
+  display: none;
+  padding: 0 16px 16px;
+  background: #fafafa;
+  border-top: 1px dashed #eee;
 }
+.card-details.open { display: block; }
 
-.order-address-head .title {
-  font-weight: 700;
+.status-box {
+  background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32;
+  padding: 10px; border-radius: 8px; font-size: 12px; margin: 16px 0;
 }
+.detail-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: #555; }
+.detail-total { font-weight: 700; color: #000; margin-top: 10px; border-top: 1px solid #eee; padding-top: 8px; }
 
-.order-address-body .line-combined {
-  font-weight: 600;
-  margin-bottom: 4px;
+/* NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; width: 100%; max-width: 480px;
+  background: #fff; border-top: 1px solid #eee;
+  display: flex; justify-content: space-around; padding: 12px 0; z-index: 100;
 }
-
-.order-address-body .line-phone {
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.order-address-body .line-address {
-  line-height: 1.4;
-}
-.order-payment-note {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: #fff8e5;
-  border-radius: 8px;
-  border: 1px solid #ffe0a3;
-  font-size: 12px;
-  color: #8a6d3b;
-  line-height: 1.4;
-}
-
-.order-payment-note .status {
-  margin-top: 4px;
-  font-weight: 600;
-}
-
-/* pending (default) */
-.order-payment-note.pending {
-  background: #fff8e5;
-  border-color: #ffe0a3;
-  color: #8a6d3b;
-}
-.order-payment-note.pending .status {
-  color: #c0392b;
-}
-
-/* PAID */
-.order-payment-note.paid {
-  background: #e9f9ed;
-  border-color: #b8e6c4;
-  color: #1b6b34;
-}
-.order-payment-note.paid .status {
-  color: #1b6b34;
-}
-
-/* REJECTED */
-.order-payment-note.rejected {
-  background: #fdecec;
-  border-color: #f5b7b1;
-  color: #a93226;
-}
-.order-payment-note.rejected .status {
-  color: #a93226;
-}
-
-.order-payment-note .track-hint {
-  margin-top: 4px;
-  font-size: 11px;
-  color: #2e7d32;
-}
-/* titik merah di atas lonceng */
-.icon-bell {
-  position: absolute; /* sudah ada, gapapa double */
-}
-
-/* bulatan merah kecil */
-.icon-bell-badge {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ff3b30;        /* merah iOS style */
-  box-shadow: 0 0 0 2px #fff; /* biar ada border putih tipis */
-  display: none;              /* default: disembunyiin */
-}
-
-/* kalau ada notif, JS akan kasih class ini */
-.icon-bell-badge.show {
-  display: block;
-}
+.nav-btn { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #999; font-size: 10px; }
+.nav-btn img { width: 24px; height: 24px; margin-bottom: 4px; opacity: 0.5; }
+.nav-btn.active { color: #000; font-weight: 700; }
+.nav-btn.active img { opacity: 1; }

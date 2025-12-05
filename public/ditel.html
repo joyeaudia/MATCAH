@@ -1,126 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Order Details — Verent</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Rasa:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="ditel.css" /> 
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Order Details</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ditel.css" />
 </head>
 <body>
-  <div class="screen">
+
+  <div class="mobile-wrapper">
     
-    <header class="appbar" role="banner">
-      <div class="appbar-inner">
-        <div class="brand-center">
-          <img src="logos/lg3.png" alt="Verent" class="brand-logo">
+    <header class="detail-header">
+      <div class="header-nav">
+        <button class="back-btn" onclick="window.location.href='order.html'">←</button>
+        <div class="header-title">
+          <h1>Order Details</h1>
+          <p>Lacak paket Anda dari proses hingga pengiriman.</p>
         </div>
-        <button id="back-btn" class="back-btn" aria-label="Back">
-          &lt;= Back
-        </button>
-        <button class="icon-bell" aria-label="Notifications" type="button">
-          <img src="acs/lcng.png" alt="Notifications">
-        </button>
+        <a href="notif.html" style="text-decoration:none;">
+            <img src="acs/lcng.png" style="width:24px; opacity:0.9; filter: brightness(0) invert(1);"> 
+        </a>
+      </div>
+      
+      <div class="status-container">
+        <div id="status-pill" class="status-pill">Checking...</div>
       </div>
     </header>
 
-    <main class="content">
+    <main class="detail-content">
       
-      <section class="card order-card">
-        <h2>Order #<span id="detail-order-id">Loading...</span></h2>
-        
-        <span class="status-pill" id="detail-status-pill">Loading Status...</span>
-        
-        <div class="meta">
-            <div style="display:flex;justify-content:space-between;">
-                <span class="muted">Date:</span>
-                <span id="detail-order-date">-</span>
-            </div>
-            <div style="display:flex;justify-content:space-between; margin-top:4px;">
-                <span class="muted">Scheduled:</span>
-                <span id="detail-scheduled">-</span>
-            </div>
+      <section class="card">
+        <div class="info-row">
+          <span class="label">Order ID</span>
+          <span class="val" id="order-id">...</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Order Date</span>
+          <span class="val" id="order-date">...</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Scheduled</span>
+          <span class="val" id="order-sched">...</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Payment Method</span>
+          <span class="val" id="payment-method">QRIS / Transfer</span>
         </div>
 
-        <div class="order-items" id="detail-items">
-           <div class="skeleton-line" style="width: 80%; height: 20px; margin-bottom: 10px; background:#eee;"></div>
-           <div class="skeleton-line" style="width: 100%; height: 20px; margin-bottom: 10px; background:#eee;"></div>
+        <div class="address-box">
+            <div class="addr-label">Shipping Address</div>
+            <div class="addr-text" id="address-text">
+                Loading address...
+            </div>
+        </div>
+        </section>
+
+      <section class="card">
+        <h3>Order Items</h3>
+        <div id="order-items-list">
+            </div>
+      </section>
+
+      <section class="card">
+        <h3>Summary</h3>
+        <div class="summary-row">
+          <span>Product Subtotal</span>
+          <span id="summ-subtotal">Rp 0</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping Fee</span>
+          <span id="summ-ship">Rp 0</span>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-row total">
+          <span>Order Total</span>
+          <span id="summ-total">Rp 0</span>
         </div>
       </section>
 
-      <section class="card detail-shipping-card">
-        <h3>Alamat Kirim</h3>
-        <p id="detail-address" style="color: #555; line-height: 1.5; white-space: pre-line;">
-          Loading address...
-        </p>
-      </section>
-
-      <section class="card detail-summary-card">
-        <h3>Ringkasan</h3>
-        <div id="detail-summary">
-            <div style="display:flex;justify-content:space-between; margin-bottom:5px;">
-                <span>Loading...</span><span>Rp 0</span>
-            </div>
-        </div>
-
-        <div class="payment-note" id="payment-note" style="margin-top: 15px; padding-top:10px; border-top:1px dashed #ddd;">
-          Metode: <span id="detail-payment-method" style="font-weight:bold;">-</span>
-        </div>
-      </section>
-
-      <aside class="card detail-tracking-card">
-        <h3>Tracking</h3>
-        <table class="tracking">
-            <tr>
-                <td>Order Placed</td>
-                <td id="track-placed" class="status done">Completed</td>
-            </tr>
-            <tr>
-                <td>Payment</td>
-                <td id="track-payment" class="status not">Pending</td>
-            </tr>
-            <tr>
-                <td>Processing</td>
-                <td id="track-prep" class="status not">...</td>
-            </tr>
-            <tr>
-                <td>Delivery</td>
-                <td id="track-out" class="status not">...</td>
-            </tr>
-             <tr>
-                <td>Delivered</td>
-                <td id="track-delivered" class="status not">...</td>
-            </tr>
-        </table>
-
-        <div class="help-links" style="margin-top:20px;">
-          <div style="display:flex; gap:10px;">
-             <button id="detail-cancel-btn" class="cancel" style="display:none;">Cancel Order</button>
-             <a href="#" id="wa-btn" class="wa-btn" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="24" height="24"> Chat Admin
-             </a>
+      <section class="card">
+        <h3>Delivery Tracking</h3>
+        <div id="track-steps">
+          <div class="step" id="step-placed">
+            <span class="step-name">Order Placed</span>
+            <span class="step-status">Pending</span>
+          </div>
+          <div class="step" id="step-payment">
+            <span class="step-name">Payment Confirmed</span>
+            <span class="step-status">Pending</span>
+          </div>
+          <div class="step" id="step-process">
+            <span class="step-name">Preparing Order</span>
+            <span class="step-status">Pending</span>
+          </div>
+          <div class="step" id="step-delivery">
+            <span class="step-name">Out for Delivery</span>
+            <span class="step-status">Pending</span>
+          </div>
+          <div class="step" id="step-done">
+            <span class="step-name">Delivered</span>
+            <span class="step-status">Pending</span>
           </div>
         </div>
-      </aside>
+      </section>
+
+      <div class="help-card">
+        <div class="help-text">
+          <strong>Butuh bantuan?</strong>
+          <p>Tim kami siap membantu. Klik ikon WhatsApp untuk chat langsung.</p>
+        </div>
+        <a href="https://wa.me/628118281416" target="_blank">
+          <img src="acs/wa.png" class="wa-icon" alt="Chat WA">
+        </a>
+      </div>
+
+      <div style="text-align:center; margin-top:30px; font-size:10px; color:#ccc; padding-bottom:20px;">
+        &copy; Verent App
+      </div>
+
     </main>
-
-    <footer class="mobile-footer">
-      <div class="small-note">© Verent</div>
-    </footer>
   </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; 
 
-    try {
-      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (e) {
-      console.error("Supabase init failed:", e);
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Jalankan init setelah session siap
+    async function init() {
+        await window.supabase.auth.getSession();
+        // Panggil fungsi render di ditel.js
+        if(window.startDetailPage) {
+            window.startDetailPage();
+        } else {
+            // Retry jika script ditel.js belum ke-load sempurna
+            setTimeout(() => { if(window.startDetailPage) window.startDetailPage(); }, 500);
+        }
     }
+    init();
   </script>
-
-  <script src="ditel.js"></script> 
+  
+  <script src="ditel.js"></script>
 </body>
 </html>

@@ -1,60 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shipping Address</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Add Address</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rasa:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="alamat.css">
 </head>
 <body>
-    <div class="page-container">
-        <div class="card">
-            <h2>Shipping Address</h2>
-            <form>
 
+    <div class="mobile-wrapper">
+        
+        <div class="top-bar">
+            <a href="javascript:history.back()" class="back-btn">←</a>
+            <div class="page-title">Add New Address</div>
+        </div>
 
-<!-- muncul hanya jika pilih Other -->
-<input 
-    type="text" 
-    id="custom-label" 
-    placeholder="Custom Label (optional)" 
-    style="display:none; margin-top:6px;"
->
-<label for="address-label">Address Label</label>
-<input type="text" id="address-label" placeholder="Contoh: Home / Office / Ashley's" />
-
-                <label for="recipient-name">Recipient Name</label>
-                <input type="text" id="recipient-name" placeholder="Enter Recipient Name" required />
-
-                <label for="phone-number">Phone Number</label>
-                <input type="tel" id="phone-number" placeholder="08xxxxxxxx" required />
-
-                <label for="street-address">Street Address</label>
-                <input type="text" id="street-address" placeholder="Enter Street Address" required />
-
-                <label for="city">City</label>
-                <select id="city" required>
-                    <option value="" disabled selected>Select City</option>
-                    <option value="jakarta">Jakarta</option>
-                    <option value="bandung">Bandung</option>
-                </select>
-
-                <label for="province">Province / State</label>
-                <select id="province" required>
-                    <option value="" disabled selected>Select Province/State</option>
-                    <option value="jawa-barat">Jawa Barat</option>
-                    <option value="dki-jakarta">DKI Jakarta</option>
-                    <option value="dki-jakarta">Tanggerang</option>
-                </select>
+        <div class="form-container">
+            <form id="address-form">
                 
-                <label for="postal-code">Postal Code</label>
-                <input type="text" id="postal-code" placeholder="Enter Postal Code" required />
+                <div class="form-group">
+                    <label>Label Alamat</label>
+                    <input type="text" id="address-label" placeholder="Contoh: Rumah, Kantor, Kost" required />
+                </div>
 
-                <button type="submit" class="create-btn save-btn">Save Address</button>
+                <div class="form-group">
+                    <label>Nama Penerima</label>
+                    <input type="text" id="recipient-name" placeholder="Nama Lengkap" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Nomor Telepon</label>
+                    <input type="tel" id="phone-number" placeholder="08xxxxxxxxxx" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Alamat Lengkap</label>
+                    <input type="text" id="street-address" placeholder="Jalan, No. Rumah, RT/RW" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Kota / Kabupaten</label>
+                    <input type="text" id="city" placeholder="Masukkan Kota" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Provinsi</label>
+                    <select id="province" required>
+                        <option value="" disabled selected>Pilih Provinsi</option>
+                        <option value="Jawa Barat">Jawa Barat</option>
+                        <option value="DKI Jakarta">DKI Jakarta</option>
+                        <option value="Banten">Banten</option>
+                        <option value="Jawa Tengah">Jawa Tengah</option>
+                        <option value="Jawa Timur">Jawa Timur</option>
+                        <option value="Bali">Bali</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Kode Pos</label>
+                    <input type="tel" id="postal-code" placeholder="xxxxx" required />
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="default-address">
+                    <label for="default-address">Jadikan Alamat Utama</label>
+                </div>
+
+                <button type="submit" class="save-btn" id="btn-save">Simpan Alamat</button>
             </form>
         </div>
     </div>
-     <script src="alamat.js"></script>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+        window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    </script>
+
+    <script src="alamat.js"></script>
+
 </body>
 </html>

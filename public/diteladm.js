@@ -1,338 +1,144 @@
-// diteladm.js — Admin Delivery Tracking untuk satu order (pakai orders_<uid> seperti ordadm.js)
+// diteladm.js — Admin Detail Logic (Final)
+
 (function () {
   'use strict';
 
-  // ===== HELPER DASAR =====
-  function safeParseRaw(key, fallbackJson) {
-    try {
-      return JSON.parse(localStorage.getItem(key) || (fallbackJson ?? '[]'));
-    } catch (e) {
-      return fallbackJson ? JSON.parse(fallbackJson) : [];
-    }
-  }
+  const id = (s) => document.getElementById(s);
+  const fmt = (n) => 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n) || 0);
+  
+  // Ambil ID dari URL
+  const getOrderId = () => new URLSearchParams(window.location.search).get('id');
 
-  function fmt(n) {
-    return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n || 0));
-  }
-
-  function escapeHtml(s) {
-    return String(s || '').replace(/[&<>"']/g, c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[c]));
-  }
-
-  function getOrderIdFromURL() {
-    const sp = new URLSearchParams(window.location.search);
-    return sp.get('id');
-  }
-
-  // ===== AMBIL SEMUA ORDERS_... (SEMUA USER) =====
-  function loadAllOrders() {
-    const all = [];
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key || !key.startsWith('orders_')) continue; // cuma bucket orders_<uid>
-
-      const uid = key.slice('orders_'.length) || 'guest';
-
-      let list;
-      try {
-        list = JSON.parse(localStorage.getItem(key) || '[]');
-      } catch (e) {
-        list = [];
-      }
-
-      if (!Array.isArray(list)) continue;
-
-      list.forEach(o => {
-        if (!o) return;
-        // pastikan punya userId supaya bisa disimpan balik
-        if (!o.userId) o.userId = uid;
-        all.push(o);
-      });
+  // --- 1. LOAD ORDER DARI SUPABASE ---
+  async function initAdminDetail() {
+    const orderId = getOrderId();
+    if (!orderId) {
+        alert("Order ID missing");
+        window.location.href = "ordadm.html";
+        return;
     }
 
-    return all;
-  }
+    const supabase = window.supabase;
+    if (!supabase) return; 
 
-  // simpan 1 order balik ke bucket user yg benar
-  function saveSingleOrderForUser(order) {
-    const uid = order.userId || 'guest';
-    const key = 'orders_' + uid;
+    // Cek format ID (UUID vs Client ID)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+    
+    let query = supabase.from('orders').select('*, order_items(*)');
 
-    let list;
-    try {
-      list = JSON.parse(localStorage.getItem(key) || '[]');
-    } catch (e) {
-      list = [];
-    }
-    if (!Array.isArray(list)) list = [];
-
-    const idx = list.findIndex(o => String(o.id) === String(order.id));
-    if (idx !== -1) {
-      list[idx] = order;
+    if (isUUID) {
+        query = query.eq('id', orderId);
     } else {
-      list.unshift(order);
+        query = query.eq('client_order_id', orderId);
     }
 
-    try {
-      localStorage.setItem(key, JSON.stringify(list));
-    } catch (e) {
-      console.error('Failed to save order bucket for user', uid, e);
+    const { data: order, error } = await query.maybeSingle();
+
+    if (error || !order) {
+        alert("Order tidak ditemukan.");
+        window.location.href = "ordadm.html";
+        return;
     }
+
+    renderForm(order);
   }
 
-  // ===== ADDRESS PER USER UNTUK ADMIN (sama konsep ordadm.js) =====
-  function loadAddressesForUser(uid) {
-    const keyUser = 'savedAddresses_v1_' + (uid || 'guest');
-    let arr = [];
-    try {
-      arr = JSON.parse(localStorage.getItem(keyUser) || '[]');
-      if (!Array.isArray(arr)) arr = [];
-    } catch (e) {
-      arr = [];
-    }
+  // --- 2. RENDER FORM ---
+  function renderForm(order) {
+    id('adm-order-id').textContent = order.client_order_id || order.id.substr(0,8);
+    id('adm-order-date').textContent = new Date(order.created_at).toLocaleString('id-ID');
+    id('adm-status-text').textContent = order.status;
+    id('adm-payment-badge').textContent = order.payment_status;
+    id('adm-total-badge').textContent = fmt(order.total);
 
-    // fallback ke key lama kalau kosong
-    if (!arr.length) {
-      arr = safeParseRaw('savedAddresses_v1', '[]');
-    }
-    return arr;
-  }
+    // Items
+    const itemsContainer = id('adm-items');
+    itemsContainer.innerHTML = '';
+    (order.order_items || []).forEach(it => {
+        itemsContainer.innerHTML += `
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+                <span>${it.qty}x ${it.title || it.name}</span>
+                <span>${fmt((it.unit_price || 0) * it.qty)}</span>
+            </div>`;
+    });
 
-  // ===== SUMMARY DI ATAS FORM =====
-  function fillSummary(order) {
-    const idEl         = document.getElementById('adm-order-id');
-    const dateEl       = document.getElementById('adm-order-date');
-    const statusText   = document.getElementById('adm-status-text');
-    const paymentBadge = document.getElementById('adm-payment-badge');
-    const totalBadge   = document.getElementById('adm-total-badge');
-    const itemsEl      = document.getElementById('adm-items');
-    const addrBlock    = document.getElementById('adm-address-block');
+    // Address / Meta Recipient
+    const addrBlock = id('adm-address-block');
+    const recName = order.recipient_name || (order.meta?.recipient_name) || '-';
+    const recAddr = order.recipient_address || (order.meta?.recipient_address) || (order.meta?.recipient) || '-';
 
-    if (idEl) idEl.textContent = order.id || '(no id)';
+    addrBlock.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:4px">Penerima: ${recName}</div>
+        <div style="font-size:13px; color:#555;">${recAddr.replace(/\n/g, '<br>')}</div>
+    `;
 
-    if (dateEl) {
-      const d = order.createdAt ? new Date(order.createdAt) : new Date();
-      dateEl.textContent = d.toLocaleString();
-    }
-
-    const st = (order.status || 'active').toLowerCase();
-    if (statusText) statusText.textContent = st;
-
-    const paySt = (order.paymentStatus || 'pending').toLowerCase();
-    if (paymentBadge) {
-      paymentBadge.textContent = 'Payment: ' + paySt;
-      paymentBadge.classList.remove('paid', 'rejected');
-      if (paySt === 'paid') paymentBadge.classList.add('paid');
-      if (paySt === 'rejected') paymentBadge.classList.add('rejected');
-    }
-
-    if (totalBadge) {
-      totalBadge.textContent = 'Total: ' + fmt(order.total || 0);
-    }
-
-    if (itemsEl) {
-      const first = order.items && order.items[0];
-      const moreCount = Math.max(0, (order.items || []).length - 1);
-      itemsEl.innerHTML = first
-        ? `<div>${escapeHtml(first.title || 'No title')}${moreCount > 0 ? ' +' + moreCount + ' more' : ''}</div>`
-        : '<div>No items</div>';
-    }
-
-    // ===== ADDRESS: pakai alamat user ini (savedAddresses_v1_<uid>) =====
-    const savedAddrs = loadAddressesForUser(order.userId);
-    let chosenAddr = null;
-    if (Array.isArray(savedAddrs) && savedAddrs.length) {
-      chosenAddr = savedAddrs.find(a => a && a.isDefault) || savedAddrs[0];
-    }
-
-    if (addrBlock && chosenAddr) {
-      const label   = escapeHtml(chosenAddr.label || '');
-      const name    = escapeHtml(chosenAddr.name || '');
-      const phone   = escapeHtml(chosenAddr.phone || '');
-      const addrHtml= escapeHtml(chosenAddr.address || '').replace(/\n/g, '<br>');
-      const combined= `${label ? label : ''}${label && name ? ' - ' : ''}${name ? name : ''}`;
-
-      addrBlock.innerHTML = `
-        <div class="admin-address-title">Address</div>
-        <div class="admin-address-main">
-          <div>${combined}</div>
-          ${phone ? `<div>${phone}</div>` : ''}
-          <div>${addrHtml}</div>
-        </div>
-      `;
-    }
-  }
-
-  // ===== INIT FORM TRACKING =====
-  function initForm(order) {
-    const scheduledInput = document.getElementById('adm-scheduled');
-    const shipFeeInput   = document.getElementById('adm-ship-fee');
-
-    const tPlaced     = document.getElementById('t-placed');
-    const tPayment    = document.getElementById('t-payment');
-    const tWait       = document.getElementById('t-wait');
-    const tPrep       = document.getElementById('t-prep');
-    const tOutActive  = document.getElementById('t-out-active');
-    const tOutInfo    = document.getElementById('t-out-info');
-
-    const tr    = order.tracking || {};
-    const paySt = (order.paymentStatus || 'pending').toLowerCase();
-
-    // scheduled delivery
-    if (scheduledInput) {
-      if (order.scheduledDelivery) {
-        // kalau string format YYYY-MM-DD, langsung pakai
-        scheduledInput.value = order.scheduledDelivery;
-      } else if (order.scheduledAt) {
+    // Form inputs
+    if (order.scheduled_at) {
         try {
-          const d = new Date(order.scheduledAt);
-          scheduledInput.value = d.toISOString().slice(0, 10);
-        } catch (e) {}
-      }
+            id('adm-scheduled').value = new Date(order.scheduled_at).toISOString().split('T')[0];
+        } catch(e) {}
     }
+    id('adm-ship-fee').value = order.shipping_fee || 0;
+    id('status-select').value = order.status || 'active';
+    id('payment-select').value = order.payment_status || 'pending';
 
-    // shipping fee
-    if (shipFeeInput) {
-      shipFeeInput.value = order.shippingFee != null ? order.shippingFee : '';
-    }
-
-    // toggles
-    if (tPlaced)  tPlaced.checked  = tr.placed != null ? !!tr.placed : true;
-    if (tPayment) tPayment.checked = tr.paymentConfirmed != null ? !!tr.paymentConfirmed : (paySt === 'paid');
-    if (tWait)    tWait.checked    = !!tr.waitingForSchedule;
-    if (tPrep)    tPrep.checked    = !!tr.preparingOrder;
-
-    const out = tr.outForDelivery || {};
-    if (tOutActive) tOutActive.checked = !!out.active;
-    if (tOutInfo)   tOutInfo.value     = out.info || '';
+    // Simpan ID untuk update
+    window.currentDbId = order.id;
   }
 
-  // ===== ACTION BUTTONS =====
-  function bindActions(order, allOrders) {
-    const scheduledInput = document.getElementById('adm-scheduled');
-    const shipFeeInput   = document.getElementById('adm-ship-fee');
+  // --- 3. SAVE BIASA (Tombol Abu) ---
+  const btnSave = id('btn-save');
+  if (btnSave) {
+      btnSave.addEventListener('click', async () => {
+          const dbId = window.currentDbId;
+          const supabase = window.supabase;
+          
+          btnSave.textContent = "Saving...";
+          const { error } = await supabase.from('orders').update({
+                status: id('status-select').value,
+                payment_status: id('payment-select').value,
+                shipping_fee: Number(id('adm-ship-fee').value),
+                scheduled_at: id('adm-scheduled').value || null
+            }).eq('id', dbId);
 
-    const tPlaced     = document.getElementById('t-placed');
-    const tPayment    = document.getElementById('t-payment');
-    const tWait       = document.getElementById('t-wait');
-    const tPrep       = document.getElementById('t-prep');
-    const tOutActive  = document.getElementById('t-out-active');
-    const tOutInfo    = document.getElementById('t-out-info');
+          btnSave.textContent = "Save Changes";
 
-    const btnSave      = document.getElementById('btn-save-tracking');
-    const btnDelivered = document.getElementById('btn-mark-delivered');
-    const btnBack      = document.getElementById('btn-back-list');
-
-    // ==== SAVE TRACKING ====
-    if (btnSave) {
-      btnSave.addEventListener('click', function () {
-        // update basic fields
-        if (scheduledInput && scheduledInput.value) {
-          order.scheduledDelivery = scheduledInput.value;
-        } else {
-          delete order.scheduledDelivery;
-        }
-
-        if (shipFeeInput) {
-          const fee = Number(shipFeeInput.value || 0);
-          if (!isNaN(fee)) {
-            order.shippingFee = fee;
-            // kalau punya subtotal, update total
-            if (typeof order.subtotal === 'number') {
-              order.total = order.subtotal + fee;
-            } else if (Array.isArray(order.items)) {
-              const productSubtotal = order.items.reduce((sum, it) => {
-                const q   = Number(it.qty || 1);
-                const up  = Number(it.unitPrice || it.price || 0);
-                const sub = it.subtotal != null ? Number(it.subtotal) : (q * up);
-                return sum + (isNaN(sub) ? 0 : sub);
-              }, 0);
-              order.total = productSubtotal + fee;
-            }
+          if (error) alert("Gagal: " + error.message);
+          else {
+              alert("Berhasil update!");
+              location.reload();
           }
-        }
-
-        // update tracking object
-        order.tracking = {
-          placed: tPlaced ? !!tPlaced.checked : true,
-          paymentConfirmed: tPayment ? !!tPayment.checked : false,
-          waitingForSchedule: tWait ? !!tWait.checked : false,
-          preparingOrder: tPrep ? !!tPrep.checked : false,
-          outForDelivery: {
-            active: tOutActive ? !!tOutActive.checked : false,
-            info: tOutInfo ? tOutInfo.value.trim() : ''
-          },
-          // kalau sebelumnya sudah delivered, jangan dihapus di sini
-          delivered: order.tracking && order.tracking.delivered ? true : false
-        };
-
-        // update juga array yang lagi dipegang (opsional, lebih ke konsistensi in-memory)
-        const idx = allOrders.findIndex(o => String(o.id) === String(order.id));
-        if (idx !== -1) {
-          allOrders[idx] = order;
-        }
-
-        // SIMPAN KE BUCKET USER YANG BENAR
-        saveSingleOrderForUser(order);
-
-        alert('Perubahan tracking & delivery berhasil disimpan.');
       });
-    }
-
-    // ==== MARK AS DELIVERED ====
-    if (btnDelivered) {
-      btnDelivered.addEventListener('click', function () {
-        const ok = confirm('Tandai order ini sebagai DELIVERED dan pindahkan ke History user?');
-        if (!ok) return;
-
-        order.status = 'delivered';
-        order.tracking = Object.assign({}, order.tracking || {}, {
-          delivered: true,
-          deliveredAt: Date.now()
-        });
-
-        const idx = allOrders.findIndex(o => String(o.id) === String(order.id));
-        if (idx !== -1) {
-          allOrders[idx] = order;
-        }
-
-        // SIMPAN KE BUCKET USER
-        saveSingleOrderForUser(order);
-
-        alert('Order telah ditandai sebagai DELIVERED.');
-        window.location.href = 'ordadm.html';
-      });
-    }
-
-    if (btnBack) {
-      btnBack.addEventListener('click', function () {
-        window.location.href = 'ordadm.html';
-      });
-    }
   }
 
-  // ===== INIT =====
-  document.addEventListener('DOMContentLoaded', function () {
-    const id   = getOrderIdFromURL();
-    const all  = loadAllOrders();
-    const order= (all || []).find(o => String(o.id) === String(id));
+  // --- 4. MARK COMPLETE (Tombol Hijau - FIX REDIRECT) ---
+  const btnDone = id('btn-mark-done');
+  if (btnDone) {
+      btnDone.addEventListener('click', async () => {
+          if (!confirm("Tandai Delivered & Paid? Order akan pindah ke History.")) return;
+          
+          const dbId = window.currentDbId;
+          const supabase = window.supabase;
 
-    if (!order) {
-      alert('Order tidak ditemukan.');
-      window.location.href = 'ordadm.html';
-      return;
-    }
+          btnDone.textContent = "Processing...";
+          btnDone.disabled = true;
 
-    fillSummary(order);
-    initForm(order);
-    bindActions(order, all);
-  });
+          const { error } = await supabase.from('orders').update({
+                status: 'delivered', 
+                payment_status: 'paid'
+            }).eq('id', dbId);
 
+          if (error) {
+              alert("Error: " + error.message);
+              btnDone.textContent = "Mark Complete & Paid";
+              btnDone.disabled = false;
+          } else {
+              alert("Order selesai! Kembali ke list...");
+              // REDIRECT KE LIST (KARENA ORDADM.JS SUDAH FIX, DIA AKAN MUNCUL DI HISTORY)
+              window.location.href = 'ordadm.html';
+          }
+      });
+  }
+
+  setTimeout(initAdminDetail, 500); // Delay dikit biar script supabase load
 })();

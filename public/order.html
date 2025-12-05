@@ -1,108 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Your Orders — Mobile</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Your Orders</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="order.css">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="appbar" role="banner">
+
+  <div class="mobile-wrapper">
+    
+    <header class="appbar">
       <div class="appbar-inner">
         <div class="brand-center">
-          <img src="logos/lg3.png" alt="logo" class="brand-logo">
+          <img src="logos/lg3.png" alt="Mazi" class="brand-logo">
         </div>
-
-        <a class="icon-bell" aria-label="Notifications" href="notif.html">
-          <span class="icon-bell-badge" id="notif-badge"></span>
-          <img src="acs/lcng.png" alt="Notifications">
+        <a class="icon-bell" href="notif.html">
+          <img src="acs/lcng.png" alt="Notif">
         </a>
       </div>
-
-      <div class="appbar-underline" aria-hidden="true"></div>
     </header>
 
     <section class="title-area">
       <h1>Your Orders</h1>
-      <p class="subtitle">Track, manage, and revisit your orders.</p>
+      <p class="subtitle">Lacak dan kelola pesanan Anda.</p>
     </section>
 
-    <nav class="tabs" role="tablist" aria-label="Order tabs">
-      <button role="tab" class="tab tab-active" data-tab="active" aria-selected="true">Active</button>
-      <button role="tab" class="tab" data-tab="scheduled" aria-selected="false">Scheduled</button>
-      <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
+    <nav class="tabs">
+      <button class="tab tab-active" data-tab="active">Active</button>
+      <button class="tab" data-tab="scheduled">Scheduled</button>
+      <button class="tab" data-tab="history">History</button>
     </nav>
 
     <main class="content">
-      <section id="tab-active" class="tab-panel">
-        <div id="order-list-active"></div> 
-      </section>
+      <div id="loading" style="text-align:center; padding:40px; color:#999;">
+        Memuat data...
+      </div>
 
-      <section id="tab-scheduled" class="tab-panel hidden">
-        <div id="order-list-scheduled"></div>
-      </section>
-
-      <section id="tab-history" class="tab-panel hidden" role="tabpanel">
-        <div id="order-list-history"></div>
-      </section>
-
-      <div class="spacer"></div>
-
-      <section class="support">
-        <h4>Customer Support</h4>
-        <p class="support-note">Need help? <br/>Chat with our support team for order assistance or product info.</p>
-        <a 
-          href="https://wa.me/628118281416?text=halo%20cici%20maziii%20mau%20tanya"
-          class="whatsapp-btn"
-          target="_blank"
-          rel="noopener"
-        >
-          <img src="acs/wa.png" alt="WA" class="wa-icon">
-          Chat Support
-        </a>
-      </section>
+      <div id="tab-active" class="tab-panel"></div> 
+      <div id="tab-scheduled" class="tab-panel hidden"></div>
+      <div id="tab-history" class="tab-panel hidden"></div>
     </main>
 
-    <nav class="bottom-nav" aria-label="Main navigation">
-      <a href="order.html" class="nav-btn active" aria-label="Orders">
-        <img src="acs/order.png" alt=""><span>Orders</span>
-      </a>
-
-      <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-        <img src="acs/Bag.png" alt=""><span>Bag</span>
-      </a>
-
-      <a href="home.html" class="nav-btn" aria-current="page" aria-label="Home">
-        <img src="acs/home.png" alt=""><span>Home</span>
-      </a>
-
-      <a href="cari.html" class="nav-btn" aria-label="Search">
-        <img src="acs/src.png" alt=""><span>Search</span>
-      </a>
-
-      <a href="prl.html" class="nav-btn" aria-label="Profile">
-        <img src="acs/prf.png" alt=""><span>Profile</span>
-      </a>
+    <nav class="bottom-nav">
+      <a href="order.html" class="nav-btn active"><img src="acs/order.png"><span>Orders</span></a>
+      <a href="bagfr.html" class="nav-btn"><img src="acs/Bag.png"><span>Bag</span></a>
+      <a href="home.html" class="nav-btn"><img src="acs/home.png"><span>Home</span></a>
+      <a href="cari.html" class="nav-btn"><img src="acs/src.png"><span>Search</span></a>
+      <a href="prl.html" class="nav-btn"><img src="acs/prf.png"><span>Profile</span></a>
     </nav>
+
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // Konfigurasi Supabase
-    const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; 
-    try {
-      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (error) {
-      console.error('Supabase init failed:', error);
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+    
+    // Init Supabase Global
+    if (!window.supabase) {
+      window.supabase = createClient(supabaseUrl, supabaseAnonKey);
     }
   </script>
-
+  
   <script src="order.js"></script>
-
 </body>
 </html>

@@ -1,206 +1,160 @@
-:root {
-    --bg: #F3F2F7;
-    --text: #111;
-    --sub: #7b7b7b;
-    --accent: #beb8c9;
-}
+/* prl.css - Fixed Layout & Navbar */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
 body {
-    height: 100%;
-    margin: 0;
-    background: #fff;
-    font-family: 'Rasa', serif;
+    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+    color: #111;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 20px 0;
+    min-height: 100vh;
 }
 
+/* WADAH UTAMA (Mobile Wrapper) */
+.mobile-wrapper {
+    width: 100%;
+    max-width: 480px; /* Lebar standar mobile */
+    background-color: #ffffff;
+    min-height: 100vh;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 80px; /* Ruang untuk navbar */
+}
 
-/* FRAME DEVICE */
+/* Profile Content */
+.profile-container {
+    padding: 40px 24px;
+    flex: 1;
+}
 
-.device {
-    width: 412px;
-    height: auto;
-    min-height: 800px;
-    background: var(--bg);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+/* Header */
+.profile-header {
+    margin-bottom: 30px;
     position: relative;
 }
-
-
-/* PROFILE SECTION */
-
-.content {
-    padding: 40px 24px 120px;
-    box-sizing: border-box;
-}
-
-.profile-section {
-    position: relative;
-    text-align: left;
-}
-
-
-/* Nama besar */
 
 .profile-name {
-    font-size: 50px;
-    /* gede banget */
+    font-family: 'Rasa', serif;
     font-weight: 700;
-    margin: 0;
-    color: var(--text);
+    font-size: 42px;
+    line-height: 1.1;
+    color: #000;
+    margin-bottom: 4px;
 }
 
-.member {
-    color: var(--sub);
-    font-size: 15px;
+.member-since {
+    color: #888;
+    font-size: 13px;
     margin-top: 4px;
 }
 
-
-/* Edit link di samping nama */
-
+/* Edit Link */
+.edit-link {
+    color: #007AFF;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
 .top-edit {
     position: absolute;
-    top: 0;
+    top: 5px;
     right: 0;
-    color: #007AFF;
-    font-size: 15px;
-    text-decoration: none;
 }
 
-
-/* Info rows */
-
-.info-list {
+/* Info Section */
+.info-section {
     margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    border-top: 1px dashed #eee;
+    padding-top: 20px;
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .label {
     font-weight: 700;
-    color: var(--text);
+    font-size: 15px;
+    color: #000;
+    width: 130px;
 }
 
 .value {
-    color: var(--text);
+    text-align: right;
+    font-size: 15px;
+    color: #333;
+    flex: 1;
+    word-break: break-all;
 }
 
-
-/* Address */
-
-.address-section {
-    margin-top: 20px;
+/* Address Box */
+.address-box {
+    margin-top: 30px;
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 12px;
 }
-
-.address-head {
+.address-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    margin-bottom: 8px;
 }
-
-.address-text {
-    margin-top: 8px;
+.address-content {
+    font-size: 14px;
     line-height: 1.5;
-    color: var(--text);
+    color: #444;
+}
+.addr-name { font-weight: 700; color: #000; }
+
+/* Logout */
+.logout-area {
+    text-align: center;
+    margin-top: 50px;
+}
+.logout-btn {
+    font-weight: 600;
+    color: #d32f2f;
+    text-decoration: none;
     font-size: 15px;
 }
 
-
-/* Logout */
-
-.logout {
-    margin-top: 40px;
-    text-align: center;
-}
-
-.logout-btn {
-    color: var(--text);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-
-/* BOTTOM NAV */
-
+/* --- NAVBAR FIX (Sama persis dengan Order/Bag) --- */
 .bottom-nav {
     position: fixed;
+    bottom: 0;
+    /* Trik agar menempel di wrapper tengah, bukan layar penuh */
+    width: 100%; 
+    max-width: 480px; 
     left: 50%;
     transform: translateX(-50%);
-    bottom: 0;
-    width: 100%;
-    max-width: 412px;
-    background: #fff;
-    border-radius: 14px 14px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-    padding: 10px 14px;
+    
+    background: #ffffff;
+    border-top: 1px solid #eee;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
 }
 
 .nav-btn {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 11px;
-    color: #777;
     text-decoration: none;
+    color: #999;
+    font-size: 10px;
+    flex: 1;
 }
-
-.nav-btn img {
-    width: 22px;
-    height: 22px;
-    margin-bottom: 3px;
-    filter: grayscale(1) opacity(0.6);
+.nav-btn img { 
+    width: 24px; 
+    height: 24px; 
+    margin-bottom: 4px; 
+    opacity: 0.5; 
 }
-
-.nav-btn.active {
-    color: #000;
-    font-weight: 700;
-}
-
-.nav-btn.active img {
-    filter: none;
-}
-
-/* EDIT LINK DI BAGIAN ADDRESS */
-.address-section .address-head a {
-    color: #007AFF;           /* biru seperti Edit di atas */
-    text-decoration: none;    /* hilangkan underline */
-    font-weight: 600;
-    font-size: 15px;
-}
-
-/* styling untuk profile address combined line */
-.prl-address-line-combined {
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: 0.1px;
-}
-
-.prl-address-phone {
-  color: var(--sub);
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-
-.prl-address-body {
-  color: var(--text);
-  line-height: 1.5;
-  font-size: 15px;
-}
+.nav-btn.active { color: #000; font-weight: 700; }
+.nav-btn.active img { opacity: 1; }

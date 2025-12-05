@@ -1,139 +1,125 @@
-/* styles.css */
+/* alamat.css - Mobile Centered Layout */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    margin: 1;
-    padding: 1;
-    background-color: #f0eded; /* Latar belakang abu-abu gelap dari desain */
-    font-family: 'Rasa';
-    
+    background-color: #eef2f6;
+    font-family: 'Rasa', serif;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh; 
+    min-height: 100vh;
 }
 
-/* Kontainer Luar Putih */
-.page-container {
-    width: 360px; 
-    height: auto;
-    background-color: #FFFFFF;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    /* 🔑 Perubahan 1: Hapus padding vertikal di sini */
-    padding: 0; 
-}
-
-/* Hapus selector .page-container ENTIRELY */
-
-.card {
-    /* 🔑 UBAH: Ambil lebar dari page-container */
-    width: 370px; 
-    
-    background-color: #FFFFFF; 
-    border-radius: 20px;
-    /* Atur padding yang sebenarnya di sini */
-    padding: 15px 30px; 
-    
-    /* Gunakan satu bayangan yang baik */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
-    
-    /* margin: 0 auto tidak diperlukan lagi karena body flexbox sudah memusatkan */
-    margin: 0; 
-    
-    /* Pastikan konten tidak melebihi batas */
-    box-sizing: border-box; 
-}
-
-.card h2 {
-    text-align: center;
-    margin-bottom: 10px; /* Sedikit jarak di bawah judul */
-    font-size: 25px;
-    font-weight: 600; /* Ganti 0 menjadi 600 agar tulisan tebal */
-}
-
-form label {
-    font-size: 14px;
-    font-weight: 500;
-    display: block;
-    margin-top: 8px;
-    margin-bottom: 4px; /* 🔽 dikurangi biar lebih rapat */
-}
-
-form input, form select {
+/* WADAH UTAMA (Mobile Wrapper) */
+.mobile-wrapper {
     width: 100%;
-    padding: 10px 8px; 
-    border: 1px solid #e0e0e0; 
-    background-color: #f7f7f7; 
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'Rasa', sans-serif; 
-    box-sizing: border-box; 
-    appearance: none;
-    margin-bottom: 5px; /* 🔽 tambahkan ini biar ada jarak kecil antar field */
+    max-width: 480px;
+    background-color: #ffffff;
+    min-height: 100vh;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Gaya khusus untuk Dropdown (Panah kustom) */
-form select {
-    /* SVG untuk panah ke bawah (agar terlihat konsisten di semua browser) */
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23333333" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px; 
-}
-
-/* Gaya Checkbox Row */
-.default-address-row {
+/* Header */
+.top-bar {
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fff;
+}
+.back-btn {
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+    margin-right: 15px;
+    line-height: 1;
+}
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+}
+
+/* Form Container */
+.form-container {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Input Group */
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+input[type="text"], 
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* Checkbox Default */
+.checkbox-group {
+    display: flex;
+    align-items: center;
     margin-top: 20px;
-    margin-bottom: 20px;
+    gap: 10px;
 }
-
-.default-address-row label {
-    margin: 0; 
-    font-size: 13px;
+.checkbox-group input {
+    width: 18px;
+    height: 18px;
+    accent-color: #007bff;
+}
+.checkbox-group label {
+    margin: 0;
     font-weight: 400;
+    color: #333;
 }
 
-.custom-checkbox {
-    width: 15px;
-    height: 15px;
-    cursor: pointer;
-}
-
+/* Button */
 .save-btn {
-    /* 🔑 UBAH: Kurangi lebar dari 100% menjadi misalnya 70% */
-    width: 50%; 
-    
-    /* 🔑 PENTING: Gunakan display: block dan margin: 0 auto untuk memusatkan */
-    margin: 20px auto 0 auto; /* Tambahkan margin atas untuk memberi jarak */
-    display: block; /* Harus block agar margin auto berfungsi */
-    
-    padding: 13px;
+    width: 100%;
+    padding: 14px;
     background-color: #007bff;
     color: white;
     font-size: 16px;
     font-weight: 600;
     border: none;
-    border-radius: 9px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.3s;
+    margin-top: 30px;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
 }
-
 .save-btn:hover {
-    filter: brightness(110%);
+    background-color: #0056b3;
 }
-
-
-/* tambahkan di bagian form input style */
-#address-label {
-    width: 100%;
-    padding: 10px 8px;
-    border: 1px solid #e0e0e0;
-    background-color: #f7f7f7;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 8px;
-    box-sizing: border-box;
+.save-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }

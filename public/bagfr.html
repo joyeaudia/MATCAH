@@ -9,176 +9,97 @@
 </head>
 <body>
   <div class="app">
-<header class="appbar" role="banner">
-  <div class="appbar-inner">
-    <div class="left-slot">
-      <!-- optional: back button or empty space -->
-    </div>
-
-    <div class="brand-center" aria-hidden="true" style="pointer-events:none;">
-      <img src="logos/lg3.png" alt="Lumière logo" class="logo by-logo" />
-    </div>
-
-    <button type="button" class="icon-bell" aria-label="Notifications">
-      <img src="acs/lcng.png" alt="Bell">
-    </button>
-  </div>
-</header>
-
+    <header class="appbar" role="banner">
+      <div class="appbar-inner">
+        <div class="left-slot"></div>
+        <div class="brand-center">
+          <img src="logos/lg3.png" alt="Lumière logo" class="logo by-logo" />
+        </div>
+        <button type="button" class="icon-bell" aria-label="Notifications">
+          <img src="acs/lcng.png" alt="Bell">
+        </button>
+      </div>
+    </header>
 
     <main class="container" role="main">
-      <!-- Page title + checkout -->
       <div class="page-head">
         <h1 class="page-title">Bag</h1>
         <button type="button" class="btn btn-primary checkout">Checkout</button>
       </div>
 
-      <!-- Cart list -->
-      <section class="cart-list" aria-label="Cart items">
-        <!-- Item -->
-        <article class="cart-item" role="article" data-price="150000">
-          <img class="thumb" src="thumb-placeholder.png" alt="Polkadot Top">
-          <div class="item-body">
-            <div class="item-head">
-              <div>
-                <div class="item-title">Polkadot Top</div>
-                <div class="item-meta">Affiliate Astore · Rp 150.000</div>
-              </div>
-              <!-- remove button uses PNG icon -->
-              <button type="button" class="remove" aria-label="Remove item">
-                <img src="icon-trash.png" alt="Remove" width="18" height="18">
-              </button>
-            </div>
-
-            <!-- quantity controls + subtotal aligned right -->
-            <div class="item-controls">
-              <div class="qty-control" aria-label="Quantity">
-                <button type="button" class="qty-btn qty-decrease" aria-label="Decrease quantity">−</button>
-                <span class="qty" aria-live="polite">1</span>
-                <button type="button" class="qty-btn qty-increase" aria-label="Increase quantity">+</button>
-              </div>
-
-              <div class="item-sub">Subtotal: <span class="item-sub-value">Rp 150.000</span></div>
-            </div>
-          </div>
-        </article>
-
-        <!-- duplicate item for demo -->
-        <article class="cart-item" role="article" data-price="150000">
-          <img class="thumb" src="thumb-placeholder.png" alt="Polkadot Top">
-          <div class="item-body">
-            <div class="item-head">
-              <div>
-                <div class="item-title">Polkadot Top</div>
-                <div class="item-meta">Affiliate Astore · Rp 150.000</div>
-              </div>
-              <button type="button" class="remove" aria-label="Remove item">
-                <img src="icon-trash.png" alt="Remove" width="18" height="18">
-              </button>
-            </div>
-
-            <div class="item-controls">
-              <div class="qty-control" aria-label="Quantity">
-                <button type="button" class="qty-btn qty-decrease" aria-label="Decrease quantity">−</button>
-                <span class="qty" aria-live="polite">1</span>
-                <button type="button" class="qty-btn qty-increase" aria-label="Increase quantity">+</button>
-              </div>
-
-              <div class="item-sub">Subtotal: <span class="item-sub-value">Rp 150.000</span></div>
-            </div>
-          </div>
-        </article>
+      <section class="cart-list" id="bag-items">
+        <div class="empty-bag" style="display:none">
+            <img src="acs/bag1.png" style="width:120px;opacity:0.6">
+            <p style="text-align:center;color:#999">Memuat keranjang...</p>
+        </div>
       </section>
 
-      <!-- WhatsApp help card -->
-      <aside class="help-card" role="region" aria-label="Help">
+      <aside class="help-card">
         <div class="help-left">
           <strong>Still have questions?</strong>
-          <p>Our team would love to assist you. Tap the WhatsApp icon to connect with us personally</p>
+          <p>Tap the WhatsApp icon to connect with us personally</p>
         </div>
-<a class="whatsapp" 
-   href="https://wa.me/628118281416" 
-   target="_blank" 
-   rel="noopener noreferrer">
-  <img src="acs/wa.png" alt="WhatsApp">
-</a>
-
+        <a class="whatsapp" href="https://wa.me/628118281416" target="_blank">
+          <img src="acs/wa.png" alt="WhatsApp">
+        </a>
       </aside>
 
-      <!-- GIFT (update HTML: tambahkan radio container di kanan) -->
-      <section class="gift-card" aria-label="Gift option">
+      <section class="gift-card">
         <div class="gift-left">
           <h3 class="gift-title">This order is a gift?</h3>
-          <p class="gift-desc">We'll wrap it with love and care — includes a free gift message you can make it extra personal</p>
+          <p class="gift-desc">We'll wrap it with love — includes a free gift message.</p>
         </div>
         <div class="gift-right">
-          <button type="button" class="gift-toggle" aria-pressed="false" aria-label="Toggle gift option"></button>
+          <button type="button" class="gift-toggle" aria-pressed="false"></button>
         </div>
       </section>
 
-      <!-- SUMMARY (Subtotal row + note) -->
-      <section class="summary-card" aria-label="Summary">
+      <section class="summary-card">
         <div class="summary-row">
           <div class="summary-label">Subtotal</div>
-          <div class="summary-value">Rp 0</div>
+          <div class="summary-value" id="bag-total">Rp 0</div>
         </div>
         <div class="summary-note">
-          This price excludes shipping fee. Shipping will be calculated at checkout.
+          Shipping fee will be calculated at checkout.
         </div>
       </section>
 
-      <!-- Liked by you -->
       <section class="liked">
-<!-- Liked by you -->
-<!-- Liked by you -->
-<section class="liked" aria-labelledby="liked-title">
-  <h3 id="liked-title">Liked by you</h3>
-
-  <!-- container where JS will render liked cards -->
-  <div class="liked-row" id="liked-row" role="list" aria-live="polite"></div>
-
-  <noscript>
-    <div style="color:#888;margin-top:8px">Aktifkan JavaScript untuk melihat daftar liked items.</div>
-  </noscript>
-</section>
-
-
+        <h3>Liked by you</h3>
+        <div class="liked-row" id="liked-row"></div>
+      </section>
     </main>
 
-    <!-- Bottom navigation -->
-  <!-- BOTTOM NAV -->
-<nav class="bottom-nav" aria-label="Main navigation">
-  <a href="order.html" class="nav-btn" aria-label="Orders">
-    <img src="acs/order.png" alt=""><span>Orders</span>
-  </a>
-
-  <a href="bagfr.html" class="nav-btn active" aria-label="Bag">
-    <img src="acs/Bag.png" alt=""><span>Bag</span>
-  </a>
-
-  <a href="Home.html" class="nav-btn" aria-current="page" aria-label="Home">
-    <img src="acs/home.png" alt=""><span>Home</span>
-  </a>
-
-  <a href="cari.html" class="nav-btn" aria-label="Search">
-    <img src="acs/src.png" alt=""><span>Search</span>
-  </a>
-
-  <a href="prl.html" class="nav-btn" aria-label="Profile">
-    <img src="acs/prf.png" alt=""><span>Profile</span>
-  </a>
-</nav>
+    <nav class="bottom-nav">
+      <a href="order.html" class="nav-btn"><img src="acs/order.png"><span>Orders</span></a>
+      <a href="bagfr.html" class="nav-btn active"><img src="acs/Bag.png"><span>Bag</span></a>
+      <a href="home.html" class="nav-btn"><img src="acs/home.png"><span>Home</span></a>
+      <a href="cari.html" class="nav-btn"><img src="acs/src.png"><span>Search</span></a>
+      <a href="prl.html" class="nav-btn"><img src="acs/prf.png"><span>Profile</span></a>
+    </nav>
   </div>
 
   <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-  const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
-  const supabaseAnonKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
-
-  window.supabase = createClient(supabaseUrl, supabaseAnonKey);
-</script>
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+  
+    if (!window.supabase) {
+      window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    }
+  
+    async function initBag() {
+        console.log("Sync session...");
+        await window.supabase.auth.getSession();
+        
+        if (typeof window.renderLikedCards === 'function') {
+            window.renderLikedCards();
+        } else {
+            setTimeout(() => { if(window.renderLikedCards) window.renderLikedCards(); }, 1000);
+        }
+    }
+    initBag();
+  </script>
 
   <script src="bagfr.js"></script>
 </body>

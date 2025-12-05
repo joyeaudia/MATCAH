@@ -1,137 +1,104 @@
-// alamat.js — save address per user (per email) + max 5 alamat
+// alamat.js — Fix Save Logic & Redirect
+
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
+    const form = document.getElementById("address-form");
+    const btnSave = document.getElementById("btn-save");
 
-  // 🔑 ambil email user yang lagi login
-  const rawEmail = (localStorage.getItem("maziEmail") || "").toLowerCase().trim();
-  if (!rawEmail) {
-    // kalau ga ada email berarti belum login → lempar ke sign in
-    // PATH OK: sesama folder page/
-    window.location.href = "singin.html";
-    return;
-  }
+    // Helper: Ambil parameter URL
+    const getQueryParam = (param) => new URLSearchParams(window.location.search).get(param);
 
-  const BASE_KEY   = "savedAddresses_v1";
-  const USER_KEY   = BASE_KEY + "_" + rawEmail;  // key per user
-  const LEGACY_KEY = BASE_KEY;                   // key lama global
-  const MAX_ADDR   = 5; // max alamat per akun
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-  function safeParse(raw) {
-    try {
-      return JSON.parse(raw || "[]");
-    } catch (err) {
-      return [];
-    }
-  }
+        // 1. Ambil Data
+        const label = document.getElementById("address-label").value.trim() || "Alamat";
+        const name = document.getElementById("recipient-name").value.trim();
+        const phone = document.getElementById("phone-number").value.trim();
+        const street = document.getElementById("street-address").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const province = document.getElementById("province").value;
+        const postal = document.getElementById("postal-code").value.trim();
+        const isDefault = document.getElementById("default-address").checked;
 
-  // 🔹 baca daftar alamat untuk user saat ini
-  function readStore() {
-    // 1) coba key per user
-    let arr = safeParse(localStorage.getItem(USER_KEY));
-    if (Array.isArray(arr) && arr.length) return arr;
+        if (!name || !phone || !street) {
+            alert("Mohon lengkapi Nama, Telepon, dan Alamat Jalan.");
+            return;
+        }
 
-    // 2) kalau kosong, coba key lama global → migrasi
-    const legacy = safeParse(localStorage.getItem(LEGACY_KEY));
-    if (Array.isArray(legacy) && legacy.length) {
-      try {
-        localStorage.setItem(USER_KEY, JSON.stringify(legacy));
-        // optional: hapus key lama biar ga dipakai lagi
-        localStorage.removeItem(LEGACY_KEY);
-      } catch (e) {
-        console.warn("Failed migrating legacy addresses", e);
-      }
-      return legacy;
-    }
+        const fullAddress = `${street}\n${city}, ${province} ${postal}`;
 
-    // 3) bener2 ga ada data
-    return [];
-  }
+        // UI Loading
+        const originalText = btnSave.textContent;
+        btnSave.textContent = "Menyimpan ke Cloud...";
+        btnSave.disabled = true;
 
-  function writeStore(arr) {
-    try {
-      localStorage.setItem(USER_KEY, JSON.stringify(arr || []));
-    } catch (e) {
-      console.error("Failed to write addresses to localStorage", e);
-    }
-  }
+        try {
+            const supabase = window.supabase;
+            if (!supabase) throw new Error("Supabase error. Refresh halaman.");
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+            // 2. Cek User
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert("Sesi habis. Silakan login kembali.");
+                window.location.href = "singin.html";
+                return;
+            }
 
-    // read inputs (ID sesuai alamat.html kamu)
-    const label = (document.getElementById("address-label")?.value || "").trim() || "Other";
-    const name = (document.getElementById("recipient-name")?.value || "").trim();
-    const phone = (document.getElementById("phone-number")?.value || "").trim();
-    const street = (document.getElementById("street-address")?.value || "").trim();
-    const city = (document.getElementById("city")?.value || "").trim();
-    const province = (document.getElementById("province")?.value || "").trim();
-    const postal = (document.getElementById("postal-code")?.value || "").trim();
+            // 3. Cek Limit 5 Alamat
+            const { count, error: countErr } = await supabase
+                .from('user_addresses')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id);
 
-    // safe read of checkbox (may be missing in markup)
-    const defaultEl = document.getElementById("default-address");
-    let isDefault = !!(defaultEl && defaultEl.checked);
+            if (!countErr && count >= 5) {
+                alert("Kuota penuh (Max 5). Hapus alamat lama di halaman Saved Address.");
+                btnSave.textContent = originalText;
+                btnSave.disabled = false;
+                return;
+            }
 
-    // basic validation (name + phone + street)
-    if (!name || !phone || !street) {
-      alert("Isi Nama, No. Telepon, dan Alamat jalan minimal.");
-      return;
-    }
+            // 4. Logic Default
+            // Kalau ini alamat pertama, otomatis jadi default
+            const finalDefault = isDefault || (count === 0);
 
-    const addressText = `${street}\n${city}${city && province ? ", " : ""}${province}\n${postal}`;
+            if (finalDefault && count > 0) {
+                // Reset default lain jika user memilih default baru
+                await supabase
+                    .from('user_addresses')
+                    .update({ is_default: false })
+                    .eq('user_id', user.id);
+            }
 
-    const list = readStore();
+            // 5. INSERT
+            const { error: insertErr } = await supabase
+                .from('user_addresses')
+                .insert({
+                    user_id: user.id,
+                    label: label,
+                    name: name,
+                    phone: phone,
+                    address: fullAddress,
+                    is_default: finalDefault
+                });
 
-    // enforce max count
-    if (list.length >= MAX_ADDR) {
-      alert(`Maksimum ${MAX_ADDR} alamat saja. Hapus salah satu jika ingin menambah lagi.`);
-      return;
-    }
+            if (insertErr) throw insertErr;
 
-    // kalau belum ada sama sekali, paksa alamat pertama jadi default
-    if (list.length === 0) {
-      isDefault = true;
-    }
+            // 6. SUKSES -> REDIRECT
+            // Kita beri delay dikit biar database sync
+            setTimeout(() => {
+                const from = getQueryParam("from");
+                if (from === "checkout") {
+                    window.location.href = "drafamt.html?from=checkout";
+                } else {
+                    window.location.href = "drafamt.html";
+                }
+            }, 500);
 
-    const newAddress = {
-      label,
-      name,
-      phone,
-      address: addressText,
-      isDefault: !!isDefault
-    };
-
-    // kalau set default, unset default alamat lain
-    if (newAddress.isDefault) {
-      list.forEach(a => { a.isDefault = false; });
-    }
-
-    list.push(newAddress);
-    writeStore(list);
-
-    // bentuk teks siap tempel ke Recipient (nama + telp + alamat lengkap)
-    const recipientText = `${name}\n${phone}\n${addressText}`;
-
-    // cek parameter ?from=
-    const params = new URLSearchParams(window.location.search);
-    const from = params.get("from");
-    const fromCheckout = from === "checkout";
-    const fromSignup   = from === "signup";
-
-    // PATH OK: Semua redirect ke halaman yang ada di folder yang sama (page/)
-    if (fromCheckout) {
-      // dipanggil dari halaman checkout → balik ke checkout
-      try {
-        localStorage.setItem("checkoutRecipientDraft_v1", recipientText);
-      } catch (e) {}
-      window.location.href = "cekout.html";
-
-    } else if (fromSignup) {
-      // user baru selesai isi alamat pertama → ke Home
-      window.location.href = "Home.html";
-
-    } else {
-      // flow biasa (misal dari drafamt / profile) → balik ke list alamat
-      window.location.href = "drafamt.html";
-    }
-  });
+        } catch (err) {
+            console.error("Save Error:", err);
+            alert("Gagal menyimpan: " + err.message);
+            btnSave.textContent = originalText;
+            btnSave.disabled = false;
+        }
+    });
 });

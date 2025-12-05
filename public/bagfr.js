@@ -1,177 +1,121 @@
-// bagfr.js — cart renderer + likes (Supabase) + checkout (localStorage per user, mirror orders ke Supabase)
+// bagfr.js — Cart Renderer + Likes + Gift Toggle + Checkout Bridge
 
 (function () {
   "use strict";
 
-  // ----- helpers -----
+  // =========================================
+  // 1. HELPER FUNCTIONS
+  // =========================================
   const q = (s) => document.querySelector(s);
   const qa = (s) => Array.from(document.querySelectorAll(s));
 
   function formatRupiah(num) {
-    num = Math.round(Number(num) || 0);
-    return (
-      "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    );
+    return "Rp " + Math.round(Number(num) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
   function escapeHtml(s) {
     return String(s || "").replace(/[&<>"']/g, (c) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      }[c])
-    );
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
-  // 🔑 ambil UID user yang sedang login
   function getCurrentUID() {
     return localStorage.getItem("maziUID") || "guest";
   }
 
-  // 🔑 bikin key per user, misalnya cart_local-123, orders_admin-fixed, likes_guest
   function userKey(base) {
-    const uid = getCurrentUID();
-    return `${base}_${uid}`;
+    return `${base}_${getCurrentUID()}`;
   }
 
-  // ----- storage: CART (per user) -----
+  // =========================================
+  // 2. CART LOGIC (Load, Save, Render)
+  // =========================================
   function loadCart() {
     try {
-      const key = userKey("cart");
-      return JSON.parse(localStorage.getItem(key) || "[]");
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveCart(cart) {
-    const key = userKey("cart");
-    localStorage.setItem(key, JSON.stringify(cart || []));
+      return JSON.parse(localStorage.getItem(userKey("cart")) || "[]");
+    } catch { return []; }
   }
 
-  // ----- render cart -----
+  function saveCart(cart) {
+    localStorage.setItem(userKey("cart"), JSON.stringify(cart || []));
+  }
+
   function renderCart() {
     const items = loadCart();
-    const container =
-      document.getElementById("bag-items") ||
-      document.querySelector(".cart-list") ||
-      document.querySelector(".bag-items");
+    const container = document.getElementById("bag-items") || document.querySelector(".cart-list");
     if (!container) return;
 
     container.innerHTML = "";
 
+    // State Kosong
     if (!items.length) {
       container.innerHTML = `
-        <div class="empty-bag">
-          <img src="acs/bag1.png" alt="Keranjang kosong">
+        <div class="empty-bag" style="text-align:center; padding:40px;">
+          <img src="acs/bag1.png" alt="Keranjang kosong" style="width:120px; opacity:0.6; margin-bottom:15px;">
+          <p style="color:#999; font-size:14px;">Keranjang Anda kosong.<br>Yuk tambah sesuatu yang manis!</p>
         </div>
       `;
-      updateSummaryTotal();
+      updateSummaryTotal(0);
       return;
     }
 
     let total = 0;
+
     items.forEach((it, idx) => {
-      const unit = Number(it.unitPrice || it.price || 0);
+      const unit = Number(it.unitPrice || 0);
       const qty = Number(it.qty || 1);
-      const subtotal = Number(
-        it.subtotal || unit * qty || unit * qty
-      );
+      const subtotal = unit * qty;
       total += subtotal;
 
-      const addonsHtml =
-        it.addons && it.addons.length
-          ? it.addons
-              .map((a) => {
-                const rawLabel = String(a.label || "").trim();
-                const hasPriceToken = /\(\s*\+\s*\d+|Rp\b|K\)/i.test(
-                  rawLabel
-                );
-                const labelEscaped = escapeHtml(rawLabel);
-                if (hasPriceToken) {
-                  return `<div class="addon">${labelEscaped}</div>`;
-                } else {
-                  return `<div class="addon">${labelEscaped}${
-                    a.price ? ` (+${formatRupiah(a.price)})` : ""
-                  }</div>`;
-                }
-              })
-              .join("")
-          : "";
+      // Render Addons (Gula, Topping, dll)
+      const addonsHtml = (it.addons || [])
+        .map((a) => `<div class="addon" style="font-size:11px; color:#777; margin-top:2px;">• ${escapeHtml(a.label)}</div>`)
+        .join("");
 
-      const imgSrc = escapeHtml(
-        it.image ||
-          (it.images && it.images[0]) ||
-          "assets/placeholder.png"
-      );
+      const imgSrc = it.image || "assets/placeholder.png";
 
       const html = `
-        <article class="cart-item" data-idx="${idx}" data-price="${unit}">
+        <article class="cart-item" data-idx="${idx}">
           <div class="thumb">
-            <img src="${imgSrc}" alt="${escapeHtml(it.title || "Product")}"
-                 onerror="this.onerror=null;this.src='assets/placeholder.png'">
+            <img src="${imgSrc}" onerror="this.src='assets/placeholder.png'" alt="Product">
           </div>
           <div class="item-body">
             <div class="item-head">
               <div>
-                <div class="item-title">${escapeHtml(
-                  it.title || "Untitled"
-                )}</div>
+                <div class="item-title">${escapeHtml(it.title)}</div>
                 <div class="item-meta">${addonsHtml}</div>
               </div>
-              <button class="remove" title="Hapus item" aria-label="Hapus item" data-idx="${idx}">
+              <button class="remove" data-idx="${idx}" aria-label="Hapus Item">
                 <img src="acs/smph.png" alt="Hapus">
               </button>
             </div>
 
             <div class="item-controls">
               <div class="qty-control">
-                <button class="qty-btn qty-decr" aria-label="Kurangi">-</button>
+                <button class="qty-btn qty-decr">-</button>
                 <span class="qty">${qty}</span>
-                <button class="qty-btn qty-incr" aria-label="Tambah">+</button>
+                <button class="qty-btn qty-incr">+</button>
               </div>
 
               <div class="right-col">
-                <div class="item-sub-value">${formatRupiah(
-                  subtotal
-                )}</div>
+                <div class="item-sub-value">${formatRupiah(subtotal)}</div>
               </div>
             </div>
           </div>
         </article>
       `;
-      const wrapper = document.createElement("div");
-      wrapper.innerHTML = html.trim();
-      container.appendChild(wrapper.firstElementChild);
+      
+      container.insertAdjacentHTML('beforeend', html);
     });
 
     updateSummaryTotal(total);
   }
 
-  // ----- update totals -----
-  function updateSummaryTotal(precalculated) {
-    let total = Number(precalculated || 0);
-    if (!precalculated) {
-      const items = loadCart();
-      total = items.reduce(
-        (s, it) =>
-          s +
-          (Number(it.subtotal) ||
-            Number(it.unitPrice || it.price || 0) *
-              Number(it.qty || 1)),
-        0
-      );
-    }
-    const summaryEl =
-      document.querySelector(".summary-value") ||
-      document.getElementById("bag-total") ||
-      document.querySelector(".bag-total");
-    if (summaryEl) summaryEl.textContent = formatRupiah(total);
+  function updateSummaryTotal(val) {
+    const el = document.querySelector(".summary-value") || document.getElementById("bag-total");
+    if (el) el.textContent = formatRupiah(val || 0);
   }
 
-  // ----- event delegation: qty, remove (cart) -----
+  // --- Event Listener Cart (Qty & Remove) ---
   document.addEventListener("click", function (e) {
     const itemEl = e.target.closest(".cart-item");
     if (!itemEl) return;
@@ -179,520 +123,186 @@
     const idx = Number(itemEl.dataset.idx);
     let cart = loadCart();
 
+    // Tambah Qty
     if (e.target.closest(".qty-incr")) {
-      cart[idx].qty =
-        Number(cart[idx].qty || 1) + 1;
-      cart[idx].subtotal =
-        Number(cart[idx].unitPrice || cart[idx].price || 0) *
-        cart[idx].qty;
-      saveCart(cart);
-      renderCart();
-      return;
-    }
-
-    if (e.target.closest(".qty-decr")) {
-      cart[idx].qty = Math.max(
-        1,
-        Number(cart[idx].qty || 1) - 1
-      );
-      cart[idx].subtotal =
-        Number(cart[idx].unitPrice || cart[idx].price || 0) *
-        cart[idx].qty;
-      saveCart(cart);
-      renderCart();
-      return;
-    }
-
-    if (e.target.closest(".remove")) {
-      cart.splice(idx, 1);
-      saveCart(cart);
-      renderCart();
-      return;
+      cart[idx].qty++;
+      saveCart(cart); renderCart();
+    } 
+    // Kurang Qty
+    else if (e.target.closest(".qty-decr")) {
+      cart[idx].qty = Math.max(1, cart[idx].qty - 1);
+      saveCart(cart); renderCart();
+    } 
+    // Hapus Item
+    else if (e.target.closest(".remove")) {
+      if(confirm("Hapus item ini dari keranjang?")) {
+          cart.splice(idx, 1);
+          saveCart(cart); renderCart();
+      }
     }
   });
 
-  // ----- public helper to add item to cart (call this from product page) -----
-  function addToBag(productObj) {
-    if (!productObj || !productObj.id)
-      throw new Error("productObj.id required");
+  // =========================================
+  // 3. GIFT TOGGLE FEATURE (Restored)
+  // =========================================
+  document.addEventListener("click", function (e) {
+    const tg = e.target.closest(".gift-toggle");
+    if (!tg) return;
+
     const cart = loadCart();
-    const sameIdx = cart.findIndex(
-      (i) =>
-        i.id === productObj.id &&
-        JSON.stringify(i.addons || []) ===
-          JSON.stringify(productObj.addons || [])
-    );
-    if (sameIdx >= 0) {
-      cart[sameIdx].qty =
-        Number(cart[sameIdx].qty || 1) +
-        (Number(productObj.qty) || 1);
-      cart[sameIdx].subtotal =
-        Number(
-          cart[sameIdx].unitPrice || cart[sameIdx].price || 0
-        ) * cart[sameIdx].qty;
-    } else {
-      const qty = Number(productObj.qty || 1);
-      const unit = Number(
-        productObj.unitPrice || productObj.price || 0
-      );
-      const item = {
-        id: productObj.id,
-        title: productObj.title || "",
-        unitPrice: unit,
-        qty: qty,
-        subtotal: Number(
-          productObj.subtotal || unit * qty
-        ),
-        image:
-          productObj.image ||
-          (productObj.images && productObj.images[0]) ||
-          "assets/placeholder.png",
-        addons: productObj.addons || [], // array
-        source: productObj.source || "",
-      };
-      cart.push(item);
+    if (!cart.length) {
+      alert("Tambahkan item ke keranjang dulu sebelum memilih Gift.");
+      return;
     }
-    saveCart(cart);
-    renderCart();
-  }
 
-  window.addToBag = addToBag;
-  window.renderCart = renderCart;
-
-  /* -------------------------
-     LIKES (per user) -> SUPABASE
-     ------------------------- */
-
-  const USER_LIKES_TABLE = 'user_likes';
-  const CURRENT_UID = getCurrentUID();
-
-  /**
-   * Mengambil daftar liked items dari Supabase.
-   * Digunakan untuk renderLikedCards().
-   * @returns {Promise<Array>} Daftar item yang disukai.
-   */
-  async function loadLikesFromSupabase() {
-      const supabase = window.supabase;
-      if (!supabase || CURRENT_UID === 'guest') return [];
-
-      try {
-          // Hanya ambil kolom yang dibutuhkan untuk tampilan
-          const { data, error } = await supabase
-              .from(USER_LIKES_TABLE)
-              .select('product_id, title, image, price, created_at')
-              .eq('user_id', CURRENT_UID)
-              .order('created_at', { ascending: false });
-
-          if (error) {
-              console.error("Error loading likes from Supabase:", error);
-              return [];
-          }
-
-          // Format data agar sesuai dengan struktur Local Storage lama
-          return data.map(item => ({
-              id: item.product_id,
-              title: item.title,
-              image: item.image,
-              price: item.price,
-              source: item.product_id.split('-')[0] || 'unknown',
-          }));
-          
-      } catch (e) {
-          console.error("Unexpected error in loadLikesFromSupabase:", e);
-          return [];
-      }
-  }
-
-  /**
-   * Merender liked items ke DOM.
-   */
-  async function renderLikedCards() {
-    // Ganti loadLikes() lokal menjadi loadLikesFromSupabase()
-    const likes = await loadLikesFromSupabase(); 
+    // Toggle Status UI
+    const isPressed = tg.getAttribute("aria-pressed") === "true";
+    tg.setAttribute("aria-pressed", !isPressed);
     
-    const container =
-      document.querySelector(".liked-row") ||
-      document.getElementById("liked-row");
-    if (!container) return;
-    container.innerHTML = "";
+    // Simpan status Gift ke LocalStorage agar cekout.js bisa membacanya nanti
+    // (Fitur ini penting agar data gift terbawa ke checkout)
+    localStorage.setItem("isGiftOrder", !isPressed);
 
-    if (!likes.length) {
-      container.innerHTML =
-        '<div style="color:#888;padding:12px">You have no liked items yet.</div>';
-      return;
-    }
+    // Animasi Kecil
+    tg.animate([
+      { transform: "scale(1)" },
+      { transform: "scale(1.1)" },
+      { transform: "scale(1)" }
+    ], { duration: 200 });
+  });
 
-    likes.forEach((it) => {
-      const id = String(it.id || "");
-      const title = String(it.title || "");
-      const image = String(
-        it.image || "assets/placeholder.png"
-      );
-      const price = Number(it.price || 0);
-      const priceText = price
-        ? "Rp " +
-          new Intl.NumberFormat("id-ID").format(price)
-        : "";
-
-      const article = document.createElement("article");
-      article.className = "like-card";
-      article.setAttribute("role", "listitem");
-      article.setAttribute("data-id", id);
-      article.setAttribute(
-        "data-source",
-        it.source ||
-          (id.includes("dsri-")
-            ? "dsri"
-            : id.includes("drsi-")
-            ? "drsi"
-            : "")
-      );
-      article.innerHTML = `
-        <div class="like-thumb">
-          <img src="${escapeHtml(image)}" alt="${escapeHtml(
-        title
-      )}"
-               onerror="this.onerror=null;this.src='assets/placeholder.png'">
-        </div>
-
-        <div class="like-body">
-          <div class="like-title">${escapeHtml(
-            title
-          )}</div>
-        </div>
-
-        <div class="like-footer">
-          ${
-            priceText
-              ? `<div class="like-price footer-price">${escapeHtml(
-                  priceText
-                )}</div>`
-              : ""
-          }
-          <button class="like-heart" aria-label="Unlike" title="Unlike"
-                  data-id="${escapeHtml(
-                    id
-                  )}" aria-pressed="true">❤</button>
-        </div>
-      `;
-      container.appendChild(article);
-    });
-  }
-
-  // FUNGSI UNLIKE LOKAL SUDAH TIDAK DIPERLUKAN KARENA SUDAH ADA FUNGSI GLOBAL DI DRSI.JS
-  // Tapi kita harus mengirim request DELETE ke Supabase saat tombol ❤ di Bag diklik.
-  document.addEventListener("click", async function (e) {
-    const heart = e.target.closest(".like-heart");
-    if (heart) {
-      e.stopPropagation();
-      const id = heart.dataset.id;
+  // =========================================
+  // 4. LIKES LOGIC (FIX ERROR 400)
+  // =========================================
+  window.renderLikedCards = async function() {
       const supabase = window.supabase;
-
-      if (!id || !supabase) return;
+      if (!supabase) return;
       
-      // Update UI sementara (optimistic update)
-      heart.setAttribute("aria-pressed", "false");
-      heart.classList.remove("like-heart-pressed");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return; // Belum login, diam saja
 
-      try {
-        const { error } = await supabase
-          .from(USER_LIKES_TABLE)
-          .delete()
-          .eq('user_id', CURRENT_UID)
-          .eq('product_id', id);
+      // FIX: Jangan minta 'created_at' agar tidak error 400
+      const { data, error } = await supabase
+          .from('user_likes')
+          .select('product_id, title, image, price') 
+          .eq('user_id', session.user.id);
 
-        if (error) {
-            console.error("Supabase UNLIKE failed:", error.message);
-            // Rollback UI jika gagal
-            heart.setAttribute("aria-pressed", "true");
-            heart.classList.add("like-heart-pressed");
-            alert("Gagal menghapus item dari Liked. Cek koneksi Anda.");
-        }
-        
-      } catch (e) {
-        console.error("Unexpected error during Supabase UNLIKE:", e);
-        alert("Terjadi kesalahan jaringan saat menghapus item.");
+      if (error) {
+          console.error("Gagal load likes:", error);
+          return;
       }
 
-      // Refresh tampilan liked cards dari data Supabase yang sudah terupdate
-      renderLikedCards(); 
-      return;
-    }
-
-    const card = e.target.closest(".like-card");
-    if (card) {
-      let id =
-        card.getAttribute("data-id") ||
-        card.dataset.id ||
-        null;
-      const source = (
-        card.getAttribute("data-source") ||
-        card.dataset.source ||
-        ""
-      )
-        .toLowerCase()
-        .trim() || null;
-
-      if (!id) {
-        alert(
-          "Tidak dapat menemukan id produk untuk kartu ini."
-        );
-        return;
+      const container = document.getElementById("liked-row");
+      if (!container) return;
+      
+      container.innerHTML = "";
+      
+      if (!data || !data.length) {
+          container.innerHTML = '<div style="color:#999;padding:10px;font-size:13px;width:100%;text-align:center;">Belum ada item yang disukai.</div>';
+          return;
       }
 
-      let page = "./drsi.html";
-      if (source === "dsri") page = "./dsri.html";
-      else if (source === "bsri") page = "./bsri.html";
-      else {
-        if (id.startsWith("dsri-")) page = "./dsri.html";
-        else if (id.startsWith("drsi-"))
-          page = "./drsi.html";
+      data.forEach(it => {
+          const priceTxt = it.price ? formatRupiah(it.price) : "";
+          const html = `
+            <article class="like-card" data-id="${it.product_id}">
+                <div class="like-thumb">
+                    <img src="${it.image || 'assets/placeholder.png'}" onerror="this.src='assets/placeholder.png'">
+                </div>
+                <div class="like-body">
+                    <div class="like-title">${escapeHtml(it.title)}</div>
+                </div>
+                <div class="like-footer">
+                    <div class="like-price footer-price">${priceTxt}</div>
+                    <button class="like-heart" data-id="${it.product_id}" aria-pressed="true">❤</button>
+                </div>
+            </article>`;
+          container.insertAdjacentHTML('beforeend', html);
+      });
+  };
+
+  // --- UNLIKE (Hapus Like) ---
+  document.addEventListener("click", async function(e) {
+      const btn = e.target.closest(".like-heart");
+      if (!btn) return;
+      e.stopPropagation();
+
+      const productId = btn.dataset.id;
+      const supabase = window.supabase;
+      
+      // Hapus visual langsung (Optimistic UI)
+      const card = btn.closest(".like-card");
+      if(card) {
+          card.style.opacity = "0";
+          setTimeout(() => card.remove(), 300);
       }
 
-      window.location.assign(
-        `${page}?id=${encodeURIComponent(String(id))}`
-      );
-    }
+      // Hapus di Database
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+          await supabase
+            .from('user_likes')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('product_id', productId);
+      }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    renderCart();
-    renderLikedCards(); // Panggil fungsi async
-  });
-
-  // Listener untuk update dari halaman produk
-  window.addEventListener(
-    "likes:updated",
-    renderLikedCards
-  );
-})(); // end first IIFE
-
-
-// ===== Checkout -> create order & redirect to order.html + WhatsApp (localStorage per user + Supabase mirror) =====
-(function () {
-  "use strict";
-
-  // 🔑 helper UID lagi (scope IIFE kedua)
-  function getCurrentUID() {
-    return localStorage.getItem("maziUID") || "guest";
-  }
-  function userKey(base) {
-    const uid = getCurrentUID();
-    return `${base}_${uid}`;
-  }
-
-  // ID random: 5 huruf (A-Z,a-z) + 4 angka
-  function genOrderId() {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    let part1 = "";
-    for (let i = 0; i < 5; i++) {
-      part1 += letters[Math.floor(Math.random() * letters.length)];
-    }
-    let part2 = "";
-    for (let i = 0; i < 4; i++) {
-      part2 += Math.floor(Math.random() * 10);
-    }
-    return part1 + part2;
-  }
-
-  function loadCartSafe() {
-    try {
-      const key = userKey("cart");
-      return JSON.parse(localStorage.getItem(key) || "[]");
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveOrdersLocally(arr) {
-    try {
-      const key = userKey("orders");
-      localStorage.setItem(key, JSON.stringify(arr || []));
-    } catch (e) {}
-  }
-  function loadOrdersLocal() {
-    try {
-      const key = userKey("orders");
-      return JSON.parse(localStorage.getItem(key) || "[]");
-    } catch (e) {
-      return [];
-    }
-  }
-
-  // build a minimal order object from cart
-  function buildOrderFromCart() {
-    const cart = loadCartSafe();
-    if (!cart.length) return null;
-
-    let total = 0;
-    const items = cart.map((it) => {
-      const unit = Number(it.unitPrice || it.price || 0);
-      const qty = Number(it.qty || 1);
-      const subtotal = Number(it.subtotal || unit * qty || unit * qty);
-      total += subtotal;
-      return {
-        id: it.id,
-        title: it.title,
-        qty: qty,
-        unitPrice: unit,
-        subtotal: subtotal,
-        addons: it.addons || [],
-        image: it.image || (it.images && it.images[0]) || "",
-      };
-    });
-
-    return {
-      id: genOrderId(),
-      createdAt: Date.now(),
-      status: "active",
-      paymentStatus: "pending",
-      total: total,
-      items: items,
-    };
-  }
-
-  // CHECKOUT: simpan order ke localStorage per user + mirror ke Supabase + buka WA + redirect ke Orders
+  // =========================================
+  // 5. CHECKOUT BRIDGE (Pindah ke cekout.html)
+  // =========================================
   document.addEventListener("click", async function (e) {
-    const btn = e.target.closest && e.target.closest(".checkout");
+    const btn = e.target.closest(".checkout"); // Tombol biru "Checkout"
     if (!btn) return;
     e.preventDefault();
 
-    const order = buildOrderFromCart();
-    if (!order) {
-      alert("Keranjang kosong. Tambahkan item dulu sebelum checkout.");
-      return;
+    const cart = loadCart();
+    if (!cart.length) { 
+        alert("Keranjang Anda kosong."); 
+        return; 
     }
 
-    // tempel info user lokal
-    const uid = localStorage.getItem("maziUID") || null;
-    const email = localStorage.getItem("maziEmail") || "";
-    const name = localStorage.getItem("maziName") || "";
+    // Cek Login Sebelum Pindah
+    const supabase = window.supabase;
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+        alert("Silakan login atau daftar akun untuk melanjutkan.");
+        window.location.href = "singin.html";
+        return;
+    }
 
-    order.userId = uid;
-    order.userEmail = email;
-    order.userName = name;
-
-    // 🟢 1) Supabase mirror (jika client tersedia & user login)
-    try {
-      const supabase = window.supabase;
-      if (supabase) {
-        const { data: userData, error: userErr } = await supabase.auth.getUser();
-
-        if (!userErr && userData?.user) {
-          const supaUser = userData.user;
-
-          const { data: insertedOrder, error: orderError } = await supabase
-            .from("orders")
-            .insert({
-              user_id: supaUser.id,
-              client_order_id: order.id,
-              status: "active",
-              is_gift: false,
-              scheduled_at: null,
-              total: order.total,
-              shipping_fee: 0,
-              payment_status: order.paymentStatus,
-              delivery_method: null,
-              notes: null,
-              recipient_name: null,
-              recipient_phone: null,
-              recipient_address: null,
-            })
-            .select("id")
-            .single();
-
-          if (orderError) {
-            console.warn("Supabase orders insert error (bagfr):", orderError);
-          } else if (insertedOrder) {
-            const itemsPayload = order.items.map((item) => ({
-              order_id: insertedOrder.id,
-              product_id: item.id ? String(item.id) : null,
-              title: item.title,
-              qty: item.qty,
-              unit_price: item.unitPrice,
-              subtotal: item.subtotal,
-              image_url: item.image || null,
-              addons_json:
-                item.addons && item.addons.length ? item.addons : null,
-            }));
-            const { error: itemsError } = await supabase
-              .from("order_items")
-              .insert(itemsPayload);
-            if (itemsError) {
-              console.warn(
-                "Supabase order_items insert error (bagfr):",
-                itemsError
-              );
-            }
-          }
-        } else {
-          console.warn(
-            "Supabase getUser error / no user (bagfr), skip remote order save",
-            userErr
-          );
+    // Logic Address Bridge (Sama seperti sebelumnya)
+    // Cek apakah user punya alamat default di DB?
+    let addressToUse = localStorage.getItem('checkoutRecipientDraft_v1');
+    if (!addressToUse) {
+        const { data: addr } = await supabase
+            .from('user_addresses')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('is_default', true)
+            .maybeSingle();
+        
+        if (addr) {
+            addressToUse = `${addr.name}\n${addr.phone}\n${addr.address}`;
+            localStorage.setItem('checkoutRecipientDraft_v1', addressToUse);
         }
-      }
-    } catch (err) {
-      console.warn("Unexpected Supabase error during bag checkout:", err);
     }
 
-    // 🟡 2) save local copy (per user) — ini yang dibaca order.js kita sekarang
-    const localOrders = loadOrdersLocal();
-    localOrders.unshift(order);
-    saveOrdersLocally(localOrders);
-
-    // clear cart (per user)
-    const cartKey = userKey("cart");
-    localStorage.removeItem(cartKey);
-    if (typeof window.renderCart === "function") window.renderCart();
-
-    // WhatsApp
-    const waNumber = "628118281416";
-    const waText = `Halo mimin Mazi, tolong cek ongkir untuk pesanan ku dengan ID ${order.id}.`;
-    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(
-      waText
-    )}`;
-    window.open(waUrl, "_blank");
-
-    // redirect ke orders page
-    window.location.href =
-      "./order.html?order=" + encodeURIComponent(order.id);
+    // Redirect ke Halaman Checkout (Di sana cekout.js yang akan kerja)
+    window.location.href = "cekout.html";
   });
 
-  // GIFT-TOGGLE: hanya boleh kalau cart tidak kosong
-  document.addEventListener("click", function (e) {
-    const tg = e.target.closest && e.target.closest(".gift-toggle");
-    if (!tg) return;
-
-    const cart = loadCartSafe();
-    if (!cart.length) {
-      try {
-        tg.animate(
-          [
-            { transform: "scale(1)" },
-            { transform: "scale(1.04)" },
-            { transform: "scale(1)" },
-          ],
-          { duration: 180 }
-        );
-      } catch (err) {}
-      alert(
-        "Tambahkan dulu minimal 1 item ke Bag sebelum menjadikan pesanan sebagai hadiah 💝"
-      );
-      return;
-    }
-
-    const pressed = tg.getAttribute("aria-pressed") === "true";
-    tg.setAttribute("aria-pressed", pressed ? "false" : "true");
-    try {
-      tg.animate(
-        [
-          { transform: "scale(1)" },
-          { transform: "scale(1.06)" },
-          { transform: "scale(1)" },
-        ],
-        { duration: 180 }
-      );
-    } catch (err) {}
-    window.location.href = "gif.html";
+  // =========================================
+  // 6. INITIALIZATION
+  // =========================================
+  document.addEventListener("DOMContentLoaded", () => {
+      // 1. Render Keranjang dari Local Storage
+      renderCart();
+      
+      // 2. Render Likes (Dipanggil via HTML restoreSession agar token siap)
+      // Tapi kita panggil juga disini sebagai cadangan
+      if(window.supabase) window.renderLikedCards();
   });
-})(); // end checkout IIFE
+
+})();

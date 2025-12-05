@@ -20,6 +20,7 @@
     </header>
 
     <main id="admin-content" class="admin-content">
+      <div id="loading" style="text-align:center; padding:20px; color:#666;">Memuat data dari server...</div>
       <div id="order-list"></div>
     </main>
 
@@ -40,24 +41,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script>
-    // 🔧 KONFIGURASI SUPABASE ADMIN
+    // KONFIGURASI SUPABASE ADMIN (Service Role)
     const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co';
-    
-    // ⚠️ SERVICE ROLE KEY (Kunci Sakti untuk Admin)
-    // Kunci ini memberikan izin penuh untuk membaca & mengubah data tanpa login user.
-    // SAYA SUDAH MEMASUKKAN KUNCI YANG ANDA BERIKAN DI SINI:
     const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDU3MjQ0NCwiZXhwIjoyMDgwMTQ4NDQ0fQ.Del6yhwSj8vQSPFONlvQnzPTLmFFTB-QO31_XJKUHus';
 
-    // Inisialisasi Klien Supabase dan sediakan ke window
     try {
-      // Menggunakan Service Key agar Admin bisa update status order milik user lain
       window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-      console.log("Supabase Admin Client Init OK in ordadm.html");
     } catch (e) {
-      console.error("Supabase Admin init failed in ordadm.html:", e);
+      console.error("Supabase Admin Init Failed", e);
     }
   </script>
 
   <script src="ordadm.js"></script>
+
 </body>
 </html>

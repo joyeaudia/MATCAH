@@ -1,88 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Profile — Verent Florensa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rasa:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="prl.css">
 </head>
-
 <body>
-    <div class="device" role="document" aria-label="mock mobile canvas">
-        <!-- MAIN CONTENT -->
-<!-- prl.html (update main profile section) -->
-<main class="content">
-  <section class="profile-section">
-    <!-- Name split into two lines: first + last -->
-    <h1 class="profile-name">
-      <span id="name-first" class="name-first">Veren</span><br>
-      <span id="name-last" class="name-last">Florensa</span>
-    </h1>
-    <p class="member">Member Since <span id="member-since">2024</span></p>
 
-    <!-- top edit -> goes to edit-profile.html -->
-<!-- top edit -> goes to edit-profile.html -->
-<a href="edt.html" id="btn-edit-profile" class="edit-link top-edit">Edit</a>
+    <div class="mobile-wrapper">
+        <main class="profile-container">
+            <div class="profile-card">
+                
+                <div class="profile-header">
+                    <a href="edt.html" class="edit-link top-edit">Edit</a>
+                    <h1 id="full-name" class="profile-name">Loading...</h1>
+                    <p class="member-since">Member Since <span id="member-since">2025</span></p>
+                </div>
 
-<div class="info-list">
-  <div class="info-row">
-    <div class="label">Email</div>
-    <div id="email-val" class="value">verentflorensa@gmail.com</div>
-  </div>
-  <div class="info-row">
-    <div class="label">Phone Number</div>
-    <div id="phone-val" class="value">08118281416</div>
-  </div>
+                <div class="info-section">
+                    <div class="info-row">
+                        <span class="label">Email</span>
+                        <span id="email-val" class="value">...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Phone Number</span>
+                        <span id="phone-val" class="value">-</span>
+                    </div>
+                </div>
 
+                <div class="address-box">
+                    <div class="address-header">
+                        <span class="label">Address</span>
+                        <a href="drafamt.html" class="edit-link">Edit</a>
+                    </div>
+                    <div id="address-text" class="address-content">
+                        Syncing address...
+                    </div>
+                </div>
 
+                <div class="logout-area">
+                    <a href="#" id="btn-logout" class="logout-btn">Log Out</a>
+                </div>
 
-    <div class="address-section">
-      <div class="address-head">
-        <div class="label">Address</div>
-        <!-- address edit -> goes to address.html -->
-        <a href="drafamt.html" id="btn-edit-address" class="edit-link small">Edit</a>
-      </div>
-      <p id="address-text" class="address-text">
-        Green Lake City cluster Europe,<br> Ketapang, Cipondoh.<br> Tangerang, Banten 15147
-      </p>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="order.html" class="nav-btn"><img src="acs/order.png"><span>Orders</span></a>
+            <a href="bagfr.html" class="nav-btn"><img src="acs/Bag.png"><span>Bag</span></a>
+            <a href="Home.html" class="nav-btn"><img src="acs/home.png"><span>Home</span></a>
+            <a href="cari.html" class="nav-btn"><img src="acs/src.png"><span>Search</span></a>
+            <a href="prl.html" class="nav-btn active"><img src="acs/prf.png"><span>Profile</span></a>
+        </nav>
     </div>
 
-  <div class="logout">
-  <a href="Index.html" class="logout-btn">Log Out</a>
-</div>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
 
-  </section>
-</main>
+        window.supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-<!-- include script at end of body -->
-<script src="prl.js"></script>
+        // 1. SYNC & RENDER (Panggil fungsi global dari prl.js)
+        async function init() {
+            await window.supabase.auth.getSession();
+            if(window.loadProfileData) window.loadProfileData();
+        }
 
-    </div>
+        // 2. LOGOUT
+        document.getElementById('btn-logout').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await window.supabase.auth.signOut();
+            localStorage.clear();
+            window.location.href = 'Index.html';
+        });
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav" aria-label="Main navigation">
-        <a href="order.html" class="nav-btn" aria-label="Orders">
-            <img src="acs/order.png" alt=""><span>Orders</span>
-        </a>
-
-        <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-            <img src="acs/Bag.png" alt=""><span>Bag</span>
-        </a>
-
-        <a href="Home.html" class="nav-btn" aria-label="Home">
-            <img src="acs/home.png" alt=""><span>Home</span>
-        </a>
-
-        <a href="cari.html" class="nav-btn" aria-label="Search">
-            <img src="acs/src.png" alt=""><span>Search</span>
-        </a>
-
-        <a href="./prl.html" class="nav-btn active" aria-label="Profile">
-            <img src="acs/prf.png" alt=""><span>Profile</span>
-        </a>
-    </nav>
+        init();
+    </script>
+    <script src="prl.js"></script>
 </body>
-
 </html>
