@@ -54,7 +54,7 @@
     }
   }
 
-  // ===== ORDERS per user (LOCAL) =====
+  // ===== ORDERS per user =====
   function loadOrders() {
     const key = userKey('orders');
     return safeParseRaw(key, '[]');
@@ -74,6 +74,7 @@
     return safeParseRaw(key, '[]');
   }
 
+<<<<<<< HEAD:public/logic/order.js
   // === 🟢 SUPABASE SYNC → LOCALSTORAGE ===
   // order.js: Ganti seluruh fungsi syncOrdersFromSupabase()
 
@@ -198,6 +199,8 @@ async function syncOrdersFromSupabase() {
     }
 }
 
+=======
+>>>>>>> parent of 037ece0 (Mirror checkout & bag orders toe):public/order.js
   // ===== small utils =====
   function guessBrand(item) {
     const idLower = String(item?.id || '').toLowerCase();
@@ -443,7 +446,7 @@ async function syncOrdersFromSupabase() {
         subtotal: subtotal,
         image: it.image || (it.images && it.images[0]) || 'assets/placeholder.png',
         addons: it.addons || [],
-        source: 'reorder'
+        source: 'reorder'  // optional, cuma penanda
       };
 
       cart.push(item);
@@ -607,6 +610,8 @@ async function syncOrdersFromSupabase() {
         : '';
 
     if (rawRecipient) {
+      // Kalau user isi "Recipient Information" di checkout,
+      // pakai ini sebagai tujuan pengiriman order
       const addrBlock = document.createElement('div');
       addrBlock.className = 'order-address-block';
 
@@ -622,6 +627,7 @@ async function syncOrdersFromSupabase() {
       `;
       panel.appendChild(addrBlock);
     } else {
+      // fallback ke Saved Address profil (alamat.html) per user
       const savedAddrs = loadSavedAddresses();
       let chosenAddr = null;
       if (Array.isArray(savedAddrs) && savedAddrs.length) {
@@ -716,12 +722,13 @@ async function syncOrdersFromSupabase() {
     const key = userKey('notifications_v1');
     const notifs = safeParseRaw(key, '[]');
 
+    // cuma hitung notif yang belum dibaca
     const hasUnread = Array.isArray(notifs) && notifs.some(n => !n.isRead);
 
     if (hasUnread) {
-      badge.classList.add('show');
+      badge.classList.add('show');    // 🔴 munculin titik merah
     } else {
-      badge.classList.remove('show');
+      badge.classList.remove('show'); // sembunyiin kalau semua sudah dibaca / kosong
     }
   }
 
@@ -739,6 +746,7 @@ async function syncOrdersFromSupabase() {
         const targetName = this.dataset.orderTab || this.dataset.tab;
         if (!targetName) return;
 
+        // simpan tab terakhir yg dibuka
         localStorage.setItem('lastOrderTab', targetName);
 
         const nameToId = {
@@ -756,10 +764,14 @@ async function syncOrdersFromSupabase() {
 
           const isActive = id === targetId;
 
+          // atur display
           el.style.display = isActive ? '' : 'none';
+
+          // kontrol class .hidden juga
           el.classList.toggle('hidden', !isActive);
         });
 
+        // toggle state tombol tab
         document.querySelectorAll('[data-order-tab],[data-tab]').forEach(tb => {
           const name = tb.dataset.orderTab || tb.dataset.tab;
           const isActive = name === targetName;
@@ -773,6 +785,7 @@ async function syncOrdersFromSupabase() {
   // ===== init =====
   document.addEventListener('DOMContentLoaded', function () {
     try {
+<<<<<<< HEAD:public/logic/order.js
         attachTabHandlers();
 
         const sp = new URLSearchParams(window.location.search);
@@ -801,6 +814,33 @@ async function syncOrdersFromSupabase() {
                 btn.click();
             }
         });
+=======
+      renderAllLists();
+      attachTabHandlers();
+
+      // 🔹 BUKA TAB DARI URL (?tab=...) atau dari lastOrderTab
+      const sp = new URLSearchParams(window.location.search);
+      const tabFromUrl = sp.get('tab');
+      const lastTab = localStorage.getItem('lastOrderTab');
+      const tabToOpen = tabFromUrl || lastTab || 'active';
+
+      const btn = document.querySelector(
+        `[data-order-tab="${tabToOpen}"], [data-tab="${tabToOpen}"]`
+      );
+      if (btn) {
+        btn.click();  // trigger logic yg sama seperti user klik
+      }
+
+      // cek notif sekali waktu page load
+      updateNotifBadge();
+
+      // kalau localStorage notif berubah dari tab lain, update juga
+      window.addEventListener('storage', function (e) {
+        if (e.key && e.key.startsWith('notifications_v1_')) {
+          updateNotifBadge();
+        }
+      });
+>>>>>>> parent of 037ece0 (Mirror checkout & bag orders toe):public/order.js
     } catch (e) {
         console.error('order render error', e);
     }
