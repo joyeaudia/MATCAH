@@ -1,4 +1,4 @@
-// bagfr.js — cart renderer + likes + checkout (localStorage per user, mirror orders ke Supabase)
+// bagfr.js — cart renderer + likes (Supabase) + checkout (localStorage per user, mirror orders ke Supabase)
 
 (function () {
   "use strict";
@@ -260,33 +260,56 @@
   window.renderCart = renderCart;
 
   /* -------------------------
-     LIKES (per user)
+     LIKES (per user) -> SUPABASE
      ------------------------- */
 
-  // === Likes per user ===
-  function getCurrentUID_likes() {
-    return localStorage.getItem("maziUID") || "guest";
-  }
-  function likesKey() {
-    return "likes_" + getCurrentUID_likes();
+  const USER_LIKES_TABLE = 'user_likes';
+  const CURRENT_UID = getCurrentUID();
+
+  /**
+   * Mengambil daftar liked items dari Supabase.
+   * Digunakan untuk renderLikedCards().
+   * @returns {Promise<Array>} Daftar item yang disukai.
+   */
+  async function loadLikesFromSupabase() {
+      const supabase = window.supabase;
+      if (!supabase || CURRENT_UID === 'guest') return [];
+
+      try {
+          // Hanya ambil kolom yang dibutuhkan untuk tampilan
+          const { data, error } = await supabase
+              .from(USER_LIKES_TABLE)
+              .select('product_id, title, image, price, created_at')
+              .eq('user_id', CURRENT_UID)
+              .order('created_at', { ascending: false });
+
+          if (error) {
+              console.error("Error loading likes from Supabase:", error);
+              return [];
+          }
+
+          // Format data agar sesuai dengan struktur Local Storage lama
+          return data.map(item => ({
+              id: item.product_id,
+              title: item.title,
+              image: item.image,
+              price: item.price,
+              source: item.product_id.split('-')[0] || 'unknown',
+          }));
+          
+      } catch (e) {
+          console.error("Unexpected error in loadLikesFromSupabase:", e);
+          return [];
+      }
   }
 
-  function loadLikes() {
-    try {
-      return JSON.parse(localStorage.getItem(likesKey()) || "[]");
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveLikes(arr) {
-    localStorage.setItem(
-      likesKey(),
-      JSON.stringify(arr || [])
-    );
-  }
-
-  function renderLikedCards() {
-    const likes = loadLikes();
+  /**
+   * Merender liked items ke DOM.
+   */
+  async function renderLikedCards() {
+    // Ganti loadLikes() lokal menjadi loadLikesFromSupabase()
+    const likes = await loadLikesFromSupabase(); 
+    
     const container =
       document.querySelector(".liked-row") ||
       document.getElementById("liked-row");
@@ -349,38 +372,50 @@
           <button class="like-heart" aria-label="Unlike" title="Unlike"
                   data-id="${escapeHtml(
                     id
-                  )}" aria-pressed="false">❤</button>
+                  )}" aria-pressed="true">❤</button>
         </div>
       `;
       container.appendChild(article);
     });
   }
 
-  document.addEventListener("click", function (e) {
+  // FUNGSI UNLIKE LOKAL SUDAH TIDAK DIPERLUKAN KARENA SUDAH ADA FUNGSI GLOBAL DI DRSI.JS
+  // Tapi kita harus mengirim request DELETE ke Supabase saat tombol ❤ di Bag diklik.
+  document.addEventListener("click", async function (e) {
     const heart = e.target.closest(".like-heart");
     if (heart) {
-      heart.setAttribute("aria-pressed", "true");
-      heart.classList.add("like-heart-pressed");
-
-      const id = heart.dataset.id;
-      if (id) {
-        setTimeout(() => {
-          let likes = loadLikes();
-          likes = likes.filter(
-            (x) => String(x.id) !== String(id)
-          );
-          saveLikes(likes);
-          renderLikedCards();
-          window.dispatchEvent(
-            new CustomEvent("likes:updated", {
-              detail: { likes },
-            })
-          );
-        }, 180);
-      } else {
-        setTimeout(renderLikedCards, 180);
-      }
       e.stopPropagation();
+      const id = heart.dataset.id;
+      const supabase = window.supabase;
+
+      if (!id || !supabase) return;
+      
+      // Update UI sementara (optimistic update)
+      heart.setAttribute("aria-pressed", "false");
+      heart.classList.remove("like-heart-pressed");
+
+      try {
+        const { error } = await supabase
+          .from(USER_LIKES_TABLE)
+          .delete()
+          .eq('user_id', CURRENT_UID)
+          .eq('product_id', id);
+
+        if (error) {
+            console.error("Supabase UNLIKE failed:", error.message);
+            // Rollback UI jika gagal
+            heart.setAttribute("aria-pressed", "true");
+            heart.classList.add("like-heart-pressed");
+            alert("Gagal menghapus item dari Liked. Cek koneksi Anda.");
+        }
+        
+      } catch (e) {
+        console.error("Unexpected error during Supabase UNLIKE:", e);
+        alert("Terjadi kesalahan jaringan saat menghapus item.");
+      }
+
+      // Refresh tampilan liked cards dari data Supabase yang sudah terupdate
+      renderLikedCards(); 
       return;
     }
 
@@ -397,24 +432,6 @@
       )
         .toLowerCase()
         .trim() || null;
-
-      if (!id) {
-        try {
-          const likes = loadLikes();
-          const title =
-            card
-              .querySelector(".like-title")
-              ?.textContent?.trim() || "";
-          const img =
-            card.querySelector(".like-thumb img")?.src;
-          const found = likes.find(
-            (x) =>
-              (x.title && x.title === title) ||
-              (x.image && x.image === img)
-          );
-          if (found && found.id) id = found.id;
-        } catch (err) {}
-      }
 
       if (!id) {
         alert(
@@ -440,9 +457,10 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     renderCart();
-    renderLikedCards();
+    renderLikedCards(); // Panggil fungsi async
   });
 
+  // Listener untuk update dari halaman produk
   window.addEventListener(
     "likes:updated",
     renderLikedCards

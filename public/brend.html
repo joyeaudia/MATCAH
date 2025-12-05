@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
 
   <style>
     :root {
-      --maxw: 430px; 
+      --maxw: 430px; /* lebar maksimum "layar HP" */
       --bg: #fafafa;
     }
 
@@ -22,7 +22,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #000; 
+      background: #000; /* biar kelihatan frame HP di tengah */
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -58,7 +58,7 @@
     .logo.show {
       opacity: 1;
       transform: scale(1);
-      animation: gentlePulse 1s ease-in-out 0.5s infinite alternate;
+      animation: gentlePulse 1s ease-in-out 0,5s infinite alternate;
     }
 
     @keyframes gentlePulse {
@@ -74,8 +74,9 @@
 <body>
   <div class="phone-frame">
     <div class="logo-wrapper">
+      <!-- GANTI src DI BAWAH INI DENGAN PNG KAMU -->
       <img
-        src="../acs/ddno.png"
+        src="acs/ddno.png"
         alt="Mazi Logo"
         class="logo"
         id="splash-logo"
@@ -84,18 +85,12 @@
   </div>
 
   <script>
+    // Biar ada efek "muncul pelan", kita tambahin class setelah sedikit delay
     window.addEventListener("load", () => {
       const logo = document.getElementById("splash-logo");
-      
-      // Animasi muncul
       setTimeout(() => {
         logo.classList.add("show");
-      }, 300);
-
-      // REVISI: Tambahkan Redirect agar tidak stuck
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 3000); 
+      }, 300); // delay 0.3 detik sebelum mulai animasi
     });
   </script>
 </body>

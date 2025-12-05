@@ -6,177 +6,246 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* RESET DASAR */
+    :root {
+      --maxw: 430px;  /* lebar maksimum "layar HP" */
+      --bg-page: #000000;
+      --bg-phone: #ffffff;
+      --card-bg: #ffffff;
+      --card-border: #e5e5e5;
+      --card-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+      --radius-pill: 999px;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-      background-color: #f0f2f5;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      background: var(--bg-page);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    /* BINGKAI HP */
     .phone-frame {
       width: 100%;
-      max-width: 375px; /* Lebar standar HP */
-      height: 812px;    /* Tinggi standar HP */
-      background-color: #ffffff;
-      border-radius: 30px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      overflow-y: auto; /* Bisa discroll jika konten panjang */
-      position: relative;
-      border: 8px solid #333; /* Simulasi bezel HP */
+      max-width: var(--maxw);
+      min-height: 100vh;
+      background: var(--bg-phone);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 16px 24px;
     }
 
-    /* HEADER */
     .header {
-      padding: 20px;
-      text-align: center;
-      background-color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
     .header-img {
-      height: 50px; /* Batasi tinggi logo header */
-      width: auto;
+      width: 120px;
+      max-width: 60%;
+      height: auto;
       object-fit: contain;
+      display: block;
     }
 
-    /* WRAPPER KARTU (GRID SYSTEM) */
     .cards-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* 2 Kolom */
-      gap: 15px; /* Jarak antar kartu */
-      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;  /* semua card di tengah secara vertical */
+      gap: 10px;
     }
 
-    /* KARTU MENU */
     .nav-card {
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      overflow: hidden;
-      border: 1px solid #f0f0f0;
-      aspect-ratio: 1 / 1; /* Membuat kartu jadi kotak */
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: 16px 18px;               /* lebih besar */
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      transition:
+        transform 0.25s ease-out,
+        box-shadow 0.25s ease-out,
+        border-color 0.25s ease-out,
+        background-color 0.25s ease-out;
+      min-height: 85px;                 /* height lebih tinggi */
+      animation: floatSoft 2.8s ease-in-out infinite alternate;
     }
 
+    /* kasih delay berbeda biar gerak lembut bergantian */
+    .nav-card:nth-child(1) { animation-delay: 0s; }
+    .nav-card:nth-child(2) { animation-delay: 0.2s; }
+    .nav-card:nth-child(3) { animation-delay: 0.4s; }
+    .nav-card:nth-child(4) { animation-delay: 0.6s; }
+    .nav-card:nth-child(5) { animation-delay: 0.8s; }
+
     .nav-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border-color: #d4d4d4;
+      background-color: #fafafa;
+    }
+
+    .nav-card:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
     .card-image-wrap {
-      width: 100%;
-      height: 100%;
+      width: 64px;          /* icon lebih besar */
+      height: 64px;
+      border-radius: 999px;  /* bulat */
+      overflow: hidden;
+      flex-shrink: 0;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 15px;
+      align-items: center;
+      background: #f5f5f5;
     }
 
-    /* PENTING: MENGATUR UKURAN GAMBAR MENU */
     .card-image-wrap img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* Gambar pas di kotak tanpa terpotong */
+      object-fit: contain;
     }
 
-    /* TOMBOL LOGOUT */
-    .logout-link {
-      text-align: center;
-      color: #ff4757;
+    .card-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .card-title {
+      font-size: 14px;
       font-weight: 600;
-      padding: 20px;
-      cursor: pointer;
-      margin-top: auto; /* Dorong ke paling bawah jika pakai flex column */
-    }
-    
-    .logout-link:hover {
-      text-decoration: underline;
+      margin-bottom: 1px;
     }
 
-    /* Scrollbar cantik (opsional) */
-    .phone-frame::-webkit-scrollbar {
-      width: 6px;
+    .card-subtitle {
+      font-size: 11px;
+      color: #777777;
     }
-    .phone-frame::-webkit-scrollbar-thumb {
-      background-color: #ccc;
-      border-radius: 4px;
+
+    @keyframes floatSoft {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-10px); /* lebih kelihatan naik-turunnya */
+      }
+      
     }
+.logout-link {
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  cursor: pointer;
+  margin: 24px 0 90px; /* ruang untuk nav bottom */
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.logout-link:hover {
+  opacity: 0.7;
+}
+
+.logout-link:active {
+  transform: scale(0.96);
+}
+
   </style>
 </head>
 <body>
-
   <div class="phone-frame">
     <div class="header">
-      <img src="../logos/logo.png" alt="Mazi Menu" class="header-img" />
+      <!-- GANTI src PNG INI DENGAN HEADER PNG KAMU -->
+      <img src="logos/logo.png" alt="Mazi Menu" class="header-img" />
     </div>
 
     <div class="cards-wrapper">
+      <!-- CARD 1 -->
       <div class="nav-card" data-target="#">
         <div class="card-image-wrap">
-          <img src="../logos/lg1.png" alt="Menu 1" />
+          <!-- GANTI src PNG SESUAI FILE KAMU -->
+          <img src="logos/lg1.png" alt="Menu 1" />
+        </div>
+        <div class="card-text">
+          <div class="card-title">LUMIÈRE</div>
+          <div class="card-subtitle">Crafted to shine with you</div>
         </div>
       </div>
 
+      <!-- CARD 2 -->
       <div class="nav-card" data-target="#">
         <div class="card-image-wrap">
-          <img src="../logos/lg2.png" alt="Menu 2" />
+          <img src="logos/lg2.png" alt="Menu 2" />
+        </div>
+        <div class="card-text">
+          <div class="card-title">Affinité Attire</div>
+          <div class="card-subtitle">Elegance that understands you</div>
         </div>
       </div>
 
+      <!-- CARD 3 -->
       <div class="nav-card" data-target="ordadm.html">
         <div class="card-image-wrap">
-          <img src="../logos/lg3.png" alt="Menu 3" />
+          <img src="logos/lg3.png" alt="Menu 3" />
+        </div>
+        <div class="card-text">
+          <div class="card-title">MAATZI MATCHA</div>
+          <div class="card-subtitle">Refresh your day the matcha way</div>
         </div>
       </div>
 
+      <!-- CARD 4 -->
       <div class="nav-card" data-target="#">
         <div class="card-image-wrap">
-          <img src="../logos/lg4.png" alt="Menu 4" />
+          <img src="logos/lg4.png" alt="Menu 4" />
+        </div>
+        <div class="card-text">
+          <div class="card-title">FLORENT</div>
+          <div class="card-subtitle">Made by hands, worn by hearts</div>
         </div>
       </div>
 
+      <!-- CARD 5 -->
       <div class="nav-card" data-target="page5.html">
         <div class="card-image-wrap">
-          <img src="../logos/lg5.png" alt="#" />
+          <img src="logos/lg5.png" alt="#" />
+        </div>
+        <div class="card-text">
+          <div class="card-title">Luxfleurid</div>
+          <div class="card-subtitle">Bloom with sophistication</div>
         </div>
       </div>
     </div>
-
-    <p class="logout-link" onclick="window.location.href='../index.html'">
-      Log Out
-    </p>
+<p class="logout-link" onclick="window.location.href='index.html'">
+  Log Out
+</p>
 
   </div>
 
   <script>
+    // Semua card bisa ditekan dan pindah ke HTML yang ada di data-target
     document.addEventListener("DOMContentLoaded", () => {
       const cards = document.querySelectorAll(".nav-card");
 
       cards.forEach(card => {
         card.addEventListener("click", () => {
           const target = card.getAttribute("data-target");
-          if (target && target !== "#") {
+          if (target) {
             window.location.href = target;
-          } else {
-            console.log("Link belum diatur (target='#')");
           }
         });
       });

@@ -4,21 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Search Page - Mobile Mock</title>
-  <link rel="stylesheet" href="../style/cari.css">
+  <link rel="stylesheet" href="cari.css">
 </head>
 <body>
   <div class="phone-wrap">
 <header class="header">
+  <!-- left spacer (keperluan supaya brand tetap perfectly centered) -->
   <div class="header-left" aria-hidden="true"></div>
 
+  <!-- brand centered using absolute centering -->
   <img 
-    src="../logos/lg3.png" 
+    src="logos/lg3.png" 
     alt="brand" 
     class="brand"
   >
 
+  <!-- bell as image inside button, easy to swap PNG -->
   <button class="bell" aria-label="Notifications">
-    <img src="../acs/lcng.png" alt="notif">
+    <!-- contoh: ganti src ke file PNG locengmu; bisa di-upload/letakkan di acs/bell.png -->
+    <img src="acs/lcng.png" alt="notif">
   </button>
 </header>
 
@@ -37,38 +41,41 @@
           <button id="clear-recent" class="clear">Clear</button>
         </div>
         <div class="recent-grid" id="recent-grid">
-          </div>
+          <!-- filled by JS -->
+        </div>
       </section>
 
       <section class="try-search">
         <h4>Results</h4>
         <div id="results" class="results-grid">
-          </div>
+          <!-- search results here -->
+        </div>
       </section>
     </main>
 
+    <!-- BOTTOM NAV -->
     <nav class="bottom-nav" aria-label="Main navigation">
       <a href="order.html" class="nav-btn" aria-label="Orders">
-        <img src="../acs/order.png" alt=""><span>Orders</span>
+        <img src="acs/order.png" alt=""><span>Orders</span>
       </a>
 
       <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-        <img src="../acs/Bag.png" alt=""><span>Bag</span>
+        <img src="acs/Bag.png" alt=""><span>Bag</span>
       </a>
 
       <a href="home.html" class="nav-btn" aria-label="Home">
-        <img src="../acs/home.png" alt=""><span>Home</span>
+        <img src="acs/home.png" alt=""><span>Home</span>
       </a>
 
-      <a href="cari.html" class="nav-btn active" aria-label="Search">
-        <img src="../acs/src.png" alt=""><span>Search</span>
+      <a href="search.html" class="nav-btn active" aria-label="Search">
+        <img src="acs/src.png" alt=""><span>Search</span>
       </a>
 
       <a href="prl.html" class="nav-btn" aria-label="Profile">
-        <img src="../acs/prf.png" alt=""><span>Profile</span>
+        <img src="acs/prf.png" alt=""><span>Profile</span>
       </a>
     </nav>
 
-  <script src="../logic/cari.js"></script>
+  <script src="cari.js"></script>
 </body>
 </html>

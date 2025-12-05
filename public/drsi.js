@@ -18,7 +18,6 @@
   // 🔑 identitas user (dipakai cart, orders, likes)
   const getCurrentUID = () => localStorage.getItem('maziUID') || 'guest';
   const userKey       = base => `${base}_${getCurrentUID()}`;
-  const likesKey      = () => userKey('likes');
 
   /* ========== Load products (drsi.json/dsri.json/products.json) ========== */
   async function loadProducts() {
@@ -196,29 +195,48 @@
 
 
 
-  /* ========== Likes (❤) per user: disimpan ke likes_<UID> ========== */
- // ===== Heart (Like) handler: per-user likes_<UID> =====
+  /* ========== Likes (❤) per user: DISINKRONKAN KE SUPABASE ========== */
 (function () {
   const heartBtn = document.querySelector('.heart');
   if (!heartBtn) return;
 
-  // --- helper per user ---
-  const getCurrentUID = () => localStorage.getItem('maziUID') || 'guest';
-  const likesKey = () => 'likes_' + getCurrentUID();
+  // --- Konfigurasi Supabase ---
+  const USER_LIKES_TABLE = 'user_likes';
+  const SUPABASE = window.supabase;
+  
+  // 🔑 FIX: Gunakan variabel untuk UID yang akan diambil dari Supabase session
+  let CURRENT_UID = 'guest';
 
-  function loadLikes() {
-    try {
-      return JSON.parse(localStorage.getItem(likesKey()) || '[]');
-    } catch (e) {
-      return [];
-    }
+  if (!SUPABASE) {
+    console.error("Supabase client not found (window.supabase). Like feature disabled.");
+    return;
   }
 
-  function saveLikes(arr) {
-    localStorage.setItem(likesKey(), JSON.stringify(arr || []));
-  }
+  // Ambil UID dari sesi yang sudah direstore di drsi.html, dan inisialisasi status Like
+  SUPABASE.auth.getSession().then(({ data: { session } }) => {
+      if (session && session.user) {
+          CURRENT_UID = session.user.id;
+          
+          const initialProduct = makeLikeObj();
+          if (initialProduct.id && CURRENT_UID !== 'guest') {
+              heartBtn.disabled = true;
+              checkInitialLikeStatus(initialProduct.id).then(isLiked => {
+                  if (isLiked) {
+                      heartBtn.setAttribute('aria-pressed', 'true');
+                  }
+                  heartBtn.disabled = false;
+              }).catch(e => {
+                  console.error("Failed to check initial status:", e);
+                  heartBtn.disabled = false;
+              });
+          }
+      }
+  }).catch(e => {
+      console.error("Error fetching Supabase session for likes:", e);
+  });
 
-  // mini toast
+
+  // --- Utilitas ---
   function miniToast(msg) {
     let t = document.querySelector('.mini-toast');
     if (!t) {
@@ -244,7 +262,7 @@
     setTimeout(() => (t.style.opacity = '0'), 1300);
   }
 
-  // build object yang disimpan ke likes
+  // build object yang dikirim ke Supabase
   function makeLikeObj() {
     const idRaw =
       document.querySelector('.product-name')?.dataset?.id ||
@@ -262,7 +280,6 @@
       document.title ||
       '';
 
-    // cari gambar dengan beberapa kemungkinan selector
     let imgEl =
       document.querySelector('.product-image img') ||
       document.querySelector('.product-image') ||
@@ -270,10 +287,7 @@
 
     let imgSrc = '';
     if (imgEl) {
-      if (
-        imgEl.tagName &&
-        imgEl.tagName.toLowerCase() === 'img'
-      ) {
+      if (imgEl.tagName && imgEl.tagName.toLowerCase() === 'img') {
         imgSrc = imgEl.src || imgEl.getAttribute('src') || '';
       } else if (imgEl.querySelector) {
         const inner = imgEl.querySelector('img');
@@ -293,23 +307,56 @@
     );
 
     return {
-      id,
+      id, // product_id
       source,
       title,
       image: imgSrc || '',
       price
     };
   }
+  
+  // Cek status Like saat halaman dimuat
+  async function checkInitialLikeStatus(productId) {
+    if (CURRENT_UID === 'guest') return false;
 
-  heartBtn.addEventListener('click', function (e) {
+    const { data, error } = await SUPABASE
+      .from(USER_LIKES_TABLE)
+      .select('product_id')
+      .eq('user_id', CURRENT_UID)
+      .eq('product_id', productId)
+      .limit(1);
+    
+    // PGRST116 biasanya berarti 'row not found'
+    if (error && error.code !== 'PGRST116') {
+      console.error("Error checking initial like status:", error.message);
+      return false;
+    }
+    
+    return data && data.length > 0;
+  }
+
+  // Main ASYNC click handler
+  heartBtn.addEventListener('click', async function (e) {
     e.preventDefault();
 
-    const pressed = heartBtn.getAttribute('aria-pressed') === 'true';
-    heartBtn.setAttribute('aria-pressed', String(!pressed));
+    const obj = makeLikeObj();
+    
+    // 🔑 FIX: Ambil UID dari session saat klik (paling akurat)
+    const { data: { session } } = await SUPABASE.auth.getSession();
+    const finalUID = session?.user?.id; 
 
-    // animasi kecil
+    if (!obj.id || !finalUID) {
+      miniToast('Tidak dapat menyimpan Liked (Perlu login)');
+      return;
+    }
+    
+    this.disabled = true; // Disable tombol saat proses
+    const pressed = this.getAttribute('aria-pressed') === 'true';
+    let success = false;
+
+    // --- Animasi kecil ---
     try {
-      heartBtn.animate(
+      this.animate(
         [
           { transform: 'scale(1)' },
           { transform: 'scale(1.12)' },
@@ -319,31 +366,58 @@
       );
     } catch (e) {}
 
-    let likes = loadLikes();
-    const obj = makeLikeObj();
-    if (!obj.id) {
-      miniToast('Tidak dapat menyukai item ini');
-      return;
-    }
-
-    const idx = likes.findIndex(x => String(x.id) === String(obj.id));
-
     if (!pressed) {
-      // tambah
-      if (idx === -1) likes.unshift(obj);
-      saveLikes(likes);
-      miniToast('Ditambahkan ke Liked');
+      // Aksi: LIKE (INSERT ke Supabase)
+      const payload = {
+        user_id: finalUID, // MENGGUNAKAN UID DARI SESSION
+        product_id: obj.id,
+        title: obj.title,
+        image: obj.image,
+        price: obj.price
+      };
+      
+      const { error } = await SUPABASE
+        .from(USER_LIKES_TABLE)
+        .insert([payload])
+        .select();
+        
+      if (error) {
+        console.error("Supabase INSERT failed:", error.message);
+        miniToast('❌ Gagal menambahkan ke Liked (Error Server)');
+      } else {
+        success = true;
+        miniToast('Ditambahkan ke Liked');
+      }
+      
     } else {
-      // hapus
-      if (idx > -1) likes.splice(idx, 1);
-      saveLikes(likes);
-      miniToast('Dihapus dari Liked');
+      // Aksi: UNLIKE (DELETE dari Supabase)
+      const { error } = await SUPABASE
+        .from(USER_LIKES_TABLE)
+        .delete()
+        .eq('user_id', finalUID) // MENGGUNAKAN UID DARI SESSION
+        .eq('product_id', obj.id);
+        
+      if (error) {
+        console.error("Supabase DELETE failed:", error.message);
+        miniToast('❌ Gagal menghapus dari Liked (Error Server)');
+      } else {
+        success = true;
+        miniToast('Dihapus dari Liked');
+      }
     }
 
-    window.dispatchEvent(
-      new CustomEvent('likes:updated', { detail: { likes } })
-    );
+    this.disabled = false; // Aktifkan kembali tombol
+
+    if (success) {
+      // Update UI setelah sukses operasi Supabase
+      this.setAttribute('aria-pressed', pressed ? 'false' : 'true');
+      window.dispatchEvent(
+        new CustomEvent('likes:updated', { detail: { productId: obj.id, liked: !pressed } })
+      );
+    }
   });
+
+  // Cek status awal saat DOM dimuat (dihapus dari sini, dipindah ke getSession promise di atas)
 })();
 
 

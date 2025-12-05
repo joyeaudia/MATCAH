@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luxfleurid — Matcha Latte</title>
-  <link rel="stylesheet" href="../style/drsi.css" />
+  <link rel="stylesheet" href="drsi.css" />
 </head>
 <body>
   <main class="product-page">
 
     <header class="header">
       <a href="Drinks.html" class="back-link">← Back</a>
-      <img src="../logos/lg3.png" alt="Luxfleurid" class="brand-logo" />
+      <img src="logos/lg3.png" alt="Luxfleurid" class="brand-logo" />
     </header>
 
     <section class="product-info">
@@ -19,12 +19,12 @@
       <p class="product-subtitle">Discover the pure taste of MORI, made with ceremonial grade matcha powder, delivering a smooth umami with seaweed notes and light bitterness.</p>
 
       <p class="product-price">
-  <span id="product-price" data-base="65000">Rp 65.000</span>
-</p>
+        <span id="product-price" data-base="65000">Rp 65.000</span>
+      </p>
     </section>
 
     <section class="product-media">
-      <img src="../Dsr/dr1.png" alt="Matcha Latte" class="product-image" />
+      <img src="Dsr/dr1.png" alt="Matcha Latte" class="product-image" />
     </section>
 
     <section id="product-options">
@@ -60,18 +60,18 @@
     <section class="product-actions">
       <button class="add-btn" id="add-to-cart" type="button">Add to Bag</button>
       <div class="right-icons">
-     <button id="share-btn" class="icon-btn" aria-label="Share product" title="Share">
-  <img src="../acs/By.png" alt="Share" width="20" height="20" />
-</button>
+        <button id="share-btn" class="icon-btn" aria-label="Share product" title="Share">
+          <img src="acs/By.png" alt="Share" width="20" height="20" />
+        </button>
 
 
-<div id="share-menu" class="share-menu" role="dialog" aria-hidden="true" style="display:none;">
-  <button data-action="copy">Copy Link</button>
-  <button data-action="native">Share</button>
-  <button id="share-close">Close</button>
-</div>
+        <div id="share-menu" class="share-menu" role="dialog" aria-hidden="true" style="display:none;">
+          <button data-action="copy">Copy Link</button>
+          <button data-action="native">Share</button>
+          <button id="share-close">Close</button>
+        </div>
 
-<div id="share-toast" class="share-toast" hidden>Link copied!</div>
+        <div id="share-toast" class="share-toast" hidden>Link copied!</div>
 
         <button class="heart" aria-pressed="false" aria-label="Like product" title="Like">
           <svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true" focusable="false" width="20" height="20">
@@ -98,10 +98,42 @@
     <h2>Got a question about this product?</h2>
     <p>Our team will be happy to<br>assist you via WhatsApp</p>
     <a href="https://wa.me/628118281416" target="_blank" class="whatsapp-btn" aria-label="Contact via WhatsApp">
-      <img src="../acs/wa.png" alt="WhatsApp" class="wa-icon" />
+      <img src="acs/wa.png" alt="WhatsApp" class="wa-icon" />
     </a>
   </section>
 
-  <script src="../logic/drsi.js"></script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    // Inisialisasi client
+    if (!window.supabase) {
+      window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    }
+
+    // FIX: Restore session on page load so RLS policies pass for authenticated users
+    async function restoreSession() {
+      try {
+        // Supabase checks localStorage for a session and sets the JWT on the client
+        const { data: { session } } = await window.supabase.auth.getSession();
+        if (session) {
+          console.log("Supabase session restored for user:", session.user.id);
+        } else {
+          // If no session, the client remains anonymous, which is fine if user hasn't logged in
+          console.log("No Supabase session found. Client is anonymous.");
+        }
+      } catch (e) {
+        console.error("Error restoring session:", e);
+      }
+    }
+
+    // Jalankan restorasi sesi sebelum drsi.js dieksekusi
+    restoreSession(); 
+  </script>
+
+  <script src="drsi.js" type="module"></script>
 </body>
 </html>

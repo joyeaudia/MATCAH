@@ -1,124 +1,164 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Checkout</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../style/cekout.css">
+    <link rel="stylesheet" href="cekout.css">
 </head>
 <body>
-  <div class="frame" role="document" aria-label="Checkout page">
-    <header class="top-nav">
-       <button class="nav-action nav-left" type="button"
-        onclick="window.location.href='gif.html'">
+  <div class="frame" role="document" aria-label="Checkout page">
+    <header class="top-nav">
+       <button class="nav-action nav-left" type="button"
+        onclick="window.location.href='gif.html'">
 Back
 </button>
-      <div class="title">Checkout</div>
-      <button class="nav-action nav-right" id="placeOrder" type="button">Place Order</button>
-    </header>
+      <div class="title">Checkout</div>
+      <button class="nav-action nav-right" id="placeOrder" type="button">Place Order</button>
+    </header>
 
-    <main class="content">
-      <section class="card summary-card" aria-labelledby="summary-title">
-        <h2 id="summary-title" class="section-title">Products Summary</h2>
+    <main class="content">
+            <section class="card summary-card" aria-labelledby="summary-title">
+        <h2 id="summary-title" class="section-title">Products Summary</h2>
 
-        <ul class="product-list">
-          <li class="product-item">
-            <div class="product-info">
-              <div class="product-title">Polkadot Top</div>
-              <div class="product-meta">Size M, Pink</div>
-            </div>
-            <div class="product-qty">Qty: 1</div>
-            <div class="product-price">Rp 129.000</div>
-          </li>
-          <li class="product-item">
-            <div class="product-info">
-              <div class="product-title">Pleated Skirt</div>
-              <div class="product-meta">Size S, Black</div>
-            </div>
-            <div class="product-qty">Qty: 2</div>
-            <div class="product-price">Rp 198.000</div>
-          </li>
-        </ul>
+        <ul class="product-list">
+          <li class="product-item">
+            <div class="product-info">
+              <div class="product-title">Polkadot Top</div>
+              <div class="product-meta">Affinite Attire • Rp 159.000</div>
+            </div>
+            <div class="qty-control" data-price="159000">
+              <button class="qty-btn dec" aria-label="Decrease">−</button>
+              <input class="qty-input" type="text" inputmode="numeric" value="1" aria-label="Quantity">
+              <button class="qty-btn inc" aria-label="Increase">+</button>
+            </div>
+          </li>
 
-        <div class="total-summary">
-          <div class="summary-row">
-            <span>Subtotal</span>
-            <span id="subtotal">Rp 327.000</span>
-          </div>
-          <div class="summary-row">
-            <span>Shipping Cost</span>
-            <span id="shipping-cost">Rp 15.000</span>
-          </div>
-          <div class="summary-row total-amount">
-            <span>Total Amount</span>
-            <span id="total-amount">Rp 342.000</span>
-          </div>
-        </div>
-      </section>
-      
-      <section class="card shipping-card" aria-labelledby="shipping-title">
-        <h2 id="shipping-title" class="section-title">Shipping Address</h2>
-        <div class="address-details" id="address-details">
-          <p>Loading address...</p>
-        </div>
-        <a href="drafamt.html" class="change-link">Change Address</a>
-      </section>
+          <li class="product-item">
+            <div class="product-info">
+              <div class="product-title">Matcha Latte</div>
+              <div class="product-meta">Mazai Matcha • Rp 45.000</div>
+            </div>
+            <div class="qty-control" data-price="45000">
+              <button class="qty-btn dec" aria-label="Decrease">−</button>
+              <input class="qty-input" type="text" inputmode="numeric" value="1" aria-label="Quantity">
+              <button class="qty-btn inc" aria-label="Increase">+</button>
+            </div>
+          </li>
+        </ul>
+      </section>
 
-      <section class="card payment-card" aria-labelledby="payment-title">
-        <h2 id="payment-title" class="section-title">Payment Method</h2>
-        <div class="payment-method">
-          <label>
-            <input type="radio" name="payment" value="cod" checked>
-            <span>Cash On Delivery (COD)</span>
-          </label>
-          <label>
-            <input type="radio" name="payment" value="transfer">
-            <span>Bank Transfer (BCA)</span>
-          </label>
-        </div>
-      </section>
+            <section class="card">
+        <label class="label" for="notes">Notes for seller (optional)</label>
+        <textarea id="notes" class="textarea" placeholder="Write any notes for seller..."></textarea>
+      </section>
 
-      <section class="card schedule-card" aria-labelledby="schedule-title">
-        <h2 id="schedule-title" class="section-title">Schedule</h2>
-        <div class="schedule-options">
-          <label>
-            <input type="radio" name="schedule" value="immediate" checked>
-            <span>Immediate Delivery (Today)</span>
-          </label>
-          <label>
-            <input type="radio" name="schedule" value="future" id="schedule-future-radio">
-            <span>Schedule Delivery</span>
-          </label>
-        </div>
-        <div class="schedule-inputs" id="schedule-inputs" style="display:none;">
-          <input type="date" id="scheduled-date">
-          <input type="time" id="scheduled-time">
-        </div>
-      </section>
+            <section class="card">
+        <label class="label">Schedule your order</label>
+        <div class="inline-selects">
+          <select aria-label="Date">
+            <option>Date</option>
+            <option>10</option>
+            <option>11</option>
+          </select>
+          <select aria-label="Month">
+            <option>Month</option>
+            <option>Jan</option>
+            <option>Feb</option>
+          </select>
+          <select aria-label="Year">
+            <option>Year</option>
+            <option>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+      </section>
 
-      <section class="card notes-card">
-        <h2 class="section-title">Notes</h2>
-        <textarea id="order-notes" placeholder="e.g. Please put it in the box"></textarea>
-      </section>
+      <section class="card">
+  <label class="label" for="recipient">Recipient Information</label>
+  <textarea id="recipient" class="textarea"
+    placeholder="Please write the recipient's name, number, and full address"></textarea>
 
-    </main>
-  </div>
+    <div class="recipient-actions">
+    <button type="button" id="btnUseSavedAddress" class="saved-link">
+      Saved Address
+    </button>
+  </div>
+</section>
 
-  <div class="ddno-overlay" id="ddno-overlay">
-    <div class="ddno-frame">
-      <div class="ddno-logo-wrapper">
-        <img
-          src="../acs/ddno.png" 
-          alt="Mazi Processing"
-          class="ddno-logo"
-          id="ddno-logo"
-        />
-      </div>
-    </div>
-  </div>
-</body>
+
+            <section class="card">
+        <label class="label">Delivery Method</label>
+
+        <div class="delivery-row" id="deliveryRow" role="radiogroup" aria-label="Delivery method">
+          <button class="delivery-item active" data-method="regular" aria-pressed="true">Regular</button>
+          <button class="delivery-item" data-method="nextday" aria-pressed="false">Next Day</button>
+          <button class="delivery-item" data-method="sameday" aria-pressed="false">Same Day</button>
+          <button class="delivery-item" data-method="instant" aria-pressed="false">Instant</button>
+          <button class="delivery-item" data-method="self" aria-pressed="false">Self Pick Up</button>
+        </div>
+      </section>
+
+      <section class="card summary-bottom">
+  <div class="flex-between">
+    <div class="muted">Product Subtotal</div>
+    <div id="subtotalRp" class="bold">Rp 204.000,00</div>
+  </div>
+
+  <div class="flex-between">
+    <div class="muted">Shipping Fee</div>
+    <div id="shippingFee" class="bold">Rp 0,00</div>
+  </div>
+
+  <div class="flex-between">
+    <div class="muted">Total (incl. shipping)</div>
+    <div id="totalRp" class="bold">Rp 204.000,00</div>
+    </div>
+
+  <p class="muted tiny">Shipping fee depends on delivery method and total items.</p>
+
+
+        <div class="payment-note">
+          <div class="muted tiny">Payment</div>
+          <div class="muted tiny">Payment and shipping fee will be calculated and sent through WhatsApp.</div>
+        </div>
+      </section>
+
+      <div class="spacer"></div>
+    </main>
+  </div>
+
+      <div id="ddno-overlay" class="ddno-overlay">
+    <div class="ddno-frame">
+      <div class="ddno-logo-wrapper">
+        <img
+          src="acs/ddno.png"
+          alt="Mazi Processing"
+          class="ddno-logo"
+          id="ddno-logo"
+        />
+      </div>
+    </div>
+  </div>
+
+      <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    const supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    // Pastikan Supabase hanya diinisialisasi sekali di window object.
+    if (!window.supabase) {
+      window.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    }
+  </script>
+
+    <script src="cekout.js" defer></script>
+  <script src="bagfr.js" defer></script>
+
+  </body>
 </html>
-<script src="../logic/cekout.js"></script>

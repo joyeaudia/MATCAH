@@ -1,96 +1,45 @@
-// ordadm.js — ADMIN: Fix Sinkronisasi Supabase & History Logic
+// ==========================================================
+// RECODED ordadm.js
+// Admin: Orders List & Sync with Supabase (using Service Key)
+// ==========================================================
 (function () {
   'use strict';
 
-  let addressCache = new Map();
+  // State
+  let currentFilter = 'all';
+  const addressCache = new Map();
+  const SUPABASE_TABLE_NAME = 'orders';
 
-  // ===== HELPER DASAR =====
-  function safeParseRaw(key, fallbackJson) {
+  // --- 1. CORE UTILITIES ---
+
+  // Helper untuk parsing Local Storage yang aman
+  function safeParseRaw(key, fallbackJson = '[]') {
     try {
-      return JSON.parse(localStorage.getItem(key) || (fallbackJson ?? '[]'));
+      const raw = localStorage.getItem(key);
+      if (raw) return JSON.parse(raw);
     } catch (e) {
-      return fallbackJson ? JSON.parse(fallbackJson) : [];
+      console.error(`Error parsing key ${key}:`, e);
     }
+    return JSON.parse(fallbackJson);
   }
 
+  // Format Rupiah
   function fmt(n) {
     return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n || 0));
   }
 
+  // Escape HTML
   function escapeHtml(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[c]));
   }
 
-  // ===== 💡 FUNGSI UPDATE SUPABASE (CRITICAL FIX) =====
-  async function updateOrderOnSupabase(order) {
-    const supabase = window.supabase;
-    
-    // 1. Cek Koneksi
-    if (!supabase) {
-      alert("CRITICAL: Supabase belum terhubung di ordadm.html!");
-      return false;
-    }
-    if (!order.id) {
-      console.warn("Update skipped: No ID");
-      return false;
-    }
+  // --- 2. STORAGE & DATA MANAGEMENT ---
 
-    // 2. Tentukan Kolom Target (FIX UTAMA)
-    let idValue = String(order.id);
-    let columnToFilterBy = 'client_order_id'; // Default untuk ID pendek user
-
-    if (idValue.startsWith('DB-')) {
-        idValue = idValue.substring(3); // Hapus 'DB-'
-        columnToFilterBy = 'id';        // Pakai UUID
-    } else if (idValue.length > 20) {
-        // Asumsi jika panjang > 20 karakter, itu UUID
-        columnToFilterBy = 'id';
-    }
-
-    console.log(`📡 Sending update... Filter: ${columnToFilterBy} = ${idValue}`);
-
-    // 3. Kirim Payload Status
-    const payload = {
-      status: order.status,          // 'completed', 'delivered', 'cancelled'
-      payment_status: order.paymentStatus, // 'paid', 'rejected'
-    };
-
-    try {
-        const { data, error } = await supabase
-          .from('orders')
-          .update(payload)
-          .eq(columnToFilterBy, idValue)
-          .select(); // Penting: Select untuk memastikan data kembali
-
-        if (error) {
-          console.error('❌ Supabase Error:', error.message);
-          alert(`GAGAL UPDATE SERVER! \nError: ${error.message}\nOrder mungkin kembali ke Active saat refresh.`);
-          return false;
-        }
-        
-        // Cek apakah ada baris yang benar-benar terupdate
-        if (!data || data.length === 0) {
-             console.warn("Supabase update sukses tapi 0 baris berubah. Cek ID.");
-             // Kita return true saja karena mungkin ID client local beda format dikit, 
-             // tapi kalau tidak error 400/500 berarti koneksi aman.
-        }
-        
-        console.log('✅ Supabase Updated Successfully');
-        return true;
-
-    } catch (e) {
-        console.error('❌ Network Error:', e);
-        alert('Kesalahan jaringan. Cek koneksi internet Anda.');
-        return false;
-    }
-  }
-
-  // ===== LOAD ALL ORDERS =====
-  function loadAllOrders() {
-    const all = [];
-    console.log('🔍 Scanning localStorage...');
+  // Load orders dari SEMUA user di Local Storage
+  function loadAllOrdersFromLocalStorage() {
+    const allOrders = [];
     addressCache.clear();
 
     for (let i = 0; i < localStorage.length; i++) {
@@ -98,11 +47,11 @@
       if (!key || !key.startsWith('orders_')) continue;
 
       const uid = key.slice('orders_'.length) || 'guest';
-      let list;
-      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { list = []; }
+      let list = safeParseRaw(key, '[]');
 
       if (!Array.isArray(list)) continue;
 
+      // Cache Addresses
       const addressKey = 'savedAddresses_v1_' + uid;
       let userAddresses = safeParseRaw(addressKey, null);
       if (!userAddresses) userAddresses = safeParseRaw('savedAddresses_v1', '[]');
@@ -110,15 +59,17 @@
 
       list.forEach(o => {
         if (!o) return;
-        if (!o.userId) o.userId = uid; 
-        all.push(o);
+        if (!o.userId) o.userId = uid;
+        allOrders.push(o);
       });
     }
-    return all;
+    // Sort dari yang terbaru
+    allOrders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return allOrders;
   }
 
-  // ===== SAVE LOCAL =====
-  function saveSingleOrderForUser(order) {
+  // Simpan kembali order ke Local Storage user yang benar
+  function saveSingleOrderToLocalStorage(order) {
     const uid = order.userId || 'guest';
     const key = 'orders_' + uid;
     let list = safeParseRaw(key, '[]');
@@ -130,12 +81,12 @@
     localStorage.setItem(key, JSON.stringify(list));
   }
 
-  // ===== ADDRESS HELPER =====
+  // Ambil alamat user dari cache
   function loadAddressesForUser(uid) {
     return addressCache.get(uid || 'guest') || []; 
   }
 
-  // ===== NOTIFICATION =====
+  // Tambah notifikasi ke user
   function addNotifForOrder(order, kind) {
     const uid = order.userId || 'guest';
     const key = 'notifications_v1_' + uid;
@@ -146,10 +97,10 @@
 
     if (kind === 'approved') {
       title = 'Payment Confirmed'; emoji = '💸';
-      message = `Order ${order.id} confirmed & paid.`;
+      message = `Order ${order.id} telah dikonfirmasi dan pembayaran sudah diterima admin.`;
     } else if (kind === 'rejected') {
       title = 'Order Rejected'; emoji = '⛔';
-      message = `Order ${order.id} rejected.`;
+      message = `Order ${order.id} telah ditolak / dibatalkan oleh admin.`;
     }
 
     notifs.unshift({
@@ -161,24 +112,92 @@
     localStorage.setItem(key, JSON.stringify(notifs));
   }
 
-  // ===== RENDER LIST & FILTER =====
-  let currentFilter = 'all';
+  // --- 3. SUPABASE SYNC (CRITICAL) ---
+
+  /**
+   * Mengupdate status dan payment status order di Supabase.
+   * Menggunakan Service Role Key untuk izin admin.
+   * @param {Object} order - Objek order yang akan diupdate
+   * @returns {Promise<boolean>} True jika sukses
+   */
+  async function updateOrderOnSupabase(order) {
+    const supabase = window.supabase;
+    
+    if (!supabase) {
+      alert("CRITICAL: Supabase belum terhubung di ordadm.html!");
+      return false;
+    }
+    if (!order.id) {
+      console.warn("Supabase Update skipped: No Order ID");
+      return false;
+    }
+
+    let idValue = String(order.id);
+    let columnToFilterBy = 'client_order_id'; // Default ID lokal user
+
+    // Tentukan filter untuk server: ID lokal (client_order_id) atau UUID (id)
+    if (idValue.startsWith('DB-')) {
+        idValue = idValue.substring(3); // Hapus 'DB-'
+        columnToFilterBy = 'id';
+    } else if (idValue.length > 20) {
+        columnToFilterBy = 'id'; // Asumsi UUID
+    }
+
+    console.log(`📡 Supabase: Sending update. Filter: ${columnToFilterBy} = ${idValue}`);
+
+    const payload = {
+      status: order.status,          // 'active', 'delivered', 'cancelled'
+      payment_status: order.paymentStatus, // 'paid', 'rejected', 'pending'
+    };
+
+    try {
+        const { error, count } = await supabase
+          .from(SUPABASE_TABLE_NAME)
+          .update(payload)
+          .eq(columnToFilterBy, idValue)
+          .select(columnToFilterBy, { count: 'exact' }); 
+
+        if (error) {
+          console.error('❌ Supabase Error:', error.message);
+          alert(`GAGAL UPDATE SERVER! \nError: ${error.message}`);
+          return false;
+        }
+        
+        if (count === 0) {
+             console.warn("Supabase update sukses tapi 0 baris berubah. Cek ID order.");
+             // Lanjut true saja, karena koneksi aman dan mungkin hanya masalah ID tidak match
+        }
+        
+        console.log(`✅ Supabase Updated. Rows updated: ${count}`);
+        return true;
+
+    } catch (e) {
+        console.error('❌ Network Error:', e);
+        alert('Kesalahan jaringan. Cek koneksi internet Anda.');
+        return false;
+    }
+  }
+
+  // --- 4. RENDER LOGIC ---
 
   function renderAdminList() {
     const container = document.getElementById('order-list');
     if (!container) return;
     container.innerHTML = '';
 
-    let orders = loadAllOrders();
+    let orders = loadAllOrdersFromLocalStorage();
 
+    // 1. Filter order yang dibatalkan user/sistem
     orders = orders.filter(o => String(o.status).toLowerCase() !== 'cancelled');
 
+    // 2. Filter berdasarkan tab (History / Gift / All)
     if (currentFilter === 'history') {
       orders = orders.filter(o => {
         const st = String(o.status).toLowerCase();
         return st === 'completed' || st === 'delivered';
       });
     } else {
+      // Tab 'All' dan 'Gift' hanya menampilkan yang sedang aktif/belum selesai
       orders = orders.filter(o => {
         const st = String(o.status).toLowerCase();
         return st !== 'completed' && st !== 'delivered';
@@ -199,81 +218,133 @@
     });
   }
 
-  // ===== RENDER CARD =====
   function renderAdminCard(order) {
     const card = document.createElement('article');
-    card.className = 'admin-order-card';
-
     const created = new Date(order.createdAt || Date.now()).toLocaleString();
     const status = (order.status || 'active').toLowerCase();
     const paymentStatus = (order.paymentStatus || 'pending').toLowerCase();
+    const isGift = !!order.isGift && !!order.gift;
 
+    // --- Card Class Setup ---
+    card.className = 'admin-order-card';
     if (status === 'completed' || status === 'delivered') card.classList.add('is-completed');
     else if (paymentStatus === 'paid') card.classList.add('is-paid');
-    
-    const isGift = !!order.isGift && !!order.gift;
     if (isGift) card.classList.add('gift');
 
-    const firstItem = order.items && order.items[0];
-    const firstItemTitle = firstItem ? (firstItem.title || firstItem.name) : '(no items)';
+    // --- Item Summary ---
+    const firstItem = order.items?.[0];
+    const firstItemTitle = firstItem ? (firstItem.title || firstItem.name || 'N/A') : '(no items)';
 
-    const savedAddrs = loadAddressesForUser(order.userId);
-    const chosenAddr = savedAddrs.find(a => a.isDefault) || savedAddrs[0];
+    // --- Address/Recipient Block ---
     let addrBlock = '';
-    
     if (order.meta && order.meta.recipient) {
-       addrBlock = `<div class="admin-address"><div>To:</div><div>${escapeHtml(order.meta.recipient)}</div></div>`;
-    } else if (chosenAddr) {
-       addrBlock = `<div class="admin-address"><div>Addr:</div><div>${escapeHtml(chosenAddr.address)}</div></div>`;
+       // Recipient (for pickup/special case)
+       addrBlock = `
+        <div class="admin-address">
+          <div class="admin-address-title">Recipient (Special)</div>
+          <div class="admin-address-main">${escapeHtml(order.meta.recipient).replace(/\n/g,"<br>")}</div>
+        </div>`;
+    } else {
+       // Standard address lookup
+       const savedAddrs = loadAddressesForUser(order.userId);
+       const chosenAddr = savedAddrs.find(a => a.isDefault) || savedAddrs[0];
+       if (chosenAddr) {
+         addrBlock = `
+          <div class="admin-address">
+            <div class="admin-address-title">Address</div>
+            <div class="admin-address-main">
+                <div>${escapeHtml(chosenAddr.label || '')}${chosenAddr.label && chosenAddr.name ? ' - ' : ''}${escapeHtml(chosenAddr.name || '')}</div>
+                <div>${escapeHtml(chosenAddr.phone || '')}</div>
+                <div>${escapeHtml(chosenAddr.address || '').replace(/\n/g,"<br>")}</div>
+            </div>
+          </div>`;
+       }
     }
 
+    // --- Gift Block ---
+    let giftBlock = '';
+    if (isGift && order.gift) {
+        const revealModeText = String(order.gift.revealMode || 'reveal').toLowerCase() === 'surprise' 
+            ? 'Keep it a surprise' : 'Reveal it now';
+        
+        let scheduled = '';
+        if (order.scheduledAt) {
+            try { scheduled = new Date(order.scheduledAt).toLocaleString('id-ID'); } catch(e) {}
+        }
+
+        giftBlock = `
+        <div class="admin-gift-block">
+          <div class="admin-gift-title">🎁 Gift order</div>
+          ${order.gift.message ? `<div class="admin-gift-line"><strong>Message:</strong> ${escapeHtml(order.gift.message)}</div>` : ''}
+          ${order.gift.fromName ? `<div class="admin-gift-line"><strong>From:</strong> ${escapeHtml(order.gift.fromName)}</div>` : ''}
+          <div class="admin-gift-line"><strong>Reveal:</strong> ${escapeHtml(revealModeText)}</div>
+          ${scheduled ? `<div class="admin-gift-line"><strong>Schedule:</strong> ${escapeHtml(scheduled)}</div>` : ''}
+        </div>`;
+    }
+
+    // --- Items List ---
     let itemsHtml = '';
     (order.items || []).forEach(it => {
-        itemsHtml += `<div class="admin-item-row"><div class="admin-item-title">${escapeHtml(it.title)} x${it.qty}</div></div>`;
+        const addons = it.addons && it.addons.length ? 
+            `<div class="admin-item-addons">${it.addons.map(a => escapeHtml(a.label || '')).join(', ')}</div>` : '';
+        const qty = Number(it.qty || 0);
+        const price = Number(it.unitPrice || it.price || 0);
+        const subtotal = Number(it.subtotal || qty * price);
+        const priceText = `${qty} × ${fmt(price)} = ${fmt(subtotal)}`;
+
+        itemsHtml += `
+          <div class="admin-item-row">
+            <div class="admin-item-main">
+              <div class="admin-item-title">${escapeHtml(it.title || it.name)}</div>
+              ${addons}
+              <div class="admin-item-price">${priceText}</div>
+            </div>
+          </div>`;
     });
 
+    // --- Final Render ---
     const badgePaymentClass = paymentStatus === 'paid' ? 'paid' : (paymentStatus === 'rejected' ? 'rejected' : '');
 
     card.innerHTML = `
       <div class="admin-order-header">
-        <div><div class="admin-order-id">ID: ${escapeHtml(order.id)}</div><div class="admin-order-created">${created}</div></div>
-        <div class="admin-order-total"><span class="admin-total-value">${fmt(order.total)}</span></div>
+        <div>
+          <div class="admin-order-id">Order ID: ${escapeHtml(order.id)}</div>
+          <div class="admin-order-created">${created}</div>
+        </div>
+        <div class="admin-order-total">
+          <span class="admin-total-label">Total</span>
+          <span class="admin-total-value">${fmt(order.total)}</span>
+        </div>
       </div>
       <div class="admin-status-row">
-        <span class="badge badge-status">${status}</span>
-        <span class="badge badge-payment ${badgePaymentClass}">${paymentStatus}</span>
+        <span class="badge badge-status">${escapeHtml(status)}</span>
+        <span class="badge badge-payment ${badgePaymentClass}">${escapeHtml(paymentStatus)}</span>
       </div>
       <div class="admin-summary-row">
-        <span class="summary-chip">${isGift ? 'Gift' : 'Order'}</span>
+        <span class="summary-chip">${isGift ? '🎁 Gift' : 'Order'}</span>
         <span class="summary-main">${escapeHtml(firstItemTitle)}</span>
         <button type="button" class="btn-toggle-detail" aria-expanded="false">Detail</button>
       </div>
       <div class="admin-details collapsed">
-        ${isGift ? '<div class="admin-gift-block">🎁 Gift Order</div>' : ''}
+        ${giftBlock}
         <div class="admin-items">${itemsHtml}</div>
         ${addrBlock}
         <div class="admin-actions">
-          <button class="btn btn-approve" data-id="${order.id}">ACC (Paid)</button>
-          <button class="btn btn-reject" data-id="${order.id}">Reject</button>
-          <button class="btn btn-delivered" data-id="${order.id}">Mark Delivered</button>
+          <button class="btn btn-approve" data-id="${escapeHtml(order.id)}">ACC (Sudah Dibayar)</button>
+          <button class="btn btn-reject" data-id="${escapeHtml(order.id)}">Tolak Order</button>
+          <button class="btn btn-delivered" data-id="${escapeHtml(order.id)}">Mark Delivered</button>
         </div>
       </div>
     `;
 
+    // --- Action Button Logic ---
     const approveBtn = card.querySelector('.btn-approve');
     const rejectBtn = card.querySelector('.btn-reject');
     const deliveredBtn = card.querySelector('.btn-delivered');
     const detailsEl = card.querySelector('.admin-details');
     const toggleBtn = card.querySelector('.btn-toggle-detail');
 
-    if (toggleBtn && detailsEl) {
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const collapsed = detailsEl.classList.toggle('collapsed');
-        toggleBtn.textContent = collapsed ? 'Detail' : 'Sembunyikan';
-      });
-    }
-
+    // Initial Button Display (Prevent duplicate logic from min.js)
     if (status === 'completed' || status === 'delivered' || status === 'cancelled') {
         if(approveBtn) approveBtn.style.display = 'none';
         if(rejectBtn) rejectBtn.style.display = 'none';
@@ -285,118 +356,112 @@
         if(deliveredBtn) deliveredBtn.style.display = 'none';
     }
 
-    // ===== 1. ACC BUTTON =====
+    // Toggle Detail
+    if (toggleBtn && detailsEl) {
+      // Default: collapse detail if width < 600px
+      if(window.innerWidth < 600) {
+        detailsEl.classList.add('collapsed');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtn.textContent = 'Sembunyikan';
+      }
+
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const collapsed = detailsEl.classList.toggle('collapsed');
+        toggleBtn.textContent = collapsed ? 'Detail' : 'Sembunyikan';
+      });
+    }
+
+    // Handler: ACC (PAID)
     if (approveBtn) {
-    approveBtn.addEventListener('click', async function (e) {
-        e.stopPropagation();
-        
-        const oldStatus = order.status;
-        const oldPay = order.paymentStatus;
+        approveBtn.addEventListener('click', async function (e) {
+            e.stopPropagation();
+            
+            const oldStatus = order.status;
+            const oldPay = order.paymentStatus;
 
-        // 💡 PERBAIKAN: Set paymentStatus ke 'paid' dan status ke 'active' (bukan 'completed')
-        order.paymentStatus = 'paid';
-        order.status = 'active'; // Order siap diproses/dikirim
+            order.paymentStatus = 'paid';
+            order.status = 'active'; // Order siap diproses/dikirim
 
-        const success = await updateOrderOnSupabase(order);
+            const success = await updateOrderOnSupabase(order);
 
-        if (success) {
-            saveSingleOrderForUser(order);
-            addNotifForOrder(order, 'approved');
-            renderAdminList();
-            alert('Sukses! Pembayaran dikonfirmasi. Order tetap di "Semua" dan siap diproses/kirim.');
-        } else {
-            // Rollback jika gagal
-            order.status = oldStatus;
-            order.paymentStatus = oldPay;
-            alert('Update GAGAL. Status dikembalikan.');
-        }
-    });
-}
-
-// ===== 3. DELIVERED BUTTON (PINDAH KE HISTORY) =====
-if (deliveredBtn) {
-      deliveredBtn.addEventListener('click', async function (e) {
-        e.stopPropagation();
-        
-        // Cek jika order sudah di-ACC (Paid)
-        if (String(order.paymentStatus).toLowerCase() !== 'paid') {
-            alert('Order harus sudah dibayar/di-ACC sebelum ditandai sebagai delivered.');
-            return;
-        }
-
-        const oldStatus = order.status;
-        const oldPay = order.paymentStatus;
-        
-        // 💡 CRITICAL FIX: Set status final yang lengkap sebelum dikirim ke server & disimpan lokal.
-        order.paymentStatus = 'paid'; 
-        order.status = 'delivered'; // Status akhir: Delivered
-
-        const success = await updateOrderOnSupabase(order);
-
-        if (success) {
-            saveSingleOrderForUser(order); // Menyimpan status final ke Local Storage User
-            renderAdminList();
-            alert('Order ditandai sebagai DELIVERED dan pindah ke History.');
-        } else {
-            // Rollback jika gagal update server
-            order.status = oldStatus;
-            order.paymentStatus = oldPay;
-            alert('Update GAGAL. Status dikembalikan.');
-        }
-      });
+            if (success) {
+                saveSingleOrderToLocalStorage(order);
+                addNotifForOrder(order, 'approved');
+                renderAdminList();
+                alert('Sukses! Pembayaran dikonfirmasi. Order siap diproses/kirim.');
+            } else {
+                // Rollback jika gagal
+                order.status = oldStatus;
+                order.paymentStatus = oldPay;
+                alert('Update GAGAL. Status dikembalikan.');
+            }
+        });
     }
 
-    // ===== 2. REJECT BUTTON =====
+    // Handler: REJECT
     if (rejectBtn) {
-      rejectBtn.addEventListener('click', async function (e) {
-        e.stopPropagation();
-        
-        const oldStatus = order.status;
-        const oldPay = order.paymentStatus;
+        rejectBtn.addEventListener('click', async function (e) {
+            e.stopPropagation();
+            
+            const oldStatus = order.status;
+            const oldPay = order.paymentStatus;
 
-        order.paymentStatus = 'rejected';
-        order.status = 'cancelled';
+            order.paymentStatus = 'rejected';
+            order.status = 'cancelled';
 
-        const success = await updateOrderOnSupabase(order);
+            const success = await updateOrderOnSupabase(order);
 
-        if (success) {
-            saveSingleOrderForUser(order);
-            addNotifForOrder(order, 'rejected');
-            renderAdminList();
-            alert('Order DITOLAK.');
-        } else {
-            order.status = oldStatus;
-            order.paymentStatus = oldPay;
-            alert('Update GAGAL.');
-        }
-      });
+            if (success) {
+                saveSingleOrderToLocalStorage(order);
+                addNotifForOrder(order, 'rejected');
+                renderAdminList();
+                alert('Order DITOLAK.');
+            } else {
+                // Rollback jika gagal
+                order.status = oldStatus;
+                order.paymentStatus = oldPay;
+                alert('Update GAGAL. Status dikembalikan.');
+            }
+        });
     }
 
-    // ===== 3. DELIVERED BUTTON =====
+    // Handler: MARK DELIVERED
     if (deliveredBtn) {
-      deliveredBtn.addEventListener('click', async function (e) {
-        e.stopPropagation();
-        
-        const oldStatus = order.status;
-        order.status = 'delivered'; // Final status
+        deliveredBtn.addEventListener('click', async function (e) {
+            e.stopPropagation();
+            
+            if (String(order.paymentStatus).toLowerCase() !== 'paid') {
+                alert('Order harus sudah dibayar/di-ACC sebelum ditandai sebagai delivered.');
+                return;
+            }
 
-        const success = await updateOrderOnSupabase(order);
+            const oldStatus = order.status;
+            
+            order.paymentStatus = 'paid'; 
+            order.status = 'delivered'; 
 
-        if (success) {
-            saveSingleOrderForUser(order);
-            renderAdminList();
-            alert('Order DELIVERED.');
-        } else {
-            order.status = oldStatus;
-            alert('Update GAGAL.');
-        }
-      });
+            const success = await updateOrderOnSupabase(order);
+
+            if (success) {
+                saveSingleOrderToLocalStorage(order); 
+                renderAdminList();
+                alert('Order ditandai sebagai DELIVERED dan pindah ke History.');
+            } else {
+                // Rollback jika gagal update server
+                order.status = oldStatus;
+                alert('Update GAGAL. Status dikembalikan.');
+            }
+        });
     }
 
-    // Klik kartu -> Detail Admin
+    // Handler: Klik Card (Redirect to Detail)
     card.addEventListener('click', function (e) {
       if (e.target.closest('.btn') || e.target.closest('.btn-toggle-detail')) return;
       if (paymentStatus === 'paid') {
+          // Asumsi ada diteladm.html
           window.location.href = 'diteladm.html?id=' + encodeURIComponent(order.id);
       }
     });
@@ -404,7 +469,8 @@ if (deliveredBtn) {
     return card;
   }
 
-  // ===== INIT =====
+  // --- 5. INITIALIZATION ---
+
   document.addEventListener('DOMContentLoaded', function () {
     const btns = document.querySelectorAll('.admin-pill');
     btns.forEach(btn => {
