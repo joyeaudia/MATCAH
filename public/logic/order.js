@@ -75,7 +75,10 @@
   }
 
   // === 🟢 SUPABASE SYNC → LOCALSTORAGE ===
-  async function syncOrdersFromSupabase() {
+  // order.js: Ganti seluruh fungsi syncOrdersFromSupabase()
+
+// === 🟢 SUPABASE SYNC → LOCALSTORAGE (Dengan Smart Merge Payment Status) ===
+async function syncOrdersFromSupabase() {
     const supabase = window.supabase;
     if (!supabase) {
       console.warn('Supabase client not found on window, skip sync');
@@ -89,6 +92,7 @@
         return;
       }
 
+      // Ambil data order dari Supabase
       const { data, error } = await supabase
         .from('orders')
         .select('*, order_items(*)')
@@ -100,6 +104,7 @@
         return;
       }
 
+      // 1. MEMETAKAN DATA REMOTE
       const remoteOrders = (data || []).map((row) => {
         const items = Array.isArray(row.order_items)
           ? row.order_items.map((it) => ({
@@ -120,7 +125,7 @@
           scheduledAt: row.scheduled_at || null,
           total: row.total || 0,
           shippingFee: row.shipping_fee || 0,
-          paymentStatus: row.payment_status || 'pending',
+          paymentStatus: row.payment_status || 'pending', // Nilai Supabase
           isGift: !!row.is_gift,
           items,
           meta: {
@@ -128,7 +133,6 @@
             recipient: row.recipient_name || '',
             deliveryMethod: row.delivery_method || null,
           },
-          // kalau suatu saat kamu mau simpan detail gift di DB, ini tinggal diisi
           gift: row.is_gift
             ? {
                 message: row.gift_message || '',
@@ -142,22 +146,57 @@
 
       const localOrders = loadOrders() || [];
 
-      // gabung & dedupe berdasarkan id (Supabase override local kalau id sama)
+      // 2. SMART MERGE (Gabungkan Local dan Remote)
       const map = new Map();
+      
+      // A. Masukkan data lokal dulu (Prioritas Awal)
       localOrders.forEach((o) => {
         if (o && o.id) map.set(String(o.id), o);
       });
-      remoteOrders.forEach((o) => {
-        if (o && o.id) map.set(String(o.id), o);
+      
+      // B. Gabungkan/Timpa dengan data Remote, menjaga status final lokal
+      remoteOrders.forEach((remoteO) => {
+        if (!remoteO || !remoteO.id) return;
+
+        const localO = map.get(String(remoteO.id));
+        
+        if (localO) {
+            const localStatusLower = String(localO.status || '').toLowerCase();
+            const isLocalFinal = ['delivered', 'completed', 'cancelled'].includes(localStatusLower);
+
+            // 🟢 JIKA STATUS LOKAL SUDAH FINAL: Pertahankan status dan payment status lokal.
+            if (isLocalFinal) {
+                
+                // Ambil semua properti dari remoteO kecuali status dan paymentStatus
+                const { status: remoteStatus, paymentStatus: remotePayStatus, ...remoteData } = remoteO;
+                
+                // Update detail order (items, total, notes, dll) dari remote ke localO di map.
+                Object.assign(localO, remoteData);
+                
+                // localO di map sudah diselamatkan dan siap disave, lewati proses timpa remoteO.
+                return;
+            }
+            
+            // JIKA BELUM FINAL, tapi statusnya PAID di lokal, pertahankan PAID.
+            if (localO.paymentStatus === 'paid') {
+                remoteO.paymentStatus = 'paid';
+            }
+            
+            // Jika status belum final, remoteO akan menimpa localO di map.
+        }
+        
+        // Timpa data di map dengan remoteO (baik itu data baru, atau data yang sudah di-patch paymentStatus)
+        map.set(String(remoteO.id), remoteO);
       });
 
       const merged = Array.from(map.values());
       saveOrders(merged);
-      console.log('Orders synced from Supabase:', merged.length);
+      console.log('Orders synced from Supabase (Smart Merged Agresif):', merged.length);
     } catch (e) {
       console.warn('syncOrdersFromSupabase error:', e);
+      // Anda bisa menambahkan alert di sini jika ingin pengguna tahu sync gagal
     }
-  }
+}
 
   // ===== small utils =====
   function guessBrand(item) {
@@ -262,33 +301,39 @@
 
   // ===== ACTIVE tab =====
   function renderActive() {
-    const panel = document.getElementById('tab-active');
-    if (!panel) return;
-    panel.innerHTML = '';
+      const panel = document.getElementById('tab-active');
+      if (!panel) return;
+      panel.innerHTML = '';
 
-    const orders = loadOrders() || [];
-    if (!orders.length) {
-      panel.innerHTML = '<div style="padding:16px;color:#666">Belum ada pesanan.</div>';
-      return;
-    }
+      const orders = loadOrders() || [];
+      if (!orders.length) {
+        panel.innerHTML = '<div style="padding:16px;color:#666">Belum ada pesanan.</div>';
+        return;
+      }
 
-    let activeOrders = orders.filter(o =>
-      String(o.status || '').toLowerCase() === 'active'
-    );
+      // 💡 PERBAIKAN FILTER: Tampilkan semua order yang BUKAN final dan BUKAN scheduled.
+      let activeOrders = orders.filter(o => {
+        const st = String(o.status || '').toLowerCase();
+        
+        // Status yang dianggap "final" (pindah ke History)
+        const isFinal = ['delivered', 'completed', 'cancelled'].includes(st);
+        
+        // Status yang dianggap "scheduled" (pindah ke Scheduled Tab)
+        const isScheduled = st === 'scheduled' || !!o.scheduledAt;
 
-    // kalau belum ada status sama sekali, anggap active
-    if (!activeOrders.length) {
-      activeOrders = orders.filter(o => !o.status);
-    }
+        // Order akan tampil di Active jika:
+        // Statusnya BUKAN final DAN BUKAN scheduled.
+        return !isFinal && !isScheduled;
+      });
 
-    if (!activeOrders.length) {
-      panel.innerHTML = '<div style="padding:16px;color:#666">Tidak ada pesanan aktif saat ini.</div>';
-      return;
-    }
+      if (!activeOrders.length) {
+        panel.innerHTML = '<div style="padding:16px;color:#666">Tidak ada pesanan aktif saat ini.</div>';
+        return;
+      }
 
-    activeOrders.forEach(o => {
-      panel.appendChild(renderOrderCardSummary(o, { context: 'active' }));
-    });
+      activeOrders.forEach(o => {
+        panel.appendChild(renderOrderCardSummary(o, { context: 'active' }));
+      });
   }
 
   // ===== SCHEDULED tab =====
@@ -325,27 +370,52 @@
 
   // ===== HISTORY tab =====
   function renderHistory() {
-    const panel = document.getElementById('tab-history');
-    if (!panel) return;
-    panel.innerHTML = '';
+    // 1. Ambil elemen panel
+        const panel = document.getElementById('tab-history');
+        if (!panel) return;
+        
+        // Bersihkan konten lama
+        panel.innerHTML = ''; 
 
-    const orders = loadOrders() || [];
+        // 2. Muat semua order dari penyimpanan lokal
+        // loadOrders() adalah fungsi yang diasumsikan ada dan mengembalikan array order.
+        const orders = loadOrders() || [];
 
-    // hanya order yang sudah selesai / batal
-    const historyOrders = orders.filter(o => {
-      const st = String(o.status || '').toLowerCase();
-      return ['delivered', 'completed', 'cancelled'].includes(st);
-    });
+        // 3. Filter order yang sudah selesai/dibatalkan
+        // hanya order yang sudah selesai / batal
+        const historyOrders = orders.filter(o => {
+            // Ambil status dan ubah ke huruf kecil untuk perbandingan yang konsisten
+            const statusLower = String(o.status || '').toLowerCase();
+            
+            // Cek apakah status order termasuk dalam kategori final (History)
+            return ['delivered', 'completed', 'cancelled'].includes(statusLower); 
+        });
 
-    if (!historyOrders.length) {
-      panel.innerHTML = '<div style="padding:16px;color:#666">History kosong.</div>';
-      return;
+        // 4. Tampilkan Hasil
+        if (!historyOrders.length) {
+            // Tampilkan pesan jika History kosong
+            panel.innerHTML = 
+                '<div style="padding:16px;color:#666">History kosong.</div>';
+            return;
+        }
+
+        // Render setiap order card summary ke dalam panel
+        // renderOrderCardSummary() adalah fungsi yang diasumsikan ada
+        historyOrders.forEach(o => {
+            try {
+                // Render card dengan konteks 'history'
+                const card = renderOrderCardSummary(o, { context: 'history' });
+                panel.appendChild(card);
+            } catch (e) {
+                console.error("Gagal merender order card untuk History:", o.id, e);
+                // Opsi: Tambahkan pesan error di UI jika satu order gagal dirender
+                const errorEl = document.createElement('div');
+                errorEl.style.color = '#c00';
+                errorEl.textContent = `Error loading order ${o.id}`;
+                panel.appendChild(errorEl);
+            }
+        });
     }
-
-    historyOrders.forEach(o => {
-      panel.appendChild(renderOrderCardSummary(o, { context: 'history' }));
-    });
-  }
 
   // ===== REORDER (History → Bag) =====
   function reorderFromHistory(orderId) {
@@ -386,14 +456,23 @@
   }
 
   // ===== DETAIL VIEW =====
-  function renderOrderDetails(orderId) {
+  async function renderOrderDetails(orderId) {
+    // 1. Sinkronisasi Data Terbaru (KUNCI PERBAIKAN)
+    try {
+        await syncOrdersFromSupabase();
+    } catch (e) {
+        console.warn("Detail view: Failed to resync before rendering.", e);
+    }
+
+    // 2. Load order terbaru dari Local Storage
     const orders = loadOrders();
     const order = (orders || []).find(o => String(o.id) === String(orderId));
 
-    // PILIH PANEL YANG SEDANG AKTIF / KELIHATAN
+    // 3. Tentukan PANEL AKTIF (Area di mana detail akan ditampilkan)
     const panelIds = ['tab-active', 'tab-schedule', 'tab-scheduled', 'tab-history'];
     let panel = null;
 
+    // Menemukan panel yang sedang terlihat/aktif saat tombol diklik
     for (const id of panelIds) {
       const el = document.getElementById(id);
       if (!el) continue;
@@ -407,25 +486,41 @@
       }
     }
 
-    // fallback
+    // fallback: Jika tidak ada panel aktif (misal dari link langsung/refresh), 
+    // kita akan menggunakan panel yang sesuai berdasarkan status order.
     if (!panel) {
-      panel =
-        document.getElementById('tab-history') ||
-        document.getElementById('tab-active');
-    }
-    if (!panel) return;
+        const statusLower = String(order.status || '').toLowerCase();
+        
+        // PENTING: Halaman detail tidak boleh memanggil renderAllLists() saat memuat.
+        // Kita hanya memilih panel yang sesuai, bukan me-render semua list.
 
-    panel.innerHTML = '';
+        if (['delivered', 'completed', 'cancelled'].includes(statusLower)) {
+             panel = document.getElementById('tab-history');
+        } else {
+             panel = document.getElementById('tab-active');
+        }
+    }
+    
+    // Fallback terakhir jika elemen masih null (safety check)
+    if (!panel) {
+        panel = document.getElementById('tab-active');
+    }
+    if (!panel) return; // Jika masih tidak ditemukan, hentikan rendering.
+
+    panel.innerHTML = ''; // Bersihkan konten panel lama
 
     if (!order) {
       panel.innerHTML = '<div style="padding:12px;color:#c33">Order tidak ditemukan.</div>';
       return;
     }
 
+    // --- MULAI RENDER DETAIL ---
     const h = document.createElement('h2');
     h.textContent = 'Order Details';
     panel.appendChild(h);
 
+    // [Semua logika render item, gift details, address, payment note, total]
+    
     // ===== list item =====
     const list = document.createElement('div');
     list.style.marginTop = '12px';
@@ -678,36 +773,36 @@
   // ===== init =====
   document.addEventListener('DOMContentLoaded', function () {
     try {
-      // Render dulu dari localStorage (biar cepat)
-      renderAllLists();
-      attachTabHandlers();
+        attachTabHandlers();
 
-      const sp = new URLSearchParams(window.location.search);
-      const tabFromUrl = sp.get('tab');
-      const lastTab = localStorage.getItem('lastOrderTab');
-      const tabToOpen = tabFromUrl || lastTab || 'active';
+        const sp = new URLSearchParams(window.location.search);
+        const tabFromUrl = sp.get('tab');
+        const lastTab = localStorage.getItem('lastOrderTab');
+        const tabToOpen = tabFromUrl || lastTab || 'active';
+        
+        updateNotifBadge();
 
-      const btn = document.querySelector(
-        `[data-order-tab="${tabToOpen}"], [data-tab="${tabToOpen}"]`
-      );
-      if (btn) {
-        btn.click();
-      }
+        window.addEventListener('storage', function (e) {
+            if (e.key && e.key.startsWith('notifications_v1_')) {
+                updateNotifBadge();
+            }
+        });
 
-      updateNotifBadge();
+        // 🟢 FIX: JALANKAN SYNC DULU, BARU RENDER DAN KLIK TAB
+        syncOrdersFromSupabase().then(() => {
+            // 1. Render semua tab setelah sync selesai (data sudah utuh/terbaru)
+            renderAllLists();
 
-      window.addEventListener('storage', function (e) {
-        if (e.key && e.key.startsWith('notifications_v1_')) {
-          updateNotifBadge();
-        }
-      });
-
-      // 🟢 Setelah itu sync ke Supabase → merge → render ulang
-      syncOrdersFromSupabase().then(() => {
-        renderAllLists();
-      });
+            // 2. Klik tab yang terakhir dilihat (setelah data ada di DOM)
+            const btn = document.querySelector(
+                `[data-order-tab="${tabToOpen}"], [data-tab="${tabToOpen}"]`
+            );
+            if (btn) {
+                btn.click();
+            }
+        });
     } catch (e) {
-      console.error('order render error', e);
+        console.error('order render error', e);
     }
   });
 

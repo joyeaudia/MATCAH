@@ -516,9 +516,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // 🟡 SIMPAN KE LOCAL (tetap sama seperti dulu)
+      // 🟡 SIMPAN KE LOCAL (tetap sama seperti dulu)
       const orders = loadOrders();
       orders.unshift(order);
       saveOrders(orders);
+
+      // 👇 TAMBAHKAN LOGGING INI
+      const uid = getCurrentUID();
+      const key = userKey('orders');
+      console.log('✅ ORDER SAVED!');
+      console.log('UID:', uid);
+      console.log('Key:', key);
+      console.log('Order ID:', order.id);
+      console.log('Total orders:', orders.length);
 
       // clear cart & gift config (per user)
       try { localStorage.removeItem(userKey('cart')); } catch (e) {}

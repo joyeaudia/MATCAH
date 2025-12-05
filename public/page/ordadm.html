@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Orders</title>
+  <link rel="stylesheet" href="ordadm.css">
+</head>
+<body>
+  <div class="admin-shell">
+
+    <header class="admin-header">
+      <h1>Admin — Orders</h1>
+
+      <div class="admin-filter-pills">
+        <button type="button" class="admin-pill is-active" data-filter="all">Semua</button>
+        <button type="button" class="admin-pill" data-filter="gift">Gift saja</button>
+        <button type="button" class="admin-pill" data-filter="history">History</button>
+      </div>
+    </header>
+
+    <main id="admin-content" class="admin-content">
+      <div id="order-list"></div>
+    </main>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="ordadm.html" class="nav-item active">
+      <img src="logos/dm2.png" class="nav-icon" alt="">
+      <span class="nav-label">Orders</span>
+    </a>
+
+    <a href="admin.html" class="nav-item">
+      <img src="logos/dm1.png" class="nav-icon" alt="">
+      <span class="nav-label">Booths</span>
+    </a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    // 🔧 KONFIGURASI SUPABASE ADMIN
+    const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co';
+    
+    // ⚠️ SERVICE ROLE KEY (Kunci Sakti untuk Admin)
+    // Kunci ini memberikan izin penuh untuk membaca & mengubah data tanpa login user.
+    // SAYA SUDAH MEMASUKKAN KUNCI YANG ANDA BERIKAN DI SINI:
+    const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDU3MjQ0NCwiZXhwIjoyMDgwMTQ4NDQ0fQ.Del6yhwSj8vQSPFONlvQnzPTLmFFTB-QO31_XJKUHus';
+
+    // Inisialisasi Klien Supabase dan sediakan ke window
+    try {
+      // Menggunakan Service Key agar Admin bisa update status order milik user lain
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      console.log('✅ Supabase Admin initialized (Service Role Active)');
+    } catch (error) {
+      console.error('❌ Failed to initialize Supabase:', error);
+      alert('Gagal menghubungkan database Admin. Cek konsol.');
+    }
+  </script>
+  
+  <script src="./ordadm.js"></script>
+
+  <script>
+    // Shortcut tombol Escape untuk kembali ke menu utama
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        window.location.href = "frsadm.html";
+      }
+    });
+  </script>
+
+</body>
+</html>
