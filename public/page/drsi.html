@@ -4,31 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luxfleurid — Matcha Latte</title>
-  <link rel="stylesheet" href="drsi.css" />
+  <link rel="stylesheet" href="../style/drsi.css" />
 </head>
 <body>
   <main class="product-page">
 
     <header class="header">
       <a href="Drinks.html" class="back-link">← Back</a>
-      <img src="logos/lg3.png" alt="Luxfleurid" class="brand-logo" />
+      <img src="../logos/lg3.png" alt="Luxfleurid" class="brand-logo" />
     </header>
 
     <section class="product-info">
       <h1 class="product-name">Matcha Latte — MORI 🍵</h1>
       <p class="product-subtitle">Discover the pure taste of MORI, made with ceremonial grade matcha powder, delivering a smooth umami with seaweed notes and light bitterness.</p>
 
-      <!-- IMPORTANT: store numeric base & old price in data-* attributes -->
-<p class="product-price">
+      <p class="product-price">
   <span id="product-price" data-base="65000">Rp 65.000</span>
 </p>
     </section>
 
     <section class="product-media">
-      <img src="Dsr/dr1.png" alt="Matcha Latte" class="product-image" />
+      <img src="../Dsr/dr1.png" alt="Matcha Latte" class="product-image" />
     </section>
 
-    <!-- OPTIONS -->
     <section id="product-options">
       <div class="option-group" role="group" aria-label="Milk Options" data-key="milk">
         <div class="group-title">Milk Options</div>
@@ -62,21 +60,18 @@
     <section class="product-actions">
       <button class="add-btn" id="add-to-cart" type="button">Add to Bag</button>
       <div class="right-icons">
-     <!-- share icon -->
-<button id="share-btn" class="icon-btn" aria-label="Share product" title="Share">
-  <img src="acs/By.png" alt="Share" width="20" height="20" />
+     <button id="share-btn" class="icon-btn" aria-label="Share product" title="Share">
+  <img src="../acs/By.png" alt="Share" width="20" height="20" />
 </button>
 
 
-<!-- simple share menu (initially hidden) -->
 <div id="share-menu" class="share-menu" role="dialog" aria-hidden="true" style="display:none;">
   <button data-action="copy">Copy Link</button>
   <button data-action="native">Share</button>
   <button id="share-close">Close</button>
 </div>
 
-<!-- toast -->
- <div id="share-toast" class="share-toast" hidden>Link copied!</div>
+<div id="share-toast" class="share-toast" hidden>Link copied!</div>
 
         <button class="heart" aria-pressed="false" aria-label="Like product" title="Like">
           <svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true" focusable="false" width="20" height="20">
@@ -103,10 +98,10 @@
     <h2>Got a question about this product?</h2>
     <p>Our team will be happy to<br>assist you via WhatsApp</p>
     <a href="https://wa.me/628118281416" target="_blank" class="whatsapp-btn" aria-label="Contact via WhatsApp">
-      <img src="acs/wa.png" alt="WhatsApp" class="wa-icon" />
+      <img src="../acs/wa.png" alt="WhatsApp" class="wa-icon" />
     </a>
   </section>
 
-  <script src="drsi.js"></script>
+  <script src="../logic/drsi.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Admin Orders</title>
-  <link rel="stylesheet" href="ordadm.css">
+  <link rel="stylesheet" href="../style/ordadm.css"> 
 </head>
 <body>
   <div class="admin-shell">
@@ -27,13 +27,13 @@
 
   <nav class="bottom-nav">
     <a href="ordadm.html" class="nav-item active">
-      <img src="logos/dm2.png" class="nav-icon" alt="">
+      <img src="../logos/dm2.png" class="nav-icon" alt="">
       <span class="nav-label">Orders</span>
     </a>
 
     <a href="admin.html" class="nav-item">
-      <img src="logos/dm1.png" class="nav-icon" alt="">
-      <span class="nav-label">Booths</span>
+      <img src="../logos/dm1.png" class="nav-icon" alt="">
+      <span class="nav-label">Admin Home</span>
     </a>
   </nav>
 
@@ -52,23 +52,12 @@
     try {
       // Menggunakan Service Key agar Admin bisa update status order milik user lain
       window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-      console.log('✅ Supabase Admin initialized (Service Role Active)');
-    } catch (error) {
-      console.error('❌ Failed to initialize Supabase:', error);
-      alert('Gagal menghubungkan database Admin. Cek konsol.');
+      console.log("Supabase Admin Client Init OK in ordadm.html");
+    } catch (e) {
+      console.error("Supabase Admin init failed in ordadm.html:", e);
     }
   </script>
-  
-  <script src="./ordadm.js"></script>
 
-  <script>
-    // Shortcut tombol Escape untuk kembali ke menu utama
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        window.location.href = "frsadm.html";
-      }
-    });
-  </script>
-
+  <script src="../logic/ordadm.js"></script>
 </body>
 </html>

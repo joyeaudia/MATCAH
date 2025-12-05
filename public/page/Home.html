@@ -5,42 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VERENT — Demo</title>
 
-  <!-- Font: Rasa -->
   <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- external stylesheet -->
-  <link rel="stylesheet" href="Home.css">
+  <link rel="stylesheet" href="../style/Home.css">
 </head>
 <body>
   <div class="device" role="document" aria-label="mock mobile canvas">
-    <!-- HEADER -->
     <header class="appbar">
       <div class="brand-left" aria-hidden="true"></div>
 <div class="brand-center" style="pointer-events:none;">
-  <img src="logos/lg3.png" alt="Brand Logo" style="height: 90px;">
+  <img src="../logos/lg3.png" alt="Brand Logo" style="height: 90px;">
 </div>
       <button class="icon-bell" aria-label="Notifications">
-        <img src="acs/lcng.png" alt="bell icon">
+        <img src="../acs/lcng.png" alt="bell icon">
       </button>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="content">
 
-      <!-- BRANDS -->
-<!-- BRANDS -->
-<section aria-labelledby="brands-title">
+      <section aria-labelledby="brands-title">
   <h2 class="section" id="brands-title">What are you looking for today?</h2>
 
   <div class="brands-wrap">
 
-    <a href="Drinks.html" class="brand-item">
-      <img src="logos/lg.2.2.png">
+    <a href="Drinks.html" class="brand-item"> <img src="../logos/lg.2.2.png">
       <div class="brand-label">Drinks</div>
     </a>
 
-    <a href="Desserts.html" class="brand-item">
-      <img src="logos/lg.1.1.png">
+    <a href="Desserts.html" class="brand-item"> <img src="../logos/lg.1.1.png">
       <div class="brand-label">Desserts</div>
     </a>
 
@@ -48,7 +40,6 @@
 </section>
 
 
-      <!-- DISCOVER -->
       <section aria-labelledby="discover-title" style="margin-top:12px;">
         <h2 class="section" id="discover-title">Discover what's new</h2>
 
@@ -56,83 +47,31 @@
 
 <article class="product" data-id="drink-matcha-001">
   <div class="image">
-    <img src="Dsr/dr1.png">
+    <img src="../Dsr/dr1.png">
     <button class="buy-pill">Buy</button>
   </div>
-  <div class="meta">
-    <div class="title">Matcha Latte</div>
-    <div class="brand">Best Seller</div>
-  </div>
-  <div class="price-row">Rp 65.000</div>
-</article>
+  </article>
 
 <article class="product" data-id="dessert-special-003">
   <div class="image">
-    <img src="Drs/dk1.png">
+    <img src="../Drs/dk1.png">
     <button class="buy-pill">Buy</button>
   </div>
-  <div class="meta">
-    <div class="title">Creme Brulee Cheesecake</div>
-    <div class="brand">Best Seller</div>
-  </div>
-  <div class="price-row">Rp 55.000</div>
-</article>
+  </article>
 
 
 <article class="product" data-id="dessert-cookie-ice-bomb">
   <div class="image">
-    <img src="Drs/dk2.png">
+    <img src="../Drs/dk2.png">
     <button class="buy-pill">Buy</button>
   </div>
-  <div class="meta">
-    <div class="title">Cookie Ice Bomb</div>
-    <div class="brand">Best Seller</div>
-  </div>
-  <div class="price-row">Rp 45.000</div>
-</article>
-
+  </article>
 
 
         </div>
       </section>
 
-      <!-- LIMITED OFFER -->
-      <section style="margin-top:14px;">
-        <h2 class="section">Limited Offer!</h2>
-        <div class="limited">
-          <div class="title">Get 10% off at our booth!</div>
-          <div class="msg">Just show that you've followed our Instagram.</div>
-        </div>
-      </section>
-
-
-      <!-- VISIT OUR BOOTH -->
-      <section class="visit" style="margin-top:14px;">
-    <div class="section-row">
-  <h2 class="section">Visit Our Booth</h2>
-  <p>Catch us offline and enjoy special deals!</p>
-</div>
-        <div class="grid">
-          <div class="chip">
-            <div class="chip-title">IPEKA Puri</div>
-            <div class="small">20 — 24 Oct | 8 AM — 6 PM</div>
-          </div>
-          <div class="chip">
-            <div class="chip-title">Emporium Pluit Mall</div>
-            <div class="small">22 Oct — 2 Nov | 10 AM — 10 PM</div>
-          </div>
-          <div class="chip">
-            <div class="chip-title">Big Bad Wolf, PIK</div>
-            <div class="small">Date / time</div>
-          </div>
-          <div class="chip">
-            <div class="chip-title">UPH</div>
-            <div class="small">Date / time</div>
-          </div>
-        </div>
-      </section>
-      <!-- ===== WhatsApp CTA (letakkan INI sebelum </main>) ===== -->
-<section class="cta-whatsapp" aria-label="WhatsApp CTA">
+      <section class="cta-whatsapp" aria-label="WhatsApp CTA">
   <h2>Still unsure which one to choose?</h2>
   <p class="lead">
     Our team is ready to<br>
@@ -140,7 +79,7 @@
   </p>
 
   <a href="https://wa.me/628118281416" target="_blank" class="wa-btn" aria-label="Chat on WhatsApp">
-    <img src="acs/wa.png" alt="WhatsApp logo">
+    <img src="../acs/wa.png" alt="WhatsApp logo">
   </a>
 </section>
 
@@ -148,33 +87,31 @@
   </div>
   
 
-  <!-- BOTTOM NAV -->
-<nav class="bottom-nav" aria-label="Main navigation">
+  <nav class="bottom-nav" aria-label="Main navigation">
   <a href="order.html" class="nav-btn" aria-label="Orders">
-    <img src="acs/order.png" alt=""><span>Orders</span>
+    <img src="../acs/order.png" alt=""><span>Orders</span>
   </a>
 
   <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-    <img src="acs/Bag.png" alt=""><span>Bag</span>
+    <img src="../acs/Bag.png" alt=""><span>Bag</span>
   </a>
 
-  <a href="home.html" class="nav-btn active" aria-current="page" aria-label="Home">
-    <img src="acs/home.png" alt=""><span>Home</span>
+  <a href="Home.html" class="nav-btn active" aria-current="page" aria-label="Home">
+    <img src="../acs/home.png" alt=""><span>Home</span>
   </a>
 
   <a href="cari.html" class="nav-btn" aria-label="Search">
-    <img src="acs/src.png" alt=""><span>Search</span>
+    <img src="../acs/src.png" alt=""><span>Search</span>
   </a>
 
   <a href="prl.html" class="nav-btn" aria-label="Profile">
-    <img src="acs/prf.png" alt=""><span>Profile</span>
+    <img src="../acs/prf.png" alt=""><span>Profile</span>
   </a>
 </nav>
   </nav>
 
   
-  <!-- tambahkan ini sebelum penutup </body> -->
-<script src="Home.js"></script>
+  <script src="../logic/Home.js"></script>
 
 </body>
 </html>

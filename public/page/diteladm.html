@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin — Delivery Tracking</title>
-  <link rel="stylesheet" href="ordadm.css">
+  <link rel="stylesheet" href="../style/ordadm.css"> 
 </head>
 <body>
   <div class="admin-shell">
@@ -15,7 +15,6 @@
 
     <main id="admin-detail" class="admin-content">
 
-      <!-- CARD RINGKAS ORDER -->
       <section class="admin-order-card" id="adm-summary-card">
         <div class="admin-order-header">
           <div class="admin-order-id">
@@ -30,33 +29,17 @@
           <span class="badge" id="adm-total-badge">Total: Rp 0</span>
         </div>
 
-        <div class="admin-items" id="adm-items">
-          <!-- first item title akan diisi JS -->
+        <div class="admin-address" id="adm-address-display">
+          Alamat: Loading...
         </div>
+        
+        <div class="admin-items-list" id="adm-items-list">
+          </div>
 
-        <div class="admin-address" id="adm-address-block">
-          <!-- alamat default akan diisi JS (optional) -->
-        </div>
       </section>
 
-      <!-- PENGATURAN JADWAL & SHIPPING -->
-      <section class="admin-detail-section">
-        <h2 class="admin-section-title">Delivery Settings</h2>
-
-        <div class="admin-form-row">
-          <label for="adm-scheduled">Scheduled Delivery</label>
-          <input type="date" id="adm-scheduled">
-        </div>
-
-        <div class="admin-form-row">
-          <label for="adm-ship-fee">Shipping Fee (Rp)</label>
-          <input type="number" id="adm-ship-fee" min="0" step="1000" placeholder="contoh: 15000">
-        </div>
-      </section>
-
-      <!-- DELIVERY TRACKING TOGGLE -->
-      <section class="admin-detail-section">
-        <h2 class="admin-section-title">Delivery Tracking</h2>
+      <section class="admin-tracking-card card">
+        <h3>Update Tracking Status</h3>
 
         <div class="admin-toggle-row">
           <label for="t-placed">Order Placed</label>
@@ -92,14 +75,34 @@
 
         <div class="admin-actions" style="margin-top:12px;">
           <button class="btn btn-details" id="btn-save-tracking">Save Changes</button>
-          <button class="btn btn-approve" id="btn-mark-delivered">Mark as Delivered</button>
-          <button class="btn btn-reject" id="btn-back-list">Back to Orders</button>
+        </div>
+      </section>
+
+      <section class="admin-schedule-card card">
+        <h3>Biaya Kirim & Jadwal</h3>
+
+        <div class="admin-form-row">
+          <label for="adm-shipping-cost">Biaya Kirim</label>
+          <input type="number" id="adm-shipping-cost" placeholder="0">
+        </div>
+
+        <div class="admin-form-row">
+          <label for="adm-schedule-date">Tanggal Kirim</label>
+          <input type="date" id="adm-schedule-date">
+        </div>
+
+        <div class="admin-form-row">
+          <label for="adm-schedule-time">Jam Kirim</label>
+          <input type="time" id="adm-schedule-time">
+        </div>
+
+        <div class="admin-actions" style="margin-top:12px;">
+          <button class="btn btn-details" id="btn-save-schedule">Save Schedule</button>
         </div>
       </section>
 
     </main>
   </div>
-
-  <script src="diteladm.js"></script>
+  <script src="../logic/diteladm.js"></script>
 </body>
 </html>

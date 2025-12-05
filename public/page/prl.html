@@ -6,27 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profile — Verent Florensa</title>
     <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="prl.css">
+    <link rel="stylesheet" href="../style/prl.css">
 </head>
 
 <body>
     <div class="device" role="document" aria-label="mock mobile canvas">
-        <!-- MAIN CONTENT -->
-<!-- prl.html (update main profile section) -->
-<main class="content">
+        <main class="content">
   <section class="profile-section">
-    <!-- Name split into two lines: first + last -->
     <h1 class="profile-name">
       <span id="name-first" class="name-first">Veren</span><br>
       <span id="name-last" class="name-last">Florensa</span>
     </h1>
     <p class="member">Member Since <span id="member-since">2024</span></p>
 
-    <!-- top edit -> goes to edit-profile.html -->
-<!-- top edit -> goes to edit-profile.html -->
-<a href="edt.html" id="btn-edit-profile" class="edit-link top-edit">Edit</a>
-
-<div class="info-list">
+    <a href="edt.html" id="btn-edit-profile" class="edit-link top-edit">Edit</a> <div class="info-list">
   <div class="info-row">
     <div class="label">Email</div>
     <div id="email-val" class="value">verentflorensa@gmail.com</div>
@@ -41,46 +34,41 @@
     <div class="address-section">
       <div class="address-head">
         <div class="label">Address</div>
-        <!-- address edit -> goes to address.html -->
-        <a href="drafamt.html" id="btn-edit-address" class="edit-link small">Edit</a>
-      </div>
+        <a href="drafamt.html" id="btn-edit-address" class="edit-link small">Edit</a> </div>
       <p id="address-text" class="address-text">
         Green Lake City cluster Europe,<br> Ketapang, Cipondoh.<br> Tangerang, Banten 15147
       </p>
     </div>
 
   <div class="logout">
-  <a href="Index.html" class="logout-btn">Log Out</a>
-</div>
+  <a href="../Index.html" class="logout-btn">Log Out</a> </div>
 
   </section>
 </main>
 
-<!-- include script at end of body -->
-<script src="prl.js"></script>
+<script src="../logic/prl.js"></script>
 
     </div>
 
-    <!-- BOTTOM NAV -->
     <nav class="bottom-nav" aria-label="Main navigation">
         <a href="order.html" class="nav-btn" aria-label="Orders">
-            <img src="acs/order.png" alt=""><span>Orders</span>
+            <img src="../acs/order.png" alt=""><span>Orders</span>
         </a>
 
         <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-            <img src="acs/Bag.png" alt=""><span>Bag</span>
+            <img src="../acs/Bag.png" alt=""><span>Bag</span>
         </a>
 
         <a href="Home.html" class="nav-btn" aria-label="Home">
-            <img src="acs/home.png" alt=""><span>Home</span>
+            <img src="../acs/home.png" alt=""><span>Home</span>
         </a>
 
         <a href="cari.html" class="nav-btn" aria-label="Search">
-            <img src="acs/src.png" alt=""><span>Search</span>
+            <img src="../acs/src.png" alt=""><span>Search</span>
         </a>
 
-        <a href="./prl.html" class="nav-btn active" aria-label="Profile">
-            <img src="acs/prf.png" alt=""><span>Profile</span>
+        <a href="prl.html" class="nav-btn active" aria-label="Profile">
+            <img src="../acs/prf.png" alt=""><span>Profile</span>
         </a>
     </nav>
 </body>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account</title>
-  <link rel="stylesheet" href="singup.css" />
+  <link rel="stylesheet" href="../style/singup.css" />
 </head>
 
 <body>
@@ -40,13 +40,13 @@
         <button type="button" class="create-btn" id="createAccountBtn">Create Account</button>
 
         <p class="signin-text">
-          Already have an account? <a href="singin.html">Sign In</a>
+          Already have an account? 
+          <a href="singin.html">Sign In</a>
         </p>
       </form>
     </div>
   </div>
 
-  <!-- 1️⃣ Supabase Client - 1x per halaman -->
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -57,8 +57,7 @@
     window.supabase = createClient(supabaseUrl, supabaseAnonKey);
   </script>
 
-  <!-- 2️⃣ Logic Sign Up -->
-  <script type="module" src="singup.js"></script>
+  <script type="module" src="../logic/singup.js"></script>
 
 </body>
 </html>

@@ -1,74 +1,3 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animasi Logo Kelap-Kelip</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: white;
-            overflow: hidden;
-        }
-
-        .logo-container {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo-container img {
-            max-width: 100%;
-            max-height: 100%;
-            position: absolute;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.8s ease-in-out, transform 1.2s ease-in-out;
-        }
-
-        /* Cahaya kelap-kelip putih */
-        .logo-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 170%;
-            height: 170%;
-            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 70%);
-            transform: translate(-50%, -50%) scale(0);
-            border-radius: 50%;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .5s ease-out, transform .8s ease-out;
-        }
-
-        .logo-container.shining::before {
-            animation: shinePulse .4s infinite alternate;
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        @keyframes shinePulse {
-            from { opacity: .4; transform: translate(-50%, -50%) scale(.9); }
-            to   { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="logo-container" id="logoContainer">
-        <img id="lg3" src="logos/lg3.png" alt="Logo Efek">
-        <img id="lgut" src="logos/lgut.png" alt="Logo Akhir">
-    </div>
-
 <script>
     const container = document.getElementById('logoContainer');
     const lg3 = document.getElementById("lg3");
@@ -82,7 +11,7 @@
         setTimeout(() => {
             container.classList.remove("shining");
             showFinalLogo();
-        }, 2500); // durasi tampil + mengkilat lg3
+        }, 2500); // durasi tampil + mengkilat
     }
 
     function showFinalLogo() {
@@ -91,12 +20,14 @@
         lgut.style.transform = "scale(1.0)";
 
         setTimeout(() => {
-            window.location.href = "singup.html"; 
-        }, 3000);
+            // JALUR MODIFIED: Menunjuk ke folder 'page/'
+            window.location.href = 'page/home.html'; 
+        }, 1500); // Durasi tampil logo akhir sebelum redirect
     }
 
-    window.onload = showLG3;
+    document.addEventListener('DOMContentLoaded', () => {
+        showLG3();
+    });
 </script>
-
 </body>
 </html>

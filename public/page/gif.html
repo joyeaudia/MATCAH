@@ -5,25 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gifting — Make it more you!</title>
 
-  <!-- Font (ubah bila perlu) -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<!-- Google Fonts: Rasa -->
 <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS eksternal -->
-  <link rel="stylesheet" href="gif.css">
+  <link rel="stylesheet" href="../style/gif.css">
 </head>
 <body>
   <div class="frame" role="document" aria-label="Gifting page">
     <header class="top-nav">
  <button class="nav-action nav-left" type="button"
-        onclick="window.location.href='bagfr.html'">
-  Cancel
+        onclick="window.location.href='bagfr.html'"> Cancel
 </button>
 
       <div class="title" aria-hidden="false">Gifting</div>
 
-     <a href="./cekout.html"
+     <a href="cekout.html"
      id="gift-next"
      class="nav-action nav-right"
      role="button"
@@ -32,17 +28,12 @@
     </header>
 
     <main class="content">
-      <!-- Hero card -->
       <section class="hero" aria-labelledby="hero-title">
-        <!-- Ganti logo.png jika ingin pakai logo -->
-        <!-- <img src="logo.png" alt="Logo" class="logo"> -->
-
         <h1 id="hero-title" class="hero-title">Make it<br>more you!</h1>
         <p class="hero-sub">Turn your gift into something truly meaningful.
           <br>Your message, your story comes to life with little animation magic!</p>
       </section>
 
-      <!-- Form -->
       <form class="gift-form" autocomplete="off" novalidate>
         <label class="label" for="message">Personalize your gift message</label>
         <textarea id="message" class="textarea" placeholder="Write your message here..." aria-label="Gift message"></textarea>
@@ -60,32 +51,30 @@
 
       <p class="label">Choose your gift card theme</p>
 
-<!-- 5 swatches with images (replace src with your PNG paths) -->
 <div class="theme-row" aria-label="Themes" id="theme-row">
   <button type="button" class="theme-swatch" data-theme="theme1" aria-pressed="false" title="Floral">
-    <img src="gif/pic1.png" alt="Theme Floral">
+    <img src="../gif/pic1.png" alt="Theme Floral">
   </button>
   <button type="button" class="theme-swatch" data-theme="theme2" aria-pressed="false" title="Minimal">
-    <img src="gif/pic2.png" alt="Theme Minimal">
+    <img src="../gif/pic2.png" alt="Theme Minimal">
   </button>
   <button type="button" class="theme-swatch" data-theme="theme3" aria-pressed="false" title="Festive">
-    <img src="gif/pic3.png" alt="Theme Festive">
+    <img src="../gif/pic3.png" alt="Theme Festive">
   </button>
   <button type="button" class="theme-swatch" data-theme="theme4" aria-pressed="false" title="Cute">
-    <img src="gif/pic4.png" alt="Theme Cute">
+    <img src="../gif/pic4.png" alt="Theme Cute">
   </button>
   <button type="button" class="theme-swatch" data-theme="theme5" aria-pressed="false" title="Classic">
-    <img src="gif/pic5.png" alt="Theme Classic">
+    <img src="../gif/pic5.png" alt="Theme Classic">
   </button>
 </div>
 
 
 <div class="spacer"></div>
 
-<!-- preview area: shows the selected theme larger -->
 <div id="theme-preview-wrap" style="margin-top:16px">
   <div id="theme-preview" aria-live="polite" class="theme-preview">
-    <img id="theme-preview-img" src="gif/pic11.png" alt="Selected theme preview">
+    <img id="theme-preview-img" src="../gif/pic11.png" alt="Selected theme preview">
 
   </div>
 </div>
@@ -98,6 +87,6 @@
     </main>
   </div>
 
-<script src="gif.js"></script>
+<script src="../logic/gif.js"></script>
 </body>
 </html>

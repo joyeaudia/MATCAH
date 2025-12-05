@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Admin Booths</title>
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="../style/admin.css"> 
 </head>
 <body>
 
@@ -20,7 +20,6 @@
     </div>
 
     <div class="grid" id="inputs-grid">
-      <!-- Box 1 -->
       <div class="box">
         <label>Location</label>
         <input type="text" class="title" data-index="0" placeholder="Mis. IPEKA Puri">
@@ -50,11 +49,9 @@
         <label>Link (optional)</label>
         <input type="url" class="link" data-index="0" placeholder="https://...">
       </div>
-
-      <!-- Box 2 -->
       <div class="box">
         <label>Location</label>
-        <input type="text" class="title" data-index="1" placeholder="Mis. Emporium Pluit Mall">
+        <input type="text" class="title" data-index="1" placeholder="Mis. Mall">
 
         <div class="row">
           <div>
@@ -81,11 +78,9 @@
         <label>Link (optional)</label>
         <input type="url" class="link" data-index="1" placeholder="https://...">
       </div>
-
-      <!-- Box 3 -->
       <div class="box">
         <label>Location</label>
-        <input type="text" class="title" data-index="2" placeholder="Mis. Big Bad Wolf, PIK">
+        <input type="text" class="title" data-index="2" placeholder="Mis. Office">
 
         <div class="row">
           <div>
@@ -113,7 +108,6 @@
         <input type="url" class="link" data-index="2" placeholder="https://...">
       </div>
 
-      <!-- Box 4 -->
       <div class="box">
         <label>Location</label>
         <input type="text" class="title" data-index="3" placeholder="Mis. UPH">
@@ -146,24 +140,19 @@
     </div>
   </div>
 
-  <!-- Bottom nav dengan 2 tombol + PNG icon -->
-
-    <!-- Kanan: pindah ke halaman admin lain -->
-<nav class="bottom-nav">
+  <nav class="bottom-nav">
 
   <a href="ordadm.html" class="nav-item">
-    <img src="logos/dm2.png" class="nav-icon" alt="">
+    <img src="../logos/dm2.png" class="nav-icon" alt="">
     <span class="nav-label">Orders</span>
   </a>
 
-<a href="admin.html" class="nav-item active">
-    <img src="logos/dm1.png" class="nav-icon" alt="">
-    <span class="nav-label">Booths</span>
+  <a href="admin.html" class="nav-item active">
+    <img src="../logos/dm1.png" class="nav-icon" alt="">
+    <span class="nav-label">Admin Home</span>
   </a>
-  
 </nav>
 
-
-  <script src="admin.js"></script>
+<script src="../logic/admin.js"></script>
 </body>
 </html>

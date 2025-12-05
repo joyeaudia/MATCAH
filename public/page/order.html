@@ -5,122 +5,95 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Your Orders — Mobile</title>
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="order.css">
+  <link rel="stylesheet" href="../style/order.css">
 </head>
 <body>
   <div class="app-shell">
-    <!-- HEADER: card style with centered brand text -->
     <header class="appbar" role="banner">
       <div class="appbar-inner">
         <div class="brand-center">
-          <img src="logos/lg3.png" alt="logo" class="brand-logo">
+          <img src="../logos/lg3.png" alt="logo" class="brand-logo">
         </div>
 
         <a class="icon-bell" aria-label="Notifications" href="notif.html">
-          <!-- titik merah kecil -->
           <span class="icon-bell-badge" id="notif-badge"></span>
-          <img src="acs/lcng.png" alt="Notifications">
+          <img src="../acs/lcng.png" alt="Notifications">
         </a>
       </div>
 
       <div class="appbar-underline" aria-hidden="true"></div>
     </header>
 
-    <!-- title & subtitle -->
     <section class="title-area">
       <h1>Your Orders</h1>
-      <p class="subtitle">Track, manage, and revisit your orders.</p>
+      <p class="subtitle">Track, manage, and review your orders history.</p>
     </section>
 
-    <!-- tabs (modified untuk JS tab-switching) -->
-    <nav class="tabs" role="tablist" aria-label="Order tabs">
-      <button role="tab" class="tab tab-active" data-tab="active" aria-selected="true">Active</button>
-      <button role="tab" class="tab" data-tab="scheduled" aria-selected="false">Scheduled</button>
-      <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
+    <nav class="tab-nav" role="tablist">
+      <button type="button" class="tab-btn is-active" role="tab" data-tab="active" aria-selected="true">
+        Active
+      </button>
+      <button type="button" class="tab-btn" role="tab" data-tab="scheduled" aria-selected="false">
+        Scheduled
+      </button>
+      <button type="button" class="tab-btn" role="tab" data-tab="history" aria-selected="false">
+        History
+      </button>
     </nav>
-
-    <!-- order list area: panels untuk tiap tab -->
-    <main class="content">
-      <!-- Tab panel: ACTIVE -->
-      <section id="tab-active" class="tab-panel">
-        <!-- Orders will be rendered here by order.js -->
-      </section>
-
-      <!-- Tab panel: SCHEDULED -->
-      <section id="tab-scheduled" class="tab-panel hidden">
-        <!-- Orders will be rendered here by order.js -->
-      </section>
-
-      <!-- Tab panel: HISTORY -->
-      <section id="tab-history" class="tab-panel hidden" role="tabpanel" aria-labelledby="tabbtn-history">
-        <!-- Orders will be rendered here by order.js -->
-      </section>
-
-      <!-- spacer so footer isn't overlapped -->
-      <div class="spacer"></div>
-
-      <!-- customer support area -->
-      <section class="support">
-        <h4>Customer Support</h4>
-        <p class="support-note">Need help? <br/>Chat with our support team for order assistance or product info.</p>
-        <a 
-          href="https://wa.me/628118281416?text=halo%20cici%20maziii%20mau%20tanya"
-          class="whatsapp-btn"
-          target="_blank"
-          rel="noopener"
-        >
-          <img src="acs/wa.png" alt="WA" class="wa-icon">
-          Chat Support
-        </a>
-      </section>
+    
+    <main class="content-area">
+      <div class="order-list" id="order-list-active" role="tabpanel" data-order-tab="active">
+        <p class="list-placeholder">Loading active orders...</p>
+      </div>
+      <div class="order-list" id="order-list-scheduled" role="tabpanel" data-order-tab="scheduled" hidden>
+        <p class="list-placeholder">Loading scheduled orders...</p>
+      </div>
+      <div class="order-list" id="order-list-history" role="tabpanel" data-order-tab="history" hidden>
+        <p class="list-placeholder">Loading history...</p>
+      </div>
     </main>
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav" aria-label="Main navigation">
-      <a href="order.html" class="nav-btn active" aria-label="Orders">
-        <img src="acs/order.png" alt=""><span>Orders</span>
+    <nav class="mobile-nav">
+      <a href="order.html" class="nav-btn is-active" aria-current="page" aria-label="Orders">
+        <img src="../acs/order.png" alt=""><span>Orders</span>
       </a>
 
       <a href="bagfr.html" class="nav-btn" aria-label="Bag">
-        <img src="acs/Bag.png" alt=""><span>Bag</span>
+        <img src="../acs/Bag.png" alt=""><span>Bag</span>
       </a>
 
       <a href="home.html" class="nav-btn" aria-current="page" aria-label="Home">
-        <img src="acs/home.png" alt=""><span>Home</span>
+        <img src="../acs/home.png" alt=""><span>Home</span>
       </a>
 
       <a href="cari.html" class="nav-btn" aria-label="Search">
-        <img src="acs/src.png" alt=""><span>Search</span>
+        <img src="../acs/src.png" alt=""><span>Search</span>
       </a>
 
       <a href="prl.html" class="nav-btn" aria-label="Profile">
-        <img src="acs/prf.png" alt=""><span>Profile</span>
+        <img src="../acs/prf.png" alt=""><span>Profile</span>
       </a>
     </nav>
   </div>
 
-  <!-- 🟢 SUPABASE CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // 🔧 SUPABASE CONFIGURATION
     const SUPABASE_URL = 'https://ebbdaxprudznktnfvcbo.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg'; // 👈 GANTI INI!
-    
-    // Initialize Supabase client
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViYmRheHBydWR6bmt0bmZ2Y2JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzI0NDQsImV4cCI6MjA4MDE0ODQ0NH0.U0AhNyTzU5nht8iMk7cYs2nSwApY1IssN4oMW1EChZg';
+
+    // Inisialisasi Klien Supabase
     try {
+      // Supabase client provided globally for order.js to use
       window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log('✅ Supabase client initialized');
-    } catch (error) {
-      console.error('❌ Failed to initialize Supabase:', error);
+      console.log("Supabase Client Init OK in order.html");
+    } catch (e) {
+      console.error("Supabase init failed in order.html:", e);
     }
   </script>
 
-  <!-- 🟢 ORDER.JS -->
-  <script src="./order.js"></script>
-
+  <script src="../logic/order.js"></script>
 </body>
 </html>
